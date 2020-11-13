@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+</head>
+
+<body>
+    <div id="personalInfo">
+        <form>
+            <fieldset>
+                <legend>Personal Information</legend>
+                {{!-- <h2>Personal Information</h2> --}}
+                <label for="username">username</label>
+                <input type="text" value="{{userName}}" id="username" readonly> <br>
+                <label for="email">email</label>
+                <input type="text" value="{{userEmail}}" id="email" readonly><br>
+                <label for="registDate">Registration Date</label>
+                <input type="text" value="{{userRegistDate}}" id="registDate" readonly><br>
+            </fieldset>
+        </form>
+    </div>
+    <div id="questions">
+        <fieldset>
+            <legend>Questions</legend>
+            {{#each userQuestionsList}}
+            <article>
+                <h2><a href="{{this.questionUrl}}">{{this.questionName}}</a></h2><br>
+            </article>
+            {{/each}}
+        </fieldset>
+    </div>
+    <div id="answers">
+        <fieldset>
+            <legend>Answers</legend>
+            {{#each userAnswersList}}
+            <article>
+                <h2><a href="{{this.questionUrl}}">{{this.questionName}}</a></h2><br>
+                <h3>{{this.answerContent}}</h3>
+            </article>
+            {{/each}}
+        </fieldset>
+    </div>
+    <div id="reviews">
+        <fieldset>
+            <legend>Reviews</legend>
+            {{#each userReviewsList}}
+            <article>
+                <h2><a href="{{this.questionUrl}}">{{this.questionName}}</a></h2><br>
+                <h3>{{this.answerContent}}</h3><br>
+                <h4>{{this.reviewContent}}</h4>
+            </article>
+            {{/each}}
+        </fieldset>
+    </div>
+    <div id="votedAnswers">
+        <fieldset>
+            <legend>VotedAnswers</legend>
+            {{#each userVotedAnswersList}}
+            <article>
+                <h2><a href="{{this.questionUrl}}">{{this.questionName}}</a></h2><br>
+                <h3>{{this.answerContent}}</h3>
+            </article>
+            {{/each}}
+        </fieldset>
+    </div>
+    <div id="votedReviews">
+        <fieldset>
+            <legend>VotedReviews</legend>
+            {{#each userVotedReviewsList}}
+            <article>
+                <h2><a href="{{this.questionUrl}}">{{this.questionName}}</a></h2><br>
+                <h3>{{this.answerContent}}</h3><br>
+                <h4>{{this.reviewContent}}</h4>
+            </article>
+            {{/each}}
+        </fieldset>
+    </div>
+</body>
+
+</html>

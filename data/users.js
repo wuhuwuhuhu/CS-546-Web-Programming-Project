@@ -1,9 +1,18 @@
 const mongoCollections = require('../config/mongoCollections');
 const users = mongoCollections.users;
-
 let exportedMethods = {
     async getAllUsers() {},
-    async getUserById(id) {},
+    async getUserById(id) {
+        const usersCollection = await users();
+        if(typeof id === "string")
+        {
+            let { ObjectId } = require("mongodb");
+            id = ObjectId(id);
+        }
+        const userfinded = await usersCollection.findOne({ _id: id });
+        if (userfinded === null) throw `Error: No user with that id ${id}`;
+        return userfinded;
+    },
     async getUserByUserName(userName) {
     },
     async addUser(userName, email, password) {

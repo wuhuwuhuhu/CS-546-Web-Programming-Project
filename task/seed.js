@@ -66,7 +66,7 @@ const main = async () => {
     
     //create a new question
     const newQuestion = {
-        content:"Why is this a question?",
+        content:"Why this is a question?",
         topic: ["Programming languages", "FootBall"],
         questioner: newUserId,
         questionCreatedTime:  new Date(),
@@ -118,7 +118,14 @@ const main = async () => {
             voteDown: newUserId,
          } }
       );
-    
+    //add a vote to the voter
+    await usersCollection.updateOne(
+        { _id: newAnswerManId },
+        { $addToSet: { 
+            votedForAnswers: newAnswerId,
+         } }
+      );
+
     
     //create a new review
     const newReview = {
@@ -152,6 +159,13 @@ const main = async () => {
         { $addToSet: { 
             voteUp: newAnswerManId,
             voteDown: newUserId,
+            } }
+        );
+    //add a vote to the voter
+    await usersCollection.updateOne(
+        { _id: newAnswerManId },
+        { $addToSet: { 
+            votedForReview: newReviewId,
             } }
         );
     console.log('Done seeding database');

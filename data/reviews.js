@@ -21,15 +21,14 @@ let exportedMethods = {
      */
     async getReviewById(id) {
         if (!id || id == null || typeof id != 'string' || id.match(/^[ ]*$/)) {
-            throw 'id of /data/reviews.js/getReviewById is not String or legal input ';
+            throw `id of /data/reviews.js/getReviewById is not String or legal input`
         }
         const reviewsCollection = await reviews();
         try {
             const reviewById = await reviewsCollection.findOne({ _id: ObjectId(id) });
             return reviewById;
         } catch (error) {
-            console.log("there is an error in /data/questions.js/getReviewById");
-            return null
+            throw `there is an error in /data/questions.js/getReviewById`
         }
     },
     /**
@@ -44,16 +43,13 @@ let exportedMethods = {
     async addReview(content, reviewer, answerId) {
         var ObjectIdExp = /^[0-9a-fA-F]{24}$/
         if (!content || content == null || typeof content != 'string' || content.match(/^[ ]*$/)) {
-            console.log("content in /data/reviews.js/addReview is blank");
-            return null
+            throw `content in /data/reviews.js/addReview is blank`
         }
         if (!reviewer || reviewer == null || typeof reviewer != 'string' || reviewer.match(/^[ ]*$/)) {
-            console.log("reviewer in /data/reviews.js/addReview is blank");
-            return null
+            throw `reviewer in /data/reviews.js/addReview is blank`
         }
         if (!answerId || answerId == null || typeof answerId != 'string' || answerId.match(/^[ ]*$/) || !ObjectIdExp.test(answerId)) {
-            console.log("answerId in /data/reviews.js/addReview has error");
-            return null
+            throw `answerId in /data/reviews.js/addReview has error`
         }
         try {
             const realDate = new Date()
@@ -73,22 +69,60 @@ let exportedMethods = {
                 throw 'Insert failed!';
             }
             const newId = insertInfor.insertedId;
-            const ansAndRev=  await anwsersdMethods.addReview(answerId,newId);
-            if(ansAndRev==null){
+            const ansAndRev = await anwsersdMethods.addReview(answerId, newId);
+            if (ansAndRev == null) {
                 throw 'Insert failed!';
             }
             const review = await this.getReviewById(newId.toString());
-            console.log(review);
             return review
         } catch (error) {
-            return null
+            throw error
         }
     },
     async removeReview(id) {
         //also remove comments related to the Review. 
     },
 
-    async updateReview(id, content) { },
+    /**
+     * 
+     * @param {*} id : id of the review
+     * @param {*} content : update the content
+     */
+    async updateReview(id, content) {
+        const reviewsCollection = await reviews();
+        var ObjectIdExp = /^[0-9a-fA-F]{24}$/
+        if (!id || typeof id != 'string' || id.match(/^[ ]*$/) || !ObjectIdExp.test(id)) {
+            throw `id in /data/reviews.js/updateReview has error`
+        }
+        if (!content || content == null || typeof content != 'string' || content.match(/^[ ]*$/)) {
+            throw `content in /data/reviews.js/updateReview is blank`
+        }
+        try {
+            const oldReview = await this.getReviewById(id)
+            if (oldReview == null) {
+                throw `didn't find review by id : ${id}`
+            }
+            const newReview = {
+                content: content,
+                recentUpdatedTime: oldReview.recentUpdatedTime,
+                Reviewer: oldReview.Reviewer,
+                answerId: oldReview.answerId,
+                voteUp: oldReview.voteUp,
+                voteDown: oldReview.voteDown
+            }
+            try {
+                await reviewsCollection.updateOne({ _id: ObjectId(id) }, { $set: newReview });
+                const newData = await this.getReviewById(id)
+                return newData
+            } catch (error) {
+                throw 'could not update review successfully';
+            }
+        } catch (error) {
+            throw error
+        }
+
+
+    },
 
     async addVoteUp(id, voterId) { },
     async removeVoteUp(id, voterId) { },

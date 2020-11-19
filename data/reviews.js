@@ -1,5 +1,6 @@
 const mongoCollections = require('../config/mongoCollections');
 const reviews = mongoCollections.reviews;
+const usersMethods = require("./users");
 const anwsersdMethods = require("./anwsers");
 const ObjectId = require('mongodb').ObjectId;
 
@@ -120,15 +121,35 @@ let exportedMethods = {
         } catch (error) {
             throw error
         }
-
+    },
+    /**
+     * 
+     * @param {*} reviewId : id of review
+     * @param {*} voterId : id of the voter
+     * when this function used, if the user already "vote up" this review, then delete it, or add it if the user didn't "vote up " the review 
+     */
+    async updateVoteUp(reviewId, voterId) {
+        const reviewsCollection = await reviews();
+        var ObjectIdExp = /^[0-9a-fA-F]{24}$/
+        if (!reviewId || typeof reviewId != 'string' || reviewId.match(/^[ ]*$/) || !ObjectIdExp.test(reviewId)) {
+            throw `reviewId in /data/reviews.js/updateVoteUp has error`
+        }
+        if (!voterId || typeof voterId != 'string' || voterId.match(/^[ ]*$/) || !ObjectIdExp.test(voterId)) {
+            throw `voterId in /data/reviews.js/updateVoteUp has error`
+        }
+        const review = await this.getReviewById(reviewId)
+        if (review == null) {
+            throw `didn't find review by id : ${reviewId}`
+        }
+        const voter = await usersMethods.getUserById(voterId)
+        if (voter == null) {
+            throw `didn't find user by id : ${voterId}`
+        }
+        //didn't finish
+        
 
     },
-
-    async addVoteUp(id, voterId) { },
-    async removeVoteUp(id, voterId) { },
-
-    async addVoteDown(id, voterId) { },
-    async removeVoteDown(id, voterId) { }
+    async updateVoteDown(reviewId, voterId) { }
 };
 
 module.exports = exportedMethods;

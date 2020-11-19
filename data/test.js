@@ -4,7 +4,7 @@ const questionsdMethods = require("./questions");
 
 async function test1() {
     try {
-        const op1 = await reviewsMethods.getReviewById("5fb5cd906768a33e948daf2");
+        const op1 = await reviewsMethods.getReviewById("5fb5cd906768a33e948daf2d");
         console.log(op1);
     } catch (error) {
         throw error
@@ -46,6 +46,13 @@ async function createDate() {
 async function test3() {
     await reviewsMethods.addReview("test","5fb5cd906768a33e948daf29","5fb5cd906768a33e948daf2c");
 }
+/**
+ * updateReview
+ */
+async function test4(){
+    const newDate= await reviewsMethods.updateReview("5fb5cd906768a33e948daf2d","this is a new review");
+    console.log(newDate);
+}
 // createDate()
 
-test1()
+test4()

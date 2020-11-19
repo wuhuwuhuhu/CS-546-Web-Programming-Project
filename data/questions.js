@@ -26,8 +26,7 @@ let exportedMethods = {
             const questionById = await rquestionsCollection.findOne({ _id: ObjectId(id) });
             return questionById;
         } catch (error) {
-            console.log("there is an error in /data/questions.js/getQuestionById");
-            return null
+            throw `there is an error in /data/questions.js/getQuestionById`
         }
     },
     async addQuestion(content, topic, questioner) {

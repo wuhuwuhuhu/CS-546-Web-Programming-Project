@@ -143,16 +143,15 @@ let exportedMethods = {
             let voterArr=review.voteUp
             if(voterArr.indexOf(voterId)==-1){
                 voterArr.push(voterId)
-                console.log(voterArr);
             }else{
                 voterArr.splice(voterArr.indexOf(voterId),1)
             }
+            
             await reviewsCollection.updateOne({ _id: ObjectId(reviewId) }, { $set: {'voteUp':voterArr} });
             const newData = await this.getReviewById(reviewId)
             return newData
         } catch (error) {
-            console.log("error");
-            return null
+            throw error
         }
     },
 
@@ -176,20 +175,22 @@ let exportedMethods = {
             throw `didn't find review by id : ${reviewId}`
         }
         const voter = await usersMethods.getUserById(voterId)
+        console.log(voter);
         if (voter == null) {
             throw `didn't find user by id : ${voterId}`
         }
         try {
             let voterArr=review.voteDown
             if(voterArr.indexOf(voterId)==-1){
-                voterArr.push(voterArr)
+                voterArr.push(voterId)
             }else{
                 voterArr.splice(voterArr.indexOf(voterId),1)
             }
             await reviewsCollection.updateOne({ _id: ObjectId(reviewId) }, { $set: {voteDown:voterArr} });
-            return true
+            const newData = await this.getReviewById(reviewId)
+            return newData
         } catch (error) {
-            return false
+            throw error
         }
     }
 };

@@ -1,6 +1,8 @@
 const mongoCollections = require('../config/mongoCollections');
 const users = mongoCollections.users;
 
+
+
 let exportedMethods = {
     async getAllUsers() {},
     async getUserById(id) {},
@@ -8,16 +10,18 @@ let exportedMethods = {
     },
     async addUser(userName, email, password) {
         //check whether userName duplicated
-        //generate _id, hash password, generate dateSignedIn 
+        //generate _id, hash password, generate dateSignedIn
         //generate empty arryays for questions answers reviews votedForReviews votedForAnswers
     },
     async removeUser(id) {
-        //also remove all data related to the user. 
+        //also remove all data related to the user.
     },
     async updateUser(id, email, password) {},
 
     async addQuestion(id,questionId){
+
         //the questionId is the question that the user aksed
+        //this part been done in data/questions.js
     },
     async removeQuestion(id,questionId){},
 

@@ -50,14 +50,14 @@ async function test3() {
  * updateReview
  */
 async function test4(){
-    const newDate= await reviewsMethods.updateReview("5fb5cd906768a33e948daf2d","this is a new review");
+    const newDate= await reviewsMethods.updateReview("5fb73445e7ad9c8684f559bb","this is a new review");
     console.log(newDate);
 }
 /**
  * updateVoteUp
  */
 async function test5(){
-    console.log(await reviewsMethods.updateVoteUp("5fb5cd906768a33e948daf2d","5fb5cd906768a33e948daf2a"));
+    console.log(await reviewsMethods.updateVoteUp("5fb73445e7ad9c8684f559bb","5fb73445e7ad9c8684f559b7"));
 }
 
 async function test6(){
@@ -65,5 +65,5 @@ async function test6(){
 }
 
 
-test5()
+test4()
 

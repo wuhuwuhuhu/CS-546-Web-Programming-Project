@@ -104,16 +104,9 @@ let exportedMethods = {
             if (oldReview == null) {
                 throw `didn't find review by id : ${id}`
             }
-            const newReview = {
-                content: content,
-                recentUpdatedTime: oldReview.recentUpdatedTime,
-                Reviewer: oldReview.Reviewer,
-                answerId: oldReview.answerId,
-                voteUp: oldReview.voteUp,
-                voteDown: oldReview.voteDown
-            }
+
             try {
-                await reviewsCollection.updateOne({ _id: ObjectId(id) }, { $set: newReview });
+                await reviewsCollection.updateOne({ _id: ObjectId(id) }, { $set: {'content':content}  });
                 const newData = await this.getReviewById(id)
                 return newData
             } catch (error) {
@@ -148,11 +141,8 @@ let exportedMethods = {
         }
         try {
             let voterArr=review.voteUp
-            console.log(voterArr);
-            console.log(voterArr.indexOf(ObjectId(voterId)));
-            console.log(voterArr[0]);
-            if(voterArr.indexOf(ObjectId(voterId))==-1){
-                voterArr.push(ObjectId(voterId))
+            if(voterArr.indexOf(voterId)==-1){
+                voterArr.push(voterId)
                 console.log(voterArr);
             }else{
                 voterArr.splice(voterArr.indexOf(voterId),1)

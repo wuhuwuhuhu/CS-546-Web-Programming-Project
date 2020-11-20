@@ -1,9 +1,25 @@
 const mongoCollections = require('../config/mongoCollections');
 const users = mongoCollections.users;
+const ObjectId = require('mongodb').ObjectId;
 
 let exportedMethods = {
     async getAllUsers() {},
-    async getUserById(id) {},
+    /**
+     * get user by id
+     * @param {*} id 
+     */
+    async getUserById(id) {
+        if (!id || id == null || typeof id != 'string' || id.match(/^[ ]*$/)) {
+            throw `id of /data/users.js/getUserById is not String or legal input`
+        }
+        const usersCollection = await users();
+        try {
+            const userById = await usersCollection.findOne({ _id: ObjectId(id) });
+            return userById;
+        } catch (error) {
+            throw `there is an error in /data/users.js/getUserById`
+        }
+    },
     async getUserByUserName(userName) {
     },
     async addUser(userName, email, password) {

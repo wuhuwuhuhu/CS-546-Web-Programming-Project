@@ -1,7 +1,7 @@
 
 const reviewsMethods = require("./reviews");
 const questionsdMethods = require("./questions");
-
+const usersdMethods = require("./users");
 async function test1() {
     try {
         const op1 = await reviewsMethods.getReviewById("5fb5cd906768a33e948daf2d");
@@ -53,6 +53,17 @@ async function test4(){
     const newDate= await reviewsMethods.updateReview("5fb5cd906768a33e948daf2d","this is a new review");
     console.log(newDate);
 }
-// createDate()
+/**
+ * updateVoteUp
+ */
+async function test5(){
+    console.log(await reviewsMethods.updateVoteUp("5fb5cd906768a33e948daf2d","5fb5cd906768a33e948daf2a"));
+}
 
-test4()
+async function test6(){
+    await usersdMethods.getUserById("5fb5cd906768a33e948daf29")
+}
+
+
+test5()
+

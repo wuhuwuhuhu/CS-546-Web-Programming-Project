@@ -64,6 +64,12 @@ async function test6(){
     await usersdMethods.getUserById("5fb5cd906768a33e948daf29")
 }
 
+/**
+ * updateVoteDown
+ */
+async function test7(){
+    console.log(await reviewsMethods.updateVoteDown("5fb73445e7ad9c8684f559bb","5fb73445e7ad9c8684f559b7"));
+}
 
-test4()
+test7()
 

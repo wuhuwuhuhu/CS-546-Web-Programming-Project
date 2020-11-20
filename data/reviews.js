@@ -2,6 +2,7 @@ const mongoCollections = require('../config/mongoCollections');
 const reviews = mongoCollections.reviews;
 const usersMethods = require("./users");
 const anwsersdMethods = require("./anwsers");
+const e = require('express');
 const ObjectId = require('mongodb').ObjectId;
 
 
@@ -145,11 +146,61 @@ let exportedMethods = {
         if (voter == null) {
             throw `didn't find user by id : ${voterId}`
         }
-        //didn't finish
-        
-
+        try {
+            let voterArr=review.voteUp
+            console.log(voterArr.indexOf(ObjectId(voterId)));
+            console.log(typeof voterArr[0]);
+            if(voterArr.indexOf(ObjectId(voterId))==-1){
+                voterArr.push(voterArr)
+            }else{
+                voterArr.splice(voterArr.indexOf(voterId),1)
+            }
+            console.log(voterArr);
+            await reviewsCollection.updateOne({ _id: ObjectId(reviewId) }, { $set: {'voteUp':voterArr} });
+            const newData = await this.getReviewById(reviewId)
+            return newData
+        } catch (error) {
+            console.log("error");
+            return null
+        }
     },
-    async updateVoteDown(reviewId, voterId) { }
+
+    /**
+     * 
+     * @param {*} reviewId 
+     * @param {*} voterId 
+     * change the voteDown status
+     */
+    async updateVoteDown(reviewId, voterId) { 
+        const reviewsCollection = await reviews();
+        var ObjectIdExp = /^[0-9a-fA-F]{24}$/
+        if (!reviewId || typeof reviewId != 'string' || reviewId.match(/^[ ]*$/) || !ObjectIdExp.test(reviewId)) {
+            throw `reviewId in /data/reviews.js/updateVoteDown has error`
+        }
+        if (!voterId || typeof voterId != 'string' || voterId.match(/^[ ]*$/) || !ObjectIdExp.test(voterId)) {
+            throw `voterId in /data/reviews.js/updateVoteDown has error`
+        }
+        const review = await this.getReviewById(reviewId)
+        if (review == null) {
+            throw `didn't find review by id : ${reviewId}`
+        }
+        const voter = await usersMethods.getUserById(voterId)
+        if (voter == null) {
+            throw `didn't find user by id : ${voterId}`
+        }
+        try {
+            let voterArr=review.voteDown
+            if(voterArr.indexOf(voterId)==-1){
+                voterArr.push(voterArr)
+            }else{
+                voterArr.splice(voterArr.indexOf(voterId),1)
+            }
+            await reviewsCollection.updateOne({ _id: ObjectId(reviewId) }, { $set: {voteDown:voterArr} });
+            return true
+        } catch (error) {
+            return false
+        }
+    }
 };
 
 module.exports = exportedMethods;

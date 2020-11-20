@@ -148,14 +148,15 @@ let exportedMethods = {
         }
         try {
             let voterArr=review.voteUp
+            console.log(voterArr);
             console.log(voterArr.indexOf(ObjectId(voterId)));
-            console.log(typeof voterArr[0]);
+            console.log(voterArr[0]);
             if(voterArr.indexOf(ObjectId(voterId))==-1){
-                voterArr.push(voterArr)
+                voterArr.push(ObjectId(voterId))
+                console.log(voterArr);
             }else{
                 voterArr.splice(voterArr.indexOf(voterId),1)
             }
-            console.log(voterArr);
             await reviewsCollection.updateOne({ _id: ObjectId(reviewId) }, { $set: {'voteUp':voterArr} });
             const newData = await this.getReviewById(reviewId)
             return newData

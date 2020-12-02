@@ -1,0 +1,63 @@
+<style>
+    .main {
+        width: 300px;
+      
+        margin: 0 auto;
+        margin-top: 150px;
+        border: 1px solid red;
+        border-radius: 10px;
+
+    }
+
+    .left {
+        display: inline-block;
+        width: 80px;
+        text-align: right;
+    }
+</style>
+<div class="main">
+
+    <div style="text-align: center;">
+        this is userinfo
+    </div>
+    <br>
+    <div>
+        userName:{{userInfo.username}}
+    </div>
+    <br>
+    <div>
+        firstName:{{userInfo.firstName}}
+    </div>
+    <br>
+    <div>
+        profrssion:{{userInfo.profrssion}}
+    </div>
+   
+</div>
+<div style="text-align: center;">
+    <button id="logout">logout user</button>
+</div>
+<script src="../../public/jquery.js"></script>
+<script>
+    $("#logout").click(function(){
+        $.ajax({
+              type : "GET",
+              contentType: "application/json;charset=UTF-8",
+             
+              url : "/logout",
+            
+              data : JSON.stringify({}),
+             
+              success : function(result) {
+                 
+                  if(result.status=="1"){
+                    location.href = "/"
+                  }
+              },
+              error : function(e){
+                  console.log(e.status);
+                  console.log(e.responseText);
+              }
+          });
+    })
+</script>

@@ -1,0 +1,84 @@
+<style>
+    .main {
+        width: 300px;
+    
+        margin: 0 auto;
+        margin-top: 150px;
+        border: 1px solid red;
+    }
+
+    .left {
+        display: inline-block;
+        width: 80px;
+        text-align: right;
+    }
+</style>
+<div class="main">
+    <form id="form" name="form">
+        <div>
+            {{#if error}}
+            <h3 style="color: red;">{{error}}</h3>
+            {{/if}}
+        </div>
+        <div>
+            <label class="left" for="username">name:</label><input name="username" id="username" type="text">
+        </div>
+        <div style="margin-top: 30px;">
+            <label class="left" for="password">password:</label><input name="password" id="password" type="password">
+        </div>
+        <div style="margin-top: 30px;">
+            <label class="left" for="email">email:</label><input name="email" id="email" type="text">
+        </div>
+         <div style="margin-top: 30px;">
+            <label class="left" for="age">age:</label><input name="age" id="age" type="text">
+        </div>
+        <div style="text-align: center;margin-top:20px">
+
+
+        </div>
+
+    </form>
+    
+    <button id="regist" type="submit">regist</button>
+</div>
+<script src="../../public/jquery.js"></script>
+<script>
+
+
+    $("#regist").click(function () {
+        let form =  $('#form').serializeArray();
+        console.log(form)
+        let jsonForm = {}
+        form.forEach((item)=>{
+            jsonForm[item.name] = item.value
+        })
+        $.ajax({
+
+            type: "POST",
+            //请求的媒体类型
+            contentType: "application/json;charset=UTF-8",
+
+            url: "/regist",
+
+            data: JSON.stringify(jsonForm),
+
+            success: function (result) {
+                console.log(result);
+                
+                if(result.status==1){
+                    alert("regist success")
+                    location.href = "/"
+                }else{
+                    $("html").html(result)
+                }
+            },
+
+            error: function (e) {
+                console.log(e.status);
+                console.log(e.responseText);
+            }
+        });
+    })
+
+
+</script>

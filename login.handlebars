@@ -1,0 +1,67 @@
+<style>
+  .main{
+    width: 300px;
+ 
+    margin:  0 auto;
+    margin-top: 150px;
+    border: 1px solid red;
+  }
+  .left{
+    display: inline-block;
+    width: 80px;
+    text-align: right;
+  }
+</style>
+<div class="main">
+    <form name="form" >
+         {{#if error}}
+            <h3 style="color: red;">{{error}}</h3>
+            {{/if}}
+        <div>
+          <label class="left" for="username">name:</label><input name="username" id="username" type="text">
+        </div>
+        <div style="margin-top: 30px;">
+          <label class="left" for="password">password:</label><input name="password"  id="password" type="password">
+        </div>
+        <div style="text-align: center;margin-top:20px">
+         
+           {{!-- <input type="submit" id="submit"  value="login"> --}}
+        </div>
+       
+    </form>
+      <button id="submit" type="submit">login</button>
+      <button id="regist" type="submit">regist</button>
+</div>
+<script src="../../public/jquery.js"></script>
+<script>
+      $("#submit").click(function(){
+        let username = $("#username").val()
+        let password = $("#password").val()
+            $.ajax({
+            
+              type : "POST",
+              //请求的媒体类型
+              contentType: "application/json;charset=UTF-8",
+            
+              url : "/login",
+             
+              data : JSON.stringify({username,password}),
+            
+              success : function(result) {
+                  $("html").html(result)
+              },
+            
+              error : function(e){
+                  console.log(e.status);
+                  console.log(e.responseText);
+              }
+          });
+        })
+      $("#regist").click(function(){
+         location.href = "/regist"
+      })
+      
+        
+
+
+</script>

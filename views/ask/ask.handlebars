@@ -2,34 +2,39 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
 </head>
 
 <body>
-    <main id="ask-main">
-        <div id="ask-div">
-            <form id="ask-form" method='post'>
-                <label id="ask-topic-label">Select Topic</label>
-                <select id="topic" name="topic">
-                    {{#each topic}}
-                <option id="topic-option" value="{{this}}"> {{this}}</option>
-                {{/each}}
-                </select>
-                <br>
-                <input id="question" name="question" placeholder="Ask Something Here..." value="{{question}}">
-                <button id="ask-submit-btn" type="submit">Submit</button>
-            </form>
-        </div>
-        <div id="ask-error-div">
-            <ul id="ask-error-ul"> {{#each errors}} <li id="ask-error-li">{{this}}</li> {{/each}} </ul>
-        </div>
+	<main id="ask-main">
+		<div id="ask-div">
+			<form id="ask-form" method='post'>
+				<label id="ask-topic-label" for="topic">Select Topic</label>
+				<select id="topic" name="topic" required>
+					{{#each topic}}
+					<option id="topic-option" value="{{this}}"> {{this}}</option>
+					{{/each}}
+				</select>
+				<br>
+				<input id="question" name="question" placeholder="Ask Something Here..." value="{{question}}">
+				<button id="ask-submit-btn" type="submit">Submit</button>
+			</form>
+		</div>
+		<div id="ask-error-div">
+			<ul id="ask-error-ul"> {{#each errors}} <li id="ask-error-li">{{this}}</li> {{/each}} </ul>
+		</div>
+		{{#if oldQuestionId}}
+		<div id ="question-exists">
+			<a href="/:{{oldQuestionId}}" >View the question</a>
+		</div>
+		{{/if}}
 
-        <div id="logout-div">
-    <a href='/logout'>Log out</a>
-</div>
-    </main>
+		<div id="logout-div">
+			<a href='/logout'>Log out</a>
+		</div>
+	</main>
 </body>
 
 </html>

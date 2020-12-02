@@ -7,11 +7,11 @@ const mongoCollections = require('../config/mongoCollections');
 const systemConfigs = mongoCollections.systemConfigs;
 const questions = mongoCollections.questions;
 //test mode setting, assign a dummy user
-const test = true;
-//const topics = ['Programming Languages','Machine Learning','Database','Web Programming','Others']
+const test = false;
+
 let topics = []
 router.get('/', async (req, res) => {
-	const topicCollection = await systemCollection();
+	const topicCollection = await systemConfigs();
 	const find = await topicCollection.findOne({ topics: { $exists: true } })
 	if (find == null) {
 		res.status(404).json('topics initial wrong.')
@@ -23,7 +23,7 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
 	const quesInfo = req.body;
-	console.log(quesInfo)
+//	console.log(quesInfo)
 	let errors = []
 	if (!quesInfo) {
 		const errorMsg = "You need to write something for the question";
@@ -62,12 +62,12 @@ router.post('/', async (req, res) => {
 
 	//check whether QuestionName duplicated
 	const questionCollection = await questions();
-
 	const findQuestion = await questionCollection.findOne({ content: content.trim() })
 	if (findQuestion) {
 		const errorMsg = 'Question already exists.';
-		const qId = findQuestion._id.toString();
 		errors.push(errorMsg);
+		//if there is already same question, show a link to the exist question
+		const qId = findQuestion._id.toString();
 		res.render('ask/ask', { errors: errors, topic: topics, question: content, oldQuestionId:qId  });
 		return;
 	}
@@ -79,13 +79,11 @@ router.post('/', async (req, res) => {
 
 	try {
 		const newQuestion = await questionsData.addQuestion(content, topic, questioner);
-		//send question id to the link for user to view
 		res.render('ask/askSuccess', { questionId: newQuestion._id });
 	} catch (error) {
-	//	console.log(error);
+	
 		const errorMsg = "Ask question failed."
 		errors.push(errorMsg);
-		
 		res.render('ask/ask', { errors: errors, topic: topics, question: content });
 		return;
 	}

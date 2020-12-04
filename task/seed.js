@@ -1,6 +1,6 @@
 /*
 Generate data to database for test.
-Just for test, all data in this file are hardcoded,
+Just for test, all data in this file are hardcoded, 
 but in each module we need to use the functions in data file(../data/) to operate the database.
 author: Wu Haodong
 date: 2020-11-13 11:44:27
@@ -23,7 +23,6 @@ const answersData = mongoCollections.anwsers;
 const reviewsData = mongoCollections.reviews;
 const systemConfigsData = mongoCollections.systemConfigs;
 
-
 const main = async () => {
     const usersCollection = await usersData();
     const questionsCollection = await questionsData();
@@ -33,11 +32,6 @@ const main = async () => {
     const db = await dbConnection();
     //delete the whole database.
     await db.dropDatabase();
-
-    //initial topics
-    const topics =["Programming languages","Database","Machine Learning","Algorithm","Others"]
-    const insertInfo = await systemConfigsCollection.insertOne({topics:topics});
-    if(insertInfo.insertedCount === 0 ) throw `Error: could not insert topics.`;
 
     //create a new user
     const newUser = {
@@ -51,7 +45,7 @@ const main = async () => {
         votedForReview:[],
         votedForAnswers: []
       };
-
+  
     const insertNewUserInfo = await usersCollection.insertOne(newUser);
     if (insertNewUserInfo.insertedCount === 0) throw `Error: could not add user.`;
     const newUserId = insertNewUserInfo.insertedId;
@@ -68,12 +62,12 @@ const main = async () => {
         votedForReview:[],
         votedForAnswers: []
       };
-
+  
     const insertNewAnswerManInfo = await usersCollection.insertOne(newAnswerMan);
     if (insertNewAnswerManInfo.insertedCount === 0) throw `Error: could not add the answer man.`;
     const newAnswerManId = insertNewAnswerManInfo.insertedId;
 
-
+    
     //create a new question
     const newQuestion = {
         content:"Why this is a question?",
@@ -88,7 +82,6 @@ const main = async () => {
     //add the question to the user
     await usersCollection.updateOne(
         { _id: newUserId },
-
         { $addToSet: { 
             questions: newQuestionId.toString(),
          } }
@@ -110,10 +103,8 @@ const main = async () => {
     //add the Answer to the question
     await questionsCollection.updateOne(
         { _id: newQuestionId },
-
         { $addToSet: { 
             answers: newAnswerId.toString(),
-
          } }
       );
     //add the Answer to the answerMan

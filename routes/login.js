@@ -71,11 +71,10 @@ router.get("/private", islogin, async (req, res) => {
   let { userInfo } = req.session
   res.render("pages/home", { userInfo: userInfo })
 })
-router.get('/logout', async (req, res) => {
-	req.session.destroy();
-	res.render('logout', {title: 'Logged Out'});
-});
-
+router.get("/logout", islogin, async (req, res) => {
+  delete req.session.userInfo
+  res.json({ status: "1", msg: "success" })
+})
 
 module.exports = router;
 

@@ -19,7 +19,13 @@ app.use(session({
 
 app.engine('handlebars', exphbs({ defaultLayout: 'main' }));
 app.set('view engine', 'handlebars');
-
+// app.use('/ask',(req,res,next)=>{
+//   if(!req.session.user){
+//     res.redirect('/login');
+//   }else{
+//     next();
+//   }
+// })
 
 configRoutes(app);
 app.listen(3000, () => {

@@ -73,7 +73,7 @@ async function test7(){
 }
 
 async function test8(){
-    console.log(await answersMethods.getAllAnwsers());
+    console.log(await answersMethods.getAllAnswers());
 }
 
 test8()

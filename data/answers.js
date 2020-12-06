@@ -1,35 +1,36 @@
 const mongoCollections = require('../config/mongoCollections');
-const anwsers = mongoCollections.anwsers;
+const answers = mongoCollections.anwsers;
 
 let exportedMethods = {
 
-    async getAllAnwsers() {
-        const anwsersCollection = await anwsers();
-        const anwsersList = await anwsersCollection.find({}).toArray();
-        return anwsersList;
+    async getAllAnswers() {
+        const answersCollection = await answers();
+        const answersList = await answersCollection.find({}).toArray();
+        return answersList;
     },
-    async getAnwserById(id) {
+    async getAnswerById(id) {
         if (!id || id == null || typeof id != 'string' || id.match(/^[ ]*$/)) {
-            throw `id of /data/reviews.js/getReviewById is not String or legal input`
+            throw `id of /data/answers.js/getAnswerById is not String or legal input`
         }
         const answersCollection = await answers();
         try {
             const answerById = await answersCollection.findOne({ _id: ObjectId(id) });
             return answerById;
         } catch (error) {
-            throw `there is an error in /data/answers.js/getAnwserById`
+            throw `there is an error in /data/answers.js/getAnswerById`
         }
     },
-    async addAnwser(content, answerer, questionId) {
-        //check whether AnwserName duplicated
+    async addAnswer(content, answerer, questionId) {
+        //check whether AnswerName duplicated
         //generate recentUpdatedTime
         //generate empty arryays for reviews voteUp voteDown
+        
     },
-    async removeAnwser(id) {
-        //also remove comments related to the Anwser. 
+    async removeAnswer(id) {
+        //also remove comments related to the Answer. 
     },
     
-    async updateAnwser(id, content) {},
+    async updateAnswer(id, content) {},
 
     async addReview(id, reviewId){},
     async removeReview(id, reviewId){},

@@ -1,7 +1,8 @@
 const mongoCollections = require('../config/mongoCollections');
 const reviews = mongoCollections.reviews;
 const usersMethods = require("./users");
-const anwsersdMethods = require("./answers");
+const answersdMethods = require("./answers");
+const questionMethods = require("./questions")
 const e = require('express');
 const ObjectId = require('mongodb').ObjectId;
 
@@ -47,13 +48,16 @@ let exportedMethods = {
         if (!content || content == null || typeof content != 'string' || content.match(/^[ ]*$/)) {
             throw `content in /data/reviews.js/addReview is blank`
         }
-        if (!reviewer || reviewer == null || typeof reviewer != 'string' || reviewer.match(/^[ ]*$/)) {
-            throw `reviewer in /data/reviews.js/addReview is blank`
+        if (!reviewer || reviewer == null || typeof reviewer != 'string' || reviewer.match(/^[ ]*$/)|| !ObjectIdExp.test(reviewer)) {
+            throw `reviewer in /data/reviews.js/addReview is blank or not match Object`
         }
         if (!answerId || answerId == null || typeof answerId != 'string' || answerId.match(/^[ ]*$/) || !ObjectIdExp.test(answerId)) {
             throw `answerId in /data/reviews.js/addReview has error`
         }
         try {
+            if(answersdMethods.getAnswerById(answerId)==null){
+                throw `did not find answer by id ${answerId} in reviews/addReview`
+            }
             const realDate = new Date()
             let voteUpArr = []
             let voteDownArr = []
@@ -71,7 +75,7 @@ let exportedMethods = {
                 throw 'Insert failed!';
             }
             const newId = insertInfor.insertedId;
-            const ansAndRev = await anwsersdMethods.addReview(answerId, newId);
+            const ansAndRev = await answersdMethods.addReview(answerId, newId);
             if (ansAndRev == null) {
                 throw 'Insert failed!';
             }
@@ -81,8 +85,48 @@ let exportedMethods = {
             throw error
         }
     },
-    async removeReview(id) {
-        //also remove comments related to the Review. 
+    async removeReview(id,userId,answerId,questionId) {
+       try {
+        var ObjectIdExp = /^[0-9a-fA-F]{24}$/
+        if (!id || id == null || typeof id != 'string' || id.match(/^[ ]*$/)||!ObjectIdExp.test(id)) {
+            throw `id in /data/reviews.js/removeReview has error`
+        }
+        if (!userId || userId == null || typeof userId != 'string' || userId.match(/^[ ]*$/) || !ObjectIdExp.test(userId)) {
+            throw `userId in /data/reviews.js/removeReview has error`
+        }
+        if (!answerId || answerId == null || typeof answerId != 'string' || answerId.match(/^[ ]*$/)||!ObjectIdExp.test(answerId)) {
+            throw `answerId in /data/reviews.js/removeReview has error`
+        }
+        if (!questionId || questionId == null || typeof questionId != 'string' || questionId.match(/^[ ]*$/) || !ObjectIdExp.test(questionId)) {
+            throw `questionId in /data/reviews.js/removeReview has error`
+        }
+        const rev = await this.getReviewById(id);
+        if(rev!=null){
+            const revDeleted=await reviewsCollection.deleteOne({ _id: ObjectId(id) });
+            if (deletionInfo.deletedCount === 0) {
+                throw `Could not delete book with id of ${id}`;
+            }
+            //update answer
+            const ansUpdate=await answersdMethods.removeReview(answerId,id)
+            if(ansUpdate==null){
+                throw `answer updated failed in reviews.js/removeReview`
+            }
+            //update question
+            const queUpdate=await questionMethods.removeReview(questionId,id)
+            if(queUpdate==null){
+                throw `answer updated failed in reviews.js/removeReview`
+            }
+            //update user
+            const usrUpdate=await usersMethods.removeReview(userId,id)
+            if(usrUpdate==null){
+                throw `user updated failed in reviews.js/removeReview`
+            }
+        }else{
+            throw `did not find review by id ${id} in reviews/removeReview`
+        }
+       } catch (error) {
+           throw error
+       }
     },
 
     /**

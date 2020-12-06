@@ -2,8 +2,24 @@ const mongoCollections = require('../config/mongoCollections');
 const anwsers = mongoCollections.anwsers;
 
 let exportedMethods = {
-    async getAllAnwsers() {},
-    async getAnwserById(id) {},
+
+    async getAllAnwsers() {
+        const anwsersCollection = await anwsers();
+        const anwsersList = await anwsersCollection.find({}).toArray();
+        return anwsersList;
+    },
+    async getAnwserById(id) {
+        if (!id || id == null || typeof id != 'string' || id.match(/^[ ]*$/)) {
+            throw `id of /data/reviews.js/getReviewById is not String or legal input`
+        }
+        const answersCollection = await answers();
+        try {
+            const answerById = await answersCollection.findOne({ _id: ObjectId(id) });
+            return answerById;
+        } catch (error) {
+            throw `there is an error in /data/answers.js/getAnwserById`
+        }
+    },
     async addAnwser(content, answerer, questionId) {
         //check whether AnwserName duplicated
         //generate recentUpdatedTime

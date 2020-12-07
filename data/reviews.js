@@ -75,10 +75,13 @@ let exportedMethods = {
                 throw 'Insert failed!';
             }
             const newId = insertInfor.insertedId;
+            //upadte answer
             const ansAndRev = await answersdMethods.addReview(answerId, newId);
             if (ansAndRev == null) {
                 throw 'Insert failed!';
             }
+            //update user (reviewer)
+            const usrUpdate=await usersMethods.addReview(reviewer,newId)
             const review = await this.getReviewById(newId.toString());
             return review
         } catch (error) {
@@ -102,7 +105,7 @@ let exportedMethods = {
         }
         const rev = await this.getReviewById(id);
         if(rev!=null){
-            const revDeleted=await reviewsCollection.deleteOne({ _id: ObjectId(id) });
+            const deletionInfo=await reviewsCollection.deleteOne({ _id: ObjectId(id) });
             if (deletionInfo.deletedCount === 0) {
                 throw `Could not delete book with id of ${id}`;
             }
@@ -187,10 +190,18 @@ let exportedMethods = {
             let voterArr=review.voteUp
             if(voterArr.indexOf(voterId)==-1){
                 voterArr.push(voterId)
+                //update user
+                // const usrUpdate=await usersMethods.addVotedForReview(voterId,reviewId)
+                // if(usrUpdate==null){
+                //     throw `user updated failed in reviews.js/removeReview`
+                // }
             }else{
                 voterArr.splice(voterArr.indexOf(voterId),1)
+                // const usrUpdate=await usersMethods.removeVotedForReview(voterId,reviewId)
+                // if(usrUpdate==null){
+                //     throw `user updated failed in reviews.js/removeReview`
+                // }
             }
-            
             await reviewsCollection.updateOne({ _id: ObjectId(reviewId) }, { $set: {'voteUp':voterArr} });
             const newData = await this.getReviewById(reviewId)
             return newData

@@ -1,4 +1,5 @@
 const mongoCollections = require('../config/mongoCollections');
+const { removeReview } = require('./answers');
 const users = mongoCollections.users;
 const ObjectId = require('mongodb').ObjectId;
 
@@ -36,6 +37,10 @@ let exportedMethods = {
         //the questionId is the question that the user aksed
     },
     async removeQuestion(id,questionId){},
+
+    async addReview(id,reviewId){},
+
+    async removeReview(id,reviewId){},
 
     async addAnswer(id,answerId){
         //the answerId is the answer that the user answered

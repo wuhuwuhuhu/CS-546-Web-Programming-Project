@@ -2,7 +2,7 @@ const mongoCollections = require('../config/mongoCollections');
 const users = mongoCollections.users;
 const ObjectId = require('mongodb').ObjectId;
 const questions = require('./questions');
-const answers =  require('./anwsers');
+const answers =  require('./answers');
 const reviews = require('./reviews');
 let exportedMethods = {
     async getAllUsers() {

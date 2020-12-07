@@ -1,4 +1,5 @@
 const mongoCollections = require('../config/mongoCollections');
+const { removeReview } = require('./answers');
 const users = mongoCollections.users;
 const ObjectId = require('mongodb').ObjectId;
 const questions = require('./questions');
@@ -114,9 +115,14 @@ let exportedMethods = {
         const userCollection = await users();
         const deletionInfo = await userCollection.removeOne({ _id: id });
 
-        if (deletionInfo.deletedCount === 0) {
-            throw new Error(`500: Could not delete user with id of ${id}`);
-        }
+    async addReview(id,reviewId){},
+
+    async removeReview(id,reviewId){},
+
+    async addAnswer(id,answerId){
+        //the answerId is the answer that the user answered
+    },
+    async removeAnswer(id,answerId){},
 
         return true;
     },

@@ -1,6 +1,6 @@
 const mongoCollections = require('../config/mongoCollections');
 const questions = mongoCollections.questions;
-const answers = mongoCollections.anwsers;
+const answers = mongoCollections.answers;
 const users = mongoCollections.users;
 const reviews = mongoCollections.reviews;
 const usersData = require('./users')

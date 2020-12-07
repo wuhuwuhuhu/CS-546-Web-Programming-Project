@@ -2,6 +2,7 @@
 const reviewsMethods = require("./reviews");
 const questionsdMethods = require("./questions");
 const usersdMethods = require("./users");
+const answersMethods = require("./answers");
 async function test1() {
     try {
         const op1 = await reviewsMethods.getReviewById("5fb5cd906768a33e948daf2d");
@@ -71,5 +72,9 @@ async function test7(){
     console.log(await reviewsMethods.updateVoteDown("5fb73445e7ad9c8684f559bb","5fb73445e7ad9c8684f559b7"));
 }
 
-test7()
+async function test8(){
+    console.log(await answersMethods.getAllAnswers());
+}
+
+test8()
 

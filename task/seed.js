@@ -14,7 +14,7 @@ const mongoCollections = require('../config/mongoCollections');
 const data = require('../data');
  const users = data.users;
  const questions = data.questions;
- const answers = data.anwsers;
+ const answers = data.answers;
  const reviews = data.reviews;
  const systemConfigs = data.systemConfigs;
 const usersData = mongoCollections.users;
@@ -183,7 +183,7 @@ const main = async () => {
 //		);
 //		
 
-	//length 24
+	//length 20
 	const userNameList = ["abyKristyButterfly","angel","bubbles","shimmer","glimmer","doll","JayChou","VenomFate","Frozen","DarkSide",
 	"hateJava","hateCPP","UltimateBeast","RockieMountain","MusicViking","SloppyJoe","Marry2020","Avatar2022","McDon2020","SupperBug2020"]
 
@@ -255,7 +255,7 @@ const main = async () => {
 	let movieQuestionList =["Best Si-Fi movie you think?","Best romantic movie in your opinion?",
 	"What is the highest rated movie you think?","When will 'Avatar2' be revealed?","Why it takes more than 10 years to produce Avatar2?",
 "Movies that you didn't figured out after watching it?", "What movie to watch in the first date?"]
-	let wineQuestionList =["Is California the biggest wine producing location?","Why people in code area drink more than other area?",
+	let wineQuestionList =["Is California the biggest wine producing location?","Why people in cold area drink more than other area?",
 	"Why young people choose beer over wine?","Is white wine really anti-aging?"]
 	let cookQuestionList =["Cooking 2 hours, eating 10 minutes, worth it?", "How to master French cooking?",
 	"What is best cooking recipies website?",
@@ -277,7 +277,7 @@ const main = async () => {
 		let seeds = true;
 		let j=0;
 		while(seeds){		
-			for(let i = 0; i < questionIdList.length; i++){ues
+			for(let i = 0; i < questionList.length; i++){
 				if(questionList[i].length !== 0){
 					const newQuestion = await questions.addQuestion(questionList[i][0],topics[i],userIdList[j]);
 					questionIdList.push(newQuestion._id)		
@@ -298,9 +298,133 @@ const main = async () => {
 	//add answers
 	try {
 		//async addAnswer(content, answerer, questionId)
-		const questionList = await questions.getAllQuestions();
-	} catch (error) {
 		
+			//await answers.addAnswer("Children's book I think",userIdList[2],questionIdList[0]);
+			//await answers.addAnswer("Dare to Lead",userIdList[1],questionIdList[0]);
+			//await answers.addAnswer("Think Like a Monk is my guess",userIdList[5],questionIdList[0]);
+			//await answers.addAnswer("I think because there is no clues to follow, LOL.",userIdList[1],questionIdList[1]);
+			//await answers.addAnswer("It sounds like background noise.",userIdList[3],questionIdList[1]);
+			//await answers.addAnswer("I think you just don't like it. Some people feel different way.",userIdList[5],questionIdList[1]);
+			//await answers.addAnswer("I feel the same.",userIdList[10],questionIdList[1]);
+			//await answers.addAnswer("Tenet",userIdList[1],questionIdList[2]);
+			//await answers.addAnswer("Avatar, if it is a sifi.",userIdList[5],questionIdList[2]);
+			//await answers.addAnswer("Matrix",userIdList[8],questionIdList[2]);
+			//await answers.addAnswer("Man in Black.",userIdList[9],questionIdList[2]);
+			//await answers.addAnswer("UPGRADE, my best.",userIdList[13],questionIdList[2]);
+			//await answers.addAnswer("E.T.",userIdList[15],questionIdList[2]);
+			//await answers.addAnswer("Arrival",userIdList[19],questionIdList[2]);
+			//await answers.addAnswer("I thought France.",userIdList[1],questionIdList[3]);
+			//await answers.addAnswer("Not Italy?",userIdList[2],questionIdList[3]);
+			//await answers.addAnswer("When it is your hobby, you will be in the FLOW...",userIdList[1],questionIdList[4]);
+			//await answers.addAnswer("Well, I don't think it worthy at all. Especially, someone complains after eating it.",userIdList[13],questionIdList[4]);
+			//await answers.addAnswer("Not at all, that's why McDonald so popular.",userIdList[13],questionIdList[4]);
+			//await answers.addAnswer("People just get bored easily, need something new.",userIdList[1],questionIdList[5]);
+			//await answers.addAnswer("And acturally everyplace now is similar to each other.",userIdList[1],questionIdList[5]);
+			//await answers.addAnswer("You need to know the planet you live for all your life.",userIdList[17],questionIdList[5]);
+			//await answers.addAnswer("It makes me forget the real life troubles, feels like live in a unreal world.",userIdList[16],questionIdList[5]);
+			//await answers.addAnswer("I have no idea and it wastes lots of money.",userIdList[15],questionIdList[5]);
+			//await answers.addAnswer("Sleeping",userIdList[1],questionIdList[6]);
+			//await answers.addAnswer("Jogging",userIdList[5],questionIdList[6]);
+			//await answers.addAnswer("Watching TV",userIdList[8],questionIdList[6]);
+			//await answers.addAnswer("Coding, ok, not true all the time.",userIdList[11],questionIdList[6]);
+			//await answers.addAnswer("Cooking",userIdList[12],questionIdList[6]);
+			//await answers.addAnswer("Mastering the art of doing nothing",userIdList[13],questionIdList[6]);
+			//await answers.addAnswer("All bad novels are horrible enough.",userIdList[15],questionIdList[7]);
+			//await answers.addAnswer("Steven is just best-seller, not the best novelist, this is different.",userIdList[16],questionIdList[7]);
+			//await answers.addAnswer(" Holiday Pop.",userIdList[19],questionIdList[8]);
+			//await answers.addAnswer("All I want for Christmas is you.",userIdList[18],questionIdList[8]);
+			//await answers.addAnswer("Classical.",userIdList[17],questionIdList[8]);
+			//await answers.addAnswer("Beatles.",userIdList[16],questionIdList[8]);
+			//await answers.addAnswer("Beatles.",userIdList[5],questionIdList[8]);
+			//await answers.addAnswer("Beatles.",userIdList[4],questionIdList[8]);
+			//await answers.addAnswer("Don Mclane.",userIdList[3],questionIdList[8]);
+			//await answers.addAnswer("Ed Shareen.",userIdList[2],questionIdList[8]);
+			//await answers.addAnswer("Charlie Puth.",userIdList[1],questionIdList[8]);
+			//await answers.addAnswer("Justin Beaber-Baby.",userIdList[0],questionIdList[8]);
+			//await answers.addAnswer("Tatanic.",userIdList[0],questionIdList[9]);
+			//await answers.addAnswer("Notebook",userIdList[5],questionIdList[9]);
+			//await answers.addAnswer("Gone with the wind",userIdList[10],questionIdList[9]);
+			//await answers.addAnswer("The Holiday",userIdList[15],questionIdList[9]);
+			//await answers.addAnswer("365 Days",userIdList[16],questionIdList[9]);
+			//await answers.addAnswer("Drink keeps people warm",userIdList[0],questionIdList[10]);
+			//await answers.addAnswer("When it is cold outside,nothing to do indoors, just drink and sleep.",userIdList[1],questionIdList[11]);
+			//await answers.addAnswer("You'd better go to a professional training school",userIdList[0],questionIdList[11]);
+			//await answers.addAnswer("When you came back at home, then you realize that your everyday life is so simple and easy.",userIdList[5],questionIdList[12]);
+			//await answers.addAnswer("I am here.",userIdList[8],questionIdList[13]);
+			//await answers.addAnswer("I think Booker Prize is the highest",userIdList[2],questionIdList[14]);
+			//await answers.addAnswer("Pulizer is only limited in US and mainly for English language, there are tons of master pieces over the world.",userIdList[18],questionIdList[14]);
+			//await answers.addAnswer("Holiday Pop",userIdList[11],questionIdList[15]);
+			//await answers.addAnswer("I don't have Prime Music. I prefer YouTube Music.",userIdList[14],questionIdList[15]);
+			//await answers.addAnswer("Star War Series",userIdList[1],questionIdList[16]);
+			//await answers.addAnswer("Tatanic",userIdList[10],questionIdList[16]);
+			//await answers.addAnswer("Gone with the wind",userIdList[15],questionIdList[16]);
+			//await answers.addAnswer("The Shawshank Redemption",userIdList[16],questionIdList[16]);
+			//await answers.addAnswer("The Godfather",userIdList[17],questionIdList[16]);
+			
+			await questions.addAnswer2("Children's book I think",userIdList[2],questionIdList[0]);
+			await questions.addAnswer2("Dare to Lead",userIdList[1],questionIdList[0]);
+			await questions.addAnswer2("Think Like a Monk is my guess",userIdList[5],questionIdList[0]);
+			await questions.addAnswer2("I think because there is no clues to follow, LOL.",userIdList[1],questionIdList[1]);
+			await questions.addAnswer2("It sounds like background noise.",userIdList[3],questionIdList[1]);
+			await questions.addAnswer2("I think you just don't like it. Some people feel different way.",userIdList[5],questionIdList[1]);
+			await questions.addAnswer2("I feel the same.",userIdList[10],questionIdList[1]);
+			await questions.addAnswer2("Tenet",userIdList[1],questionIdList[2]);
+			await questions.addAnswer2("Avatar, if it is a sifi.",userIdList[5],questionIdList[2]);
+			await questions.addAnswer2("Matrix",userIdList[8],questionIdList[2]);
+			await questions.addAnswer2("Man in Black.",userIdList[9],questionIdList[2]);
+			await questions.addAnswer2("UPGRADE, my best.",userIdList[13],questionIdList[2]);
+			await questions.addAnswer2("E.T.",userIdList[15],questionIdList[2]);
+			await questions.addAnswer2("Arrival",userIdList[19],questionIdList[2]);
+			await questions.addAnswer2("I thought France.",userIdList[1],questionIdList[3]);
+			await questions.addAnswer2("Not Italy?",userIdList[2],questionIdList[3]);
+			await questions.addAnswer2("When it is your hobby, you will be in the FLOW...",userIdList[1],questionIdList[4]);
+			await questions.addAnswer2("Well, I don't think it worthy at all. Especially, someone complains after eating it.",userIdList[13],questionIdList[4]);
+			await questions.addAnswer2("Not at all, that's why McDonald so popular.",userIdList[13],questionIdList[4]);
+			await questions.addAnswer2("People just get bored easily, need something new.",userIdList[1],questionIdList[5]);
+			await questions.addAnswer2("And acturally everyplace now is similar to each other.",userIdList[1],questionIdList[5]);
+			await questions.addAnswer2("You need to know the planet you live for all your life.",userIdList[17],questionIdList[5]);
+			await questions.addAnswer2("It makes me forget the real life troubles, feels like live in a unreal world.",userIdList[16],questionIdList[5]);
+			await questions.addAnswer2("I have no idea and it wastes lots of money.",userIdList[15],questionIdList[5]);
+			await questions.addAnswer2("Sleeping",userIdList[1],questionIdList[6]);
+			await questions.addAnswer2("Jogging",userIdList[5],questionIdList[6]);
+			await questions.addAnswer2("Watching TV",userIdList[8],questionIdList[6]);
+			await questions.addAnswer2("Coding, ok, not true all the time.",userIdList[11],questionIdList[6]);
+			await questions.addAnswer2("Cooking",userIdList[12],questionIdList[6]);
+			await questions.addAnswer2("Mastering the art of doing nothing",userIdList[13],questionIdList[6]);
+			await questions.addAnswer2("All bad novels are horrible enough.",userIdList[15],questionIdList[7]);
+			await questions.addAnswer2("Steven is just best-seller, not the best novelist, this is different.",userIdList[16],questionIdList[7]);
+			await questions.addAnswer2(" Holiday Pop.",userIdList[19],questionIdList[8]);
+			await questions.addAnswer2("All I want for Christmas is you.",userIdList[18],questionIdList[8]);
+			await questions.addAnswer2("Classical.",userIdList[17],questionIdList[8]);
+			await questions.addAnswer2("Beatles.",userIdList[16],questionIdList[8]);
+			await questions.addAnswer2("Beatles.",userIdList[5],questionIdList[8]);
+			await questions.addAnswer2("Beatles.",userIdList[4],questionIdList[8]);
+			await questions.addAnswer2("Don Mclane.",userIdList[3],questionIdList[8]);
+			await questions.addAnswer2("Ed Shareen.",userIdList[2],questionIdList[8]);
+			await questions.addAnswer2("Charlie Puth.",userIdList[1],questionIdList[8]);
+			await questions.addAnswer2("Justin Beaber-Baby.",userIdList[0],questionIdList[8]);
+			await questions.addAnswer2("Tatanic.",userIdList[0],questionIdList[9]);
+			await questions.addAnswer2("Notebook",userIdList[5],questionIdList[9]);
+			await questions.addAnswer2("Gone with the wind",userIdList[10],questionIdList[9]);
+			await questions.addAnswer2("The Holiday",userIdList[15],questionIdList[9]);
+			await questions.addAnswer2("365 Days",userIdList[16],questionIdList[9]);
+			await questions.addAnswer2("Drink keeps people warm",userIdList[0],questionIdList[10]);
+			await questions.addAnswer2("When it is cold outside,nothing to do indoors, just drink and sleep.",userIdList[1],questionIdList[11]);
+			await questions.addAnswer2("You'd better go to a professional training school",userIdList[0],questionIdList[11]);
+			await questions.addAnswer2("When you came back at home, then you realize that your everyday life is so simple and easy.",userIdList[5],questionIdList[12]);
+			await questions.addAnswer2("I am here.",userIdList[8],questionIdList[13]);
+			await questions.addAnswer2("I think Booker Prize is the highest",userIdList[2],questionIdList[14]);
+			await questions.addAnswer2("Pulizer is only limited in US and mainly for English language, there are tons of master pieces over the world.",userIdList[18],questionIdList[14]);
+			await questions.addAnswer2("Holiday Pop",userIdList[11],questionIdList[15]);
+			await questions.addAnswer2("I don't have Prime Music. I prefer YouTube Music.",userIdList[14],questionIdList[15]);
+			await questions.addAnswer2("Star War Series",userIdList[1],questionIdList[16]);
+			await questions.addAnswer2("Tatanic",userIdList[10],questionIdList[16]);
+			await questions.addAnswer2("Gone with the wind",userIdList[15],questionIdList[16]);
+			await questions.addAnswer2("The Shawshank Redemption",userIdList[16],questionIdList[16]);
+			await questions.addAnswer2("The Godfather",userIdList[17],questionIdList[16]);
+		
+	} catch (error) {
+		console.log(error)
 	}
 
 	

@@ -1,7 +1,7 @@
 const e = require('express');
 const { ObjectId } = require('mongodb');
 const mongoCollections = require('../config/mongoCollections');
-const answers = mongoCollections.anwsers;
+const answers = mongoCollections.answers;
 const reviews = mongoCollections.reviews;
 const questionsMethods = require('./questions')
 const usersMethods = require("./users");

@@ -159,6 +159,13 @@ let exportedMethods = {
      */
     async addReview(id, reviewId) {
         try {
+            var ObjectIdExp = /^[0-9a-fA-F]{24}$/
+            if (!reviewId || typeof reviewId != 'string' || reviewId.match(/^[ ]*$/) || !ObjectIdExp.test(reviewId)) {
+                throw `reviewId in /data/answer.js/addReview has error`
+            }
+            if (!id || typeof id != 'string' || id.match(/^[ ]*$/) || !ObjectIdExp.test(id)) {
+                throw `id in /data/answer.js/addReview has error`
+            }
             const answersCollection = await answers()
             const updateInfo = await answersCollection.updateOne({ _id: id }, { $addToSet: { reviews: reviewId } })
             if (updateInfo.matchedCount === 0) {
@@ -175,13 +182,20 @@ let exportedMethods = {
     },
     async removeReview(id, reviewId) {
         try {
+            var ObjectIdExp = /^[0-9a-fA-F]{24}$/
+            if (!reviewId || typeof reviewId != 'string' || reviewId.match(/^[ ]*$/) || !ObjectIdExp.test(reviewId)) {
+                throw `reviewId in /data/answer.js/removeReview has error`
+            }
+            if (!id || typeof id != 'string' || id.match(/^[ ]*$/) || !ObjectIdExp.test(id)) {
+                throw `id in /data/answer.js/removeReview has error`
+            }
             const answersCollection = await answers()
             const updateInfo = await answersCollection.updateOne({ _id: id }, { $pull: { reviews: reviewId } })
             if (updateInfo.matchedCount === 0) {
-                throw `did not find answer by id ${id} in answer.js/addReview`
+                throw `did not find answer by id ${id} in answer.js/removeReview`
             }
             if (updateInfo.modifiedCount === 0) {
-                throw `failed to update answer by adding review in answer.js/addReview`
+                throw `failed to update answer by adding review in answer.js/removeReview`
             }
             const updatedAnswer = await this.getAnswerById(id);
             return updatedAnswer;
@@ -190,13 +204,73 @@ let exportedMethods = {
         }
     },
 
-    async addVoteUp(id, voterId) {
-        
-     },
-    async removeVoteUp(id, voterId) { },
+    async updateVoteUp(answerId, voterId) {
+     try {
+        const answersCollection = await answers()
+        var ObjectIdExp = /^[0-9a-fA-F]{24}$/
+        if (!answerId || typeof answerId != 'string' || answerId.match(/^[ ]*$/) || !ObjectIdExp.test(answerId)) {
+            throw `answerId in /data/answers.js/updateVoteDown has error`
+        }
+        if (!voterId || typeof voterId != 'string' || voterId.match(/^[ ]*$/) || !ObjectIdExp.test(voterId)) {
+            throw `voterId in /data/answers.js/updateVoteDown has error`
+        }
+        const ans = await answersCollection.getAnswerById(id)
+        let voteUpArr = ans.voteUp
+        if(voteUpArr.indexOf(id)==-1){
+            // add vote
+            const updateInfo = await answersCollection.updateOne({ _id: id }, { $addToSet: { voteUp: voterId } })
+            const voteInUser = await usersMethods.addVotedForAnswer(voterId,answerId)
+            if (updateInfo.modifiedCount === 0) {
+                throw `failed to update voteUpArr by adding voter in answers.js/updateVoteUp`
+            }
+        }else{
+            // delete it from array
+            const updateInfo = await answersCollection.updateOne({ _id: id }, { $pull: { voteUp: voterId } })
+            const voteInUser = await usersMethods.removeVotedForAnswer(voterId,answerId)
+            if (updateInfo.modifiedCount === 0) {
+                throw `failed to update voteUpArr by deleting voter in answers.js/updateVoteUp`
+            }
+        }
+        const updatedAnswer = await this.getAnswerById(id);
+        return updatedAnswer;
+     } catch (error) {
+         throw error
+     }
+    },
 
-    async addVoteDown(id, voterId) { },
-    async removeVoteDown(id, voterId) { }
+    async updateVoteDown(answerId, voterId) {
+        try {
+            const answersCollection = await answers()
+            var ObjectIdExp = /^[0-9a-fA-F]{24}$/
+            if (!answerId || typeof answerId != 'string' || answerId.match(/^[ ]*$/) || !ObjectIdExp.test(answerId)) {
+                throw `answerId in /data/reviews.js/updateVoteDown has error`
+            }
+            if (!voterId || typeof voterId != 'string' || voterId.match(/^[ ]*$/) || !ObjectIdExp.test(voterId)) {
+                throw `voterId in /data/reviews.js/updateVoteDown has error`
+            }
+            const ans = await answersCollection.getAnswerById(id)
+            let voteDownArr = ans.voteDown
+            if(voteDownArr.indexOf(id)==-1){
+                // add vote
+                const updateInfo = await answersCollection.updateOne({ _id: id }, { $addToSet: { voteDown: voterId } })
+                const voteInUser = await usersMethods.addVotedForAnswer(voterId,answerId)
+                if (updateInfo.modifiedCount === 0) {
+                    throw `failed to update voteDownArr by adding voter in answer.js/updateVoteUp`
+                }
+            }else{
+                // delete it from array
+                const updateInfo = await answersCollection.updateOne({ _id: id }, { $pull: { voteDown: voterId } })
+                const voteInUser = await usersMethods.removeVotedForAnswer(voterId,answerId)
+                if (updateInfo.modifiedCount === 0) {
+                    throw `failed to update voteDownArr by deleting voter in answer.js/updateVoteUp`
+                }
+            }
+            const updatedAnswer = await this.getAnswerById(id);
+            return updatedAnswer;
+         } catch (error) {
+             throw error
+         }
+    },
 };
 
 module.exports = exportedMethods;

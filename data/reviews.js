@@ -191,13 +191,13 @@ let exportedMethods = {
             if(voterArr.indexOf(voterId)==-1){
                 voterArr.push(voterId)
                 //update user
-                // const usrUpdate=await usersMethods.addVotedForReview(voterId,reviewId)
+                const usrUpdate=await usersMethods.addVotedForReview(voterId,reviewId)
                 // if(usrUpdate==null){
                 //     throw `user updated failed in reviews.js/removeReview`
                 // }
             }else{
                 voterArr.splice(voterArr.indexOf(voterId),1)
-                // const usrUpdate=await usersMethods.removeVotedForReview(voterId,reviewId)
+                const usrUpdate=await usersMethods.removeVotedForReview(voterId,reviewId)
                 // if(usrUpdate==null){
                 //     throw `user updated failed in reviews.js/removeReview`
                 // }
@@ -238,8 +238,10 @@ let exportedMethods = {
             let voterArr=review.voteDown
             if(voterArr.indexOf(voterId)==-1){
                 voterArr.push(voterId)
+                const usrUpdate=await usersMethods.addVotedForReview(voterId,reviewId)
             }else{
                 voterArr.splice(voterArr.indexOf(voterId),1)
+                const usrUpdate=await usersMethods.removeVotedForReview(voterId,reviewId)
             }
             await reviewsCollection.updateOne({ _id: ObjectId(reviewId) }, { $set: {voteDown:voterArr} });
             const newData = await this.getReviewById(reviewId)

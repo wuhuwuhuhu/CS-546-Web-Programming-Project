@@ -1,12 +1,12 @@
 const userData = require('./users');
 const questionata = require('./questions');
-const anwserData = require('./anwsers');
+const answerData = require('./answers');
 const reviewData = require('./reviews');
 const systemConfigData = require('./systemConfigs');
 module.exports = {
   users: userData,
   questions: questionata,
-  anwsers: anwserData,
+  answers: answerData,
   reviews: reviewData,
   systemConfigs: systemConfigData,
 };

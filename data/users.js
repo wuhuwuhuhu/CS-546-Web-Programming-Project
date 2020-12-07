@@ -114,7 +114,7 @@ let exportedMethods = {
 
         const userCollection = await users();
         const deletionInfo = await userCollection.removeOne({ _id: id });
-
+	},
     async addReview(id,reviewId){},
 
     async removeReview(id,reviewId){},
@@ -122,9 +122,9 @@ let exportedMethods = {
     async addAnswer(id,answerId){
         //the answerId is the answer that the user answered
     },
-    async removeAnswer(id,answerId){},
+    async removeAnswer(id,answerId){}
 
-        return true;
-    },
+  
 
 }
+module.exports = exportedMethods;

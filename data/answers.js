@@ -233,7 +233,7 @@ let exportedMethods = {
                 throw `failed to update voteUpArr by deleting voter in answers.js/updateVoteUp`
             }
         }
-        const updatedAnswer = await this.getAnswerById(id);
+        const updatedAnswer = await this.getAnswerById(answerId);
         return updatedAnswer;
      } catch (error) {
          throw error
@@ -267,7 +267,7 @@ let exportedMethods = {
                     throw `failed to update voteDownArr by deleting voter in answer.js/updateVoteUp`
                 }
             }
-            const updatedAnswer = await this.getAnswerById(id);
+            const updatedAnswer = await this.getAnswerById(answerId);
             return updatedAnswer;
          } catch (error) {
              throw error

@@ -46,11 +46,13 @@ let exportedMethods = {
             const realDate = new Date()
             let voteUpArr = []
             let voteDownArr = []
+            let reviewsArr=[]
             const newAnswer = {
                 content: content,
                 recentUpdatedTime: realDate,
                 answerer: answerer,
                 questionId: questionId,
+                reviews:reviewsArr,
                 voteUp: voteUpArr,
                 voteDown: voteDownArr
             }

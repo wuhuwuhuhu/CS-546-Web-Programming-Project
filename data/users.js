@@ -1,54 +1,174 @@
 const mongoCollections = require('../config/mongoCollections');
 const users = mongoCollections.users;
-const ObjectId = require('mongodb').ObjectId;
-
+const usersData = require('../data/users');
+const questions = require('./questions');
+const answers =  require('./anwsers');
+const reviews = require('./reviews');
 let exportedMethods = {
-    async getAllUsers() {},
+    async getAllUsers() {
+        const userCollection = await users();
+        const userList = await userCollection.find({}).toArray();
+        if (!userList) throw new Error('404: Users not found');
+        return userList;
+    },
     /**
      * get user by id
      * @param {*} id 
      */
-    async getUserById(id) {
-        if (!id || id == null || typeof id != 'string' || id.match(/^[ ]*$/)) {
-            throw `id of /data/users.js/getUserById is not String or legal input`
+    async getUserByEmail(email) {
+        if (!email) throw new Error('You must provide an email');
+        if (typeof email !== 'string') throw new TypeError('email must be a string');
+
+        email = email.toLowerCase();
+
+        const userCollection = await users();
+        try{
+        const userByEmail = await userCollection.findOne({ email: email });
+        return userByEmail;
+        }catch(error){
+            throw `there is an error in /data/users.js/getUserByEmail `
         }
+
+
+        },
+    
+
+    async getUserById(id) {
+        if (!id) throw new Error('You must provide an id');
+        if (typeof id !== 'string') throw new TypeError('id must be a string');
+        
         const usersCollection = await users();
         try {
-            const userById = await usersCollection.findOne({ _id: ObjectId(id) });
-            return userById;
+            const user = await usersCollection.findOne({ _id: ObjectId(id) });
+            return user;
         } catch (error) {
-            throw `there is an error in /data/users.js/getUserById`
+            throw `there is an error in /data/users.js/getUser`
         }
     },
-    async getUserByUserName(userName) {
+    async getUserByName(name) {
+        if (!name) throw new Error('You must provide an name');
+        if (typeof name !== 'string') throw new TypeError('name must be a string');
+
+        name = name.toLowerCase();
+
+        const userCollection = await users();
+        try{
+        const userByEmail = await userCollection.findOne({ email: email });
+        return userByEmail;
+        }catch(error){
+            throw `there is an error in /data/users.js/getUserByEmail `
+        }
+
+
+        
     },
-    async addUser(userName, email, password) {
-        //check whether userName duplicated
-        //generate _id, hash password, generate dateSignedIn 
-        //generate empty arryays for questions answers reviews votedForReviews votedForAnswers
+
+    async addUser(email, hashedPassword,name , city, state) {
+        if (!email) throw new Error('You must provide an email');
+        if (!hashedPassword) throw new Error('You must provide a hashed password');
+        if (!userName) throw new Error('You must provide a userNme');
+        if (!city) throw new Error('You must provide a city');
+        if (!state) throw new Error('You must provide a state');
+        if (typeof email !== 'string') throw new TypeError('email must be a string');
+        if (typeof hashedPassword !== 'string') throw new TypeError('hashedPassword must be a string');
+        if (typeof userName !== 'string') throw new TypeError('userName must be a string');
+        if (typeof city !== 'string') throw new TypeError('city must be a string');
+        if (typeof state !== 'string') throw new TypeError('state must be a string');
+
+        email = email.toLowerCase()
+
+        let emailExists;
+        try {
+            const user = await this.getUserByEmail(email);
+            emailExists = true;
+        } catch (err) {
+            emailExists = false;
+        }
+
+        if (emailExists) throw new Error('500: Email already registered');
+
+        let newUser = {
+            _id: uuid.v4(),
+            email: email,
+            hashedPassword: hashedPassword,
+            userName: userName,
+            city: city,
+            state: state,
+            questionId: [],
+            ReviewId: [],
+            AnswerId: []
+        };
+
+        const userCollection = await users();
+        const newInsertInformation = await userCollection.insertOne(newUser);
+
+        if (newInsertInformation.insertedCount === 0) throw new Error('500: Insert failed!');
+
+        return await this.getUserById(newInsertInformation.insertedId);
     },
+
     async removeUser(id) {
-        //also remove all data related to the user. 
-    },
-    async updateUser(id, email, password) {},
+        if (!id) throw new Error('You must provide an id');
+        if (typeof id !== 'string') throw new TypeError('id must be a string');
 
-    async addQuestion(id,questionId){
-        //the questionId is the question that the user aksed
-    },
-    async removeQuestion(id,questionId){},
+        const userCollection = await users();
+        const deletionInfo = await userCollection.removeOne({ _id: id });
 
-    async addAnswer(id,answerId){
+        if (deletionInfo.deletedCount === 0) {
+            throw new Error(`500: Could not delete user with id of ${id}`);
+        }
+
+        return true;
+    },
+    async removeReview(userId,reviewId){
+        const user= await getUserById(userId);
+       ReviewId = user.ReviewId;
+       removeByValue(AnswerID,reviewId);
+       function removeByValue(arr, val) {
+        for (var i = 0; i < arr.length; i++) {
+            if (arr[i] == val) {
+                arr.splice(i, 1);
+                    break;
+    
+            }
+        }
+    
+    }
+    },
+
+    async addReview(userId,reviewId){
+        if (!userId) throw new Error('You must provide a userId');
+        if (!reviewId) throw new Error('You must provide a reviewId');
+        const user= await this.getUserById(userId);
+        let ReviewId = user.ReviewId;
+        ReviewId.push(reviewId);
+    },
+
+    async addAnswer(userId,answerId){
+        if (!userId) throw new Error('You must provide a userId');
+        if (!gameId) throw new Error('You must provide a answerId');
+        const user= await this.getUserById(userId);
+        let ReviewId = user.ReviewId;
+        ReviewId.push(answerId);
         //the answerId is the answer that the user answered
     },
-    async removeAnswer(id,answerId){},
-
-    async addVotedForReview(id,ReviewId){
-        //just add the ReviewId to the votedForReviews
-    },
-    async removeVotedForReview(id,ReviewId){},
-
-    async addVotedForAnswer(id,AnswerId){},
-    async removeVotedForAnswer(id,AnswerId){}
-};
+    async removeAnswer(userId,answerId){
+       const user= await getUserById(userId);
+       AnswerId = user.AnswerId;
+       removeByValue(AnswerID,answerId);
+       function removeByValue(arr, val) {
+        for (var i = 0; i < arr.length; i++) {
+            if (arr[i] == val) {
+                arr.splice(i, 1);
+                    break;
+    
+            }
+    
+        }
+    
+    } 
+    }
+}
+  
 
 module.exports = exportedMethods;

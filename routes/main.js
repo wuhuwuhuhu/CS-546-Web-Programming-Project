@@ -4,7 +4,7 @@ const userData = require('../data/users');
 let logOutFlag = false;
 
 router.get('/main', async(req,res) => {
-    res.render("mainPage");
+    res.render("mainpage");
     return;
 });
 module.exports = router;

@@ -1,10 +1,10 @@
 const mongoCollections = require('../config/mongoCollections');
-const { removeReview } = require('./answers');
+//const { removeReview } = require('./answers');
 const users = mongoCollections.users;
 const ObjectId = require('mongodb').ObjectId;
 const questions = require('./questions');
-const answers =  require('./answers');
-const reviews = require('./reviews');
+//const answers =  require('./answers');
+//const reviews = require('./reviews');
 let exportedMethods = {
     async getAllUsers() {
         const userCollection = await users();
@@ -115,16 +115,58 @@ let exportedMethods = {
         const userCollection = await users();
         const deletionInfo = await userCollection.removeOne({ _id: id });
 	},
-    async addReview(id,reviewId){},
+    async addReview(id,reviewId){
+		if(!id || !reviewId) throw 'users.js|addReview: you need to input id and reviewId'
+		if(typeof id !== 'string' || id.trim()==='') throw 'users.js|addReview: id must be non-empty string' 
+		if(typeof reviewId !== 'string' || reviewId.trim()==='') throw 'users.js|addReview: reviewId must be non-empty string'
+		
+		let objectId = await myDBfunction(id)
+		const userCollection = await users();
+		const updateInfo = await userCollection.updateOne({ _id: objectId }, { $addToSet: { reviews: reviewId.trim() } })
+		
+		if (updateInfo.matchedCount === 0) throw `questions.js|updateQeustion(): review ${id} not found`
+		if (updateInfo.modifiedCount === 0) throw `questions.js|updateQeustion(): Nothing been updated.`
+		
+		let updatedUser = await this.getUserById(id);
+		return updatedUser
+		
+	},
 
     async removeReview(id,reviewId){},
 
     async addAnswer(id,answerId){
-        //the answerId is the answer that the user answered
+		//the answerId is the answer that the user answered
+		if(!id || !answerId) throw 'users.js|addReview: you need to input id and answerId'
+		if(typeof id !== 'string' || id.trim()==='') throw 'users.js|addReview: id must be non-empty string' 
+		if(typeof answerId !== 'string' || answerId.trim()==='') throw 'users.js|addReview: answerId must be non-empty string'
+		
+		let objectId = await myDBfunction(id)
+		const userCollection = await users();
+		const updateInfo = await userCollection.updateOne({ _id: objectId }, { $addToSet: { answers: answerId.trim() } })
+		
+		if (updateInfo.matchedCount === 0) throw `questions.js|updateQeustion(): answer ${id} not found`
+		if (updateInfo.modifiedCount === 0) throw `questions.js|updateQeustion(): Nothing been updated.`
+		
+		let updatedUser = await this.getUserById(id);
+		return updatedUser
+		
     },
     async removeAnswer(id,answerId){}
 
   
 
 }
+
+//helper method--parse id to objectId
+async function myDBfunction(id) {
+	//check to make sure we have input at all
+	if (!id) throw 'Error: Id parameter must be supplied';
+	//check to make sure it's a string
+	if (typeof id !== 'string') throw "Error: Id must be a string";
+
+	let { ObjectId } = require('mongodb')
+	let parsedId = ObjectId(id);
+	return parsedId
+}
+
 module.exports = exportedMethods;

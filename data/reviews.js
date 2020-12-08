@@ -74,7 +74,7 @@ let exportedMethods = {
             if (insertInfor.insertedCount === 0) {
                 throw 'Insert failed!';
             }
-            const newId = insertInfor.insertedId;
+            const newId = insertInfor.insertedId.toString();
             //upadte answer
             const ansAndRev = await answersdMethods.addReview(answerId, newId);
             if (ansAndRev == null) {
@@ -82,7 +82,7 @@ let exportedMethods = {
             }
             //update user (reviewer)
             const usrUpdate=await usersMethods.addReview(reviewer,newId)
-            const review = await this.getReviewById(newId.toString());
+            const review = await this.getReviewById(newId);
             return review
         } catch (error) {
             throw error

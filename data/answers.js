@@ -216,7 +216,7 @@ let exportedMethods = {
         if (!voterId || typeof voterId != 'string' || voterId.match(/^[ ]*$/) || !ObjectIdExp.test(voterId)) {
             throw `voterId in /data/answers.js/updateVoteDown has error`
         }
-        const ans = await answersCollection.getAnswerById(id)
+        const ans = await answersCollection.getAnswerById(answerId)
         let voteUpArr = ans.voteUp
         if(voteUpArr.indexOf(id)==-1){
             // add vote
@@ -233,7 +233,7 @@ let exportedMethods = {
                 throw `failed to update voteUpArr by deleting voter in answers.js/updateVoteUp`
             }
         }
-        const updatedAnswer = await this.getAnswerById(id);
+        const updatedAnswer = await this.getAnswerById(answerId);
         return updatedAnswer;
      } catch (error) {
          throw error

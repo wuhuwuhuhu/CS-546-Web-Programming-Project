@@ -227,67 +227,7 @@ const main = async () => {
 		await answers.addAnswer("The Shawshank Redemption", userIdList[16], questionIdList[16]);
 		await answers.addAnswer("The Godfather", userIdList[17], questionIdList[16]);
 
-		//await questions.addAnswer2("Children's book I think", userIdList[2], questionIdList[0]);
-		//await questions.addAnswer2("Dare to Lead", userIdList[1], questionIdList[0]);
-		//await questions.addAnswer2("Think Like a Monk is my guess", userIdList[5], questionIdList[0]);
-		//await questions.addAnswer2("I think because there is no clues to follow, LOL.", userIdList[1], questionIdList[1]);
-		//await questions.addAnswer2("It sounds like background noise.", userIdList[3], questionIdList[1]);
-		//await questions.addAnswer2("I think you just don't like it. Some people feel different way.", userIdList[5], questionIdList[1]);
-		//await questions.addAnswer2("I feel the same.", userIdList[10], questionIdList[1]);
-		//await questions.addAnswer2("Tenet", userIdList[1], questionIdList[2]);
-		//await questions.addAnswer2("Avatar, if it is a sifi.", userIdList[5], questionIdList[2]);
-		//await questions.addAnswer2("Matrix", userIdList[8], questionIdList[2]);
-		//await questions.addAnswer2("Man in Black.", userIdList[9], questionIdList[2]);
-		//await questions.addAnswer2("UPGRADE, my best.", userIdList[13], questionIdList[2]);
-		//await questions.addAnswer2("E.T.", userIdList[15], questionIdList[2]);
-		//await questions.addAnswer2("Arrival", userIdList[19], questionIdList[2]);
-		//await questions.addAnswer2("I thought France.", userIdList[1], questionIdList[3]);
-		//await questions.addAnswer2("Not Italy?", userIdList[2], questionIdList[3]);
-		//await questions.addAnswer2("When it is your hobby, you will be in the FLOW...", userIdList[1], questionIdList[4]);
-		//await questions.addAnswer2("Well, I don't think it worthy at all. Especially, someone complains after eating it.", userIdList[13], questionIdList[4]);
-		//await questions.addAnswer2("Not at all, that's why McDonald so popular.", userIdList[13], questionIdList[4]);
-		//await questions.addAnswer2("People just get bored easily, need something new.", userIdList[1], questionIdList[5]);
-		//await questions.addAnswer2("And acturally everyplace now is similar to each other.", userIdList[1], questionIdList[5]);
-		//await questions.addAnswer2("You need to know the planet you live for all your life.", userIdList[17], questionIdList[5]);
-		//await questions.addAnswer2("It makes me forget the real life troubles, feels like live in a unreal world.", userIdList[16], questionIdList[5]);
-		//await questions.addAnswer2("I have no idea and it wastes lots of money.", userIdList[15], questionIdList[5]);
-		//await questions.addAnswer2("Sleeping", userIdList[1], questionIdList[6]);
-		//await questions.addAnswer2("Jogging", userIdList[5], questionIdList[6]);
-		//await questions.addAnswer2("Watching TV", userIdList[8], questionIdList[6]);
-		//await questions.addAnswer2("Coding, ok, not true all the time.", userIdList[11], questionIdList[6]);
-		//await questions.addAnswer2("Cooking", userIdList[12], questionIdList[6]);
-		//await questions.addAnswer2("Mastering the art of doing nothing", userIdList[13], questionIdList[6]);
-		//await questions.addAnswer2("All bad novels are horrible enough.", userIdList[15], questionIdList[7]);
-		//await questions.addAnswer2("Steven is just best-seller, not the best novelist, this is different.", userIdList[16], questionIdList[7]);
-		//await questions.addAnswer2(" Holiday Pop.", userIdList[19], questionIdList[8]);
-		//await questions.addAnswer2("All I want for Christmas is you.", userIdList[18], questionIdList[8]);
-		//await questions.addAnswer2("Classical.", userIdList[17], questionIdList[8]);
-		//await questions.addAnswer2("Beatles.", userIdList[16], questionIdList[8]);
-		//await questions.addAnswer2("Beatles.", userIdList[5], questionIdList[8]);
-		//await questions.addAnswer2("Beatles.", userIdList[4], questionIdList[8]);
-		//await questions.addAnswer2("Don Mclane.", userIdList[3], questionIdList[8]);
-		//await questions.addAnswer2("Ed Shareen.", userIdList[2], questionIdList[8]);
-		//await questions.addAnswer2("Charlie Puth.", userIdList[1], questionIdList[8]);
-		//await questions.addAnswer2("Justin Beaber-Baby.", userIdList[0], questionIdList[8]);
-		//await questions.addAnswer2("Tatanic.", userIdList[0], questionIdList[9]);
-		//await questions.addAnswer2("Notebook", userIdList[5], questionIdList[9]);
-		//await questions.addAnswer2("Gone with the wind", userIdList[10], questionIdList[9]);
-		//await questions.addAnswer2("The Holiday", userIdList[15], questionIdList[9]);
-		//await questions.addAnswer2("365 Days", userIdList[16], questionIdList[9]);
-		//await questions.addAnswer2("Drink keeps people warm", userIdList[0], questionIdList[10]);
-		//await questions.addAnswer2("When it is cold outside,nothing to do indoors, just drink and sleep.", userIdList[1], questionIdList[11]);
-		//await questions.addAnswer2("You'd better go to a professional training school", userIdList[0], questionIdList[11]);
-		//await questions.addAnswer2("When you came back at home, then you realize that your everyday life is so simple and easy.", userIdList[5], questionIdList[12]);
-		//await questions.addAnswer2("I am here.", userIdList[8], questionIdList[13]);
-		//await questions.addAnswer2("I think Booker Prize is the highest", userIdList[2], questionIdList[14]);
-		//await questions.addAnswer2("Pulizer is only limited in US and mainly for English language, there are tons of master pieces over the world.", userIdList[18], questionIdList[14]);
-		//await questions.addAnswer2("Holiday Pop", userIdList[11], questionIdList[15]);
-		//await questions.addAnswer2("I don't have Prime Music. I prefer YouTube Music.", userIdList[14], questionIdList[15]);
-		//await questions.addAnswer2("Star War Series", userIdList[1], questionIdList[16]);
-		//await questions.addAnswer2("Tatanic", userIdList[10], questionIdList[16]);
-		//await questions.addAnswer2("Gone with the wind", userIdList[15], questionIdList[16]);
-		//await questions.addAnswer2("The Shawshank Redemption", userIdList[16], questionIdList[16]);
-		//await questions.addAnswer2("The Godfather", userIdList[17], questionIdList[16]);
+
 
 	} catch (error) {
 		console.log(error)
@@ -350,7 +290,7 @@ const main = async () => {
 		console.log(error);
 
 	}
-	
+
 
 
 	//Shuffle review time
@@ -371,75 +311,75 @@ const main = async () => {
 	} catch (error) {
 		console.log(error);
 	}
-	
+
 	//add Voteup and votedown for answers
 	let answerIdList2 = answerIdList;
-	
-		try {
-			for(let i = 0; i< answerIdList2.length;i++){
-				let userIdList2 = userIdList.slice(0,userIdList.length)
-				
-				for(let j = 0; j< userIdList2.length; j++){
-					let voteUp = Math.floor(Math.random() * Math.floor(2))
+
+	try {
+		for (let i = 0; i < answerIdList2.length; i++) {
+			let userIdList2 = userIdList.slice(0, userIdList.length)
+
+			for (let j = 0; j < userIdList2.length; j++) {
+				let voteUp = Math.floor(Math.random() * Math.floor(2))
 				//	console.log(voteUp)
-					if(voteUp){
-						await updateMethods.addVoteUpForAnswer(answerIdList2[i],userIdList2[j]);
-						userIdList2.splice(j,1)
-					
-					}
-				
+				if (voteUp) {
+					await updateMethods.addVoteUpForAnswer(answerIdList2[i], userIdList2[j]);
+					userIdList2.splice(j, 1)
+
 				}
-				for(let j = 0; j< userIdList2.length; j++){
-					let voteDown = Math.floor(Math.random() * Math.floor(2))
+
+			}
+			for (let j = 0; j < userIdList2.length; j++) {
+				let voteDown = Math.floor(Math.random() * Math.floor(2))
 				//	console.log(voteDown)
-					if(voteDown){
-						await updateMethods.addVoteDownForAnswer(answerIdList2[i],userIdList2[j]);
-						userIdList2.splice(j,1)
-					
-					}
-				
+				if (voteDown) {
+					await updateMethods.addVoteDownForAnswer(answerIdList2[i], userIdList2[j]);
+					userIdList2.splice(j, 1)
+
 				}
 
 			}
-			
-			
-		} catch (error) {
-			console.log(error)
+
 		}
-	
-		//add Voteup and votedown for reviews
-		
-		let reviewIdList2 = reviewIdList;
-		try {
-			for(let i = 0; i< reviewIdList2.length;i++){
-				let userIdList2 = userIdList.slice(0,userIdList.length)
-				for(let j = 0; j< userIdList2.length; j++){
-					let voteUp = Math.floor(Math.random() * Math.floor(2))
-					if(voteUp){
-						await updateMethods.addVoteUpForReview(reviewIdList2[i],userIdList2[j]);
-						userIdList2.splice(j,1)
-					
-					}
-				
-				}
-				for(let j = 0; j< userIdList2.length; j++){
-					let voteDown = Math.floor(Math.random() * Math.floor(2))
-					if(voteDown){
-						await updateMethods.addVoteDownForReview(reviewIdList2[i],userIdList2[j]);
-						userIdList2.splice(j,1)
-					
-					}
-				
+
+
+	} catch (error) {
+		console.log(error)
+	}
+
+	//add Voteup and votedown for reviews
+
+	let reviewIdList2 = reviewIdList;
+	try {
+		for (let i = 0; i < reviewIdList2.length; i++) {
+			let userIdList2 = userIdList.slice(0, userIdList.length)
+			for (let j = 0; j < userIdList2.length; j++) {
+				let voteUp = Math.floor(Math.random() * Math.floor(2))
+				if (voteUp) {
+					await updateMethods.addVoteUpForReview(reviewIdList2[i], userIdList2[j]);
+					userIdList2.splice(j, 1)
+
 				}
 
 			}
-			
-			
-		} catch (error) {
-			console.log(error)
+			for (let j = 0; j < userIdList2.length; j++) {
+				let voteDown = Math.floor(Math.random() * Math.floor(2))
+				if (voteDown) {
+					await updateMethods.addVoteDownForReview(reviewIdList2[i], userIdList2[j]);
+					userIdList2.splice(j, 1)
+
+				}
+
+			}
+
 		}
 
-		
+
+	} catch (error) {
+		console.log(error)
+	}
+
+
 
 	console.log('Done seeding database');
 

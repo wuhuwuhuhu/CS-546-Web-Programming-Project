@@ -3,6 +3,7 @@ const { ObjectId } = require('mongodb');
 const mongoCollections = require('../config/mongoCollections');
 const answers = mongoCollections.answers;
 const reviews = mongoCollections.reviews;
+const usrs = mongoCollections.users;
 const questionsMethods = require('./questions')
 const usersMethods = require("./users");
 
@@ -46,13 +47,13 @@ let exportedMethods = {
             const realDate = new Date()
             let voteUpArr = []
             let voteDownArr = []
-            let reviewsArr=[]
+            let reviewsArr = []
             const newAnswer = {
                 content: content,
                 recentUpdatedTime: realDate,
                 answerer: answerer,
                 questionId: questionId,
-                reviews:reviewsArr,
+                reviews: reviewsArr,
                 voteUp: voteUpArr,
                 voteDown: voteDownArr
             }
@@ -62,13 +63,21 @@ let exportedMethods = {
                 throw 'Insert failed!';
             }
             const newId = insertInfor.insertedId.toString();
+            console.log(newId);
             // add answer to question
             const answerAddedInQus = await questionsMethods.addAnswer(questionId, newId)
             if (answerAddedInQus == null) {
                 throw 'Insert failed!';
             }
             //update user
-            const answerAddedInUsr = await usersMethods.addAnswer(answerer, newId)
+            try {
+                const answerAddedInUsr = await usersMethods.addAnswer(answerer, newId)
+            if (answerAddedInUsr == null) {
+                throw 'Insert failed!';
+            }
+            } catch (error) {
+                throw error
+            }
             const ans = await this.getAnswerById(newId);
             return ans
 
@@ -207,71 +216,89 @@ let exportedMethods = {
     },
 
     async updateVoteUp(answerId, voterId) {
-     try {
-        const answersCollection = await answers()
-        var ObjectIdExp = /^[0-9a-fA-F]{24}$/
-        if (!answerId || typeof answerId != 'string' || answerId.match(/^[ ]*$/) || !ObjectIdExp.test(answerId)) {
-            throw `answerId in /data/answers.js/updateVoteDown has error`
-        }
-        if (!voterId || typeof voterId != 'string' || voterId.match(/^[ ]*$/) || !ObjectIdExp.test(voterId)) {
-            throw `voterId in /data/answers.js/updateVoteDown has error`
-        }
-        const ans = await answersCollection.getAnswerById(answerId)
-        let voteUpArr = ans.voteUp
-        if(voteUpArr.indexOf(voterId)==-1){
-            // add vote
-            const updateInfo = await answersCollection.updateOne({ _id: ObjectId(answerId) }, { $addToSet: { voteUp: voterId } })
-            const voteInUser = await usersMethods.addVotedForAnswer(voterId,answerId)
-            if (updateInfo.modifiedCount === 0) {
-                throw `failed to update voteUpArr by adding voter in answers.js/updateVoteUp`
+        try {
+            const answersCollection = await answers()
+            const usrsCollection = await usrs()
+            var ObjectIdExp = /^[0-9a-fA-F]{24}$/
+            if (!answerId || typeof answerId != 'string' || answerId.match(/^[ ]*$/) || !ObjectIdExp.test(answerId)) {
+                throw `answerId in /data/answers.js/updateVoteDown has error`
             }
-        }else{
-            // delete it from array
-            const updateInfo = await answersCollection.updateOne({ _id: ObjectId(answerId) }, { $pull: { voteUp: voterId } })
-            const voteInUser = await usersMethods.removeVotedForAnswer(voterId,answerId)
-            if (updateInfo.modifiedCount === 0) {
-                throw `failed to update voteUpArr by deleting voter in answers.js/updateVoteUp`
+            if (!voterId || typeof voterId != 'string' || voterId.match(/^[ ]*$/) || !ObjectIdExp.test(voterId)) {
+                throw `voterId in /data/answers.js/updateVoteDown has error`
             }
+            const ans = await this.getAnswerById(answerId)
+            let voteUpArr = ans.voteUp
+            if (voteUpArr.indexOf(voterId) == -1) {
+                // add voter id in answer
+                const updateInfo = await answersCollection.updateOne({ _id: ObjectId(answerId) }, { $addToSet: { voteUp: voterId } })
+                if (updateInfo.modifiedCount === 0) {
+                    throw `failed to update voteUpArr in answer by adding voter in answers.js/updateVoteUp`
+                }
+                //add answer id in user votedForAnswers
+                const voteInUser = await usrsCollection.updateOne({ _id: ObjectId(id) }, { $addToSet: { votedForAnswers: answerId } })
+                if (voteInUser.modifiedCount === 0) {
+                    throw `failed to update votedForAnswers in user by adding voter in answer.js/updateVoteUp`
+                }
+            } else {
+                // delete voter id in answer
+                const updateInfo = await answersCollection.updateOne({ _id: ObjectId(answerId) }, { $pull: { voteUp: voterId } })
+                if (updateInfo.modifiedCount === 0) {
+                    throw `failed to update voteUpArr by deleting voter in answers.js/updateVoteUp`
+                }
+                //delete answer id in user votedForAnswers
+                const voteInUser = await usrsCollection.updateOne({ _id: ObjectId(id) }, { $pull: { votedForAnswers: answerId } })
+                if (voteInUser.modifiedCount === 0) {
+                    throw `failed to update votedForAnswers in user by deleting voter in answer.js/updateVoteUp`
+                }
+            }
+            const updatedAnswer = await this.getAnswerById(answerId);
+            return updatedAnswer;
+        } catch (error) {
+            throw error
         }
-        const updatedAnswer = await this.getAnswerById(answerId);
-        return updatedAnswer;
-     } catch (error) {
-         throw error
-     }
     },
 
     async updateVoteDown(answerId, voterId) {
         try {
             const answersCollection = await answers()
+            const usrsCollection = await usrs()
             var ObjectIdExp = /^[0-9a-fA-F]{24}$/
             if (!answerId || typeof answerId != 'string' || answerId.match(/^[ ]*$/) || !ObjectIdExp.test(answerId)) {
-                throw `answerId in /data/reviews.js/updateVoteDown has error`
+                throw `answerId in /data/answer.js/updateVoteDown has error`
             }
             if (!voterId || typeof voterId != 'string' || voterId.match(/^[ ]*$/) || !ObjectIdExp.test(voterId)) {
-                throw `voterId in /data/reviews.js/updateVoteDown has error`
+                throw `voterId in /data/answer.js/updateVoteDown has error`
             }
-            const ans = await answersCollection.getAnswerById(answerId)
+            const ans = await this.getAnswerById(answerId)
             let voteDownArr = ans.voteDown
-            if(voteDownArr.indexOf(voterId)==-1){
+            if (voteDownArr.indexOf(voterId) == -1) {
                 // add vote
                 const updateInfo = await answersCollection.updateOne({ _id: ObjectId(answerId) }, { $addToSet: { voteDown: voterId } })
-                const voteInUser = await usersMethods.addVotedForAnswer(voterId,answerId)
                 if (updateInfo.modifiedCount === 0) {
                     throw `failed to update voteDownArr by adding voter in answer.js/updateVoteUp`
                 }
-            }else{
+                //add answer id in user votedForAnswers
+                const voteInUser = await usrsCollection.updateOne({ _id: ObjectId(id) }, { $addToSet: { votedForAnswers: answerId } })
+                if (voteInUser.modifiedCount === 0) {
+                    throw `failed to update votedForAnswers in user by adding voter in answer.js/updateVoteDown`
+                }
+            } else {
                 // delete it from array
                 const updateInfo = await answersCollection.updateOne({ _id: ObjectId(answerId) }, { $pull: { voteDown: voterId } })
-                const voteInUser = await usersMethods.removeVotedForAnswer(voterId,answerId)
                 if (updateInfo.modifiedCount === 0) {
                     throw `failed to update voteDownArr by deleting voter in answer.js/updateVoteUp`
+                }
+                //delete answer id in user votedForAnswers
+                const voteInUser = await usrsCollection.updateOne({ _id: ObjectId(id) }, { $pull: { votedForAnswers: answerId } })
+                if (voteInUser.modifiedCount === 0) {
+                    throw `failed to update votedForAnswers in user by deleting voter in answer.js/updateVoteUp`
                 }
             }
             const updatedAnswer = await this.getAnswerById(answerId);
             return updatedAnswer;
-         } catch (error) {
-             throw error
-         }
+        } catch (error) {
+            throw error
+        }
     },
 };
 

@@ -40,10 +40,10 @@ let exportedMethods = {
         
         const usersCollection = await users();
         try {
-            const userById = await usersCollection.findOne({ _id: ObjectId(id) });
-            return userById;
+            const user = await usersCollection.findOne({ _id: ObjectId(id) });
+            return user;
         } catch (error) {
-            throw `there is an error in /data/users.js/getUserById`
+            throw `there is an error in /data/users.js/getUser`
         }
     },
     async getUserByName(name) {
@@ -132,7 +132,9 @@ let exportedMethods = {
 		
 	},
 
-    async removeReview(id,reviewId){},
+        if (deletionInfo.deletedCount === 0) {
+            throw new Error(`500: Could not delete user with id of ${id}`);
+        }
 
     async addAnswer(id,answerId){
 		//the answerId is the answer that the user answered
@@ -151,10 +153,40 @@ let exportedMethods = {
 		return updatedUser
 		
     },
-    async removeAnswer(id,answerId){}
 
-  
+    async addReview(userId,reviewId){
+        if (!userId) throw new Error('You must provide a userId');
+        if (!reviewId) throw new Error('You must provide a reviewId');
+        const user= await this.getUserById(userId);
+        let ReviewId = user.ReviewId;
+        ReviewId.push(reviewId);
+    },
 
+    async addAnswer(userId,answerId){
+        console.log("in add answer in user");
+        if (!userId) throw new Error('You must provide a userId');
+        if (!answerId) throw new Error('You must provide a answerId');
+        const user= await this.getUserById(userId);
+        let ReviewId = user.ReviewId;
+        ReviewId.push(answerId);
+        //the answerId is the answer that the user answered
+    },
+    async removeAnswer(userId,answerId){
+       const user= await getUserById(userId);
+       AnswerId = user.AnswerId;
+       removeByValue(AnswerID,answerId);
+       function removeByValue(arr, val) {
+        for (var i = 0; i < arr.length; i++) {
+            if (arr[i] == val) {
+                arr.splice(i, 1);
+                    break;
+    
+            }
+    
+        }
+    
+    } 
+    
 }
 
 //helper method--parse id to objectId

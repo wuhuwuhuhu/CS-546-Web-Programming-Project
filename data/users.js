@@ -1,8 +1,10 @@
 const mongoCollections = require('../config/mongoCollections');
+//const { removeReview } = require('./answers');
 const users = mongoCollections.users;
-const { ObjectId } = require('mongodb');
-
-
+const ObjectId = require('mongodb').ObjectId;
+const questions = require('./questions');
+//const answers =  require('./answers');
+//const reviews = require('./reviews');
 let exportedMethods = {
     async getAllUsers() {
         const userCollection = await users();
@@ -38,10 +40,10 @@ let exportedMethods = {
         
         const usersCollection = await users();
         try {
-            const user = await usersCollection.findOne({ _id: ObjectId(id) });
-            return user;
+            const userById = await usersCollection.findOne({ _id: ObjectId(id) });
+            return userById;
         } catch (error) {
-            throw `there is an error in /data/users.js/getUser`
+            throw `there is an error in /data/users.js/getUserById`
         }
     },
     async getUserByName(name) {
@@ -111,64 +113,60 @@ let exportedMethods = {
         if (typeof id !== 'string') throw new TypeError('id must be a string');
 
         const userCollection = await users();
-        const deletionInfo = await userCollection.removeOne({ _id: ObjectId(id) });
+        const deletionInfo = await userCollection.removeOne({ _id: id });
+	},
+    async addReview(id,reviewId){
+		if(!id || !reviewId) throw 'users.js|addReview: you need to input id and reviewId'
+		if(typeof id !== 'string' || id.trim()==='') throw 'users.js|addReview: id must be non-empty string' 
+		if(typeof reviewId !== 'string' || reviewId.trim()==='') throw 'users.js|addReview: reviewId must be non-empty string'
+		
+		let objectId = await myDBfunction(id)
+		const userCollection = await users();
+		const updateInfo = await userCollection.updateOne({ _id: objectId }, { $addToSet: { reviews: reviewId.trim() } })
+		
+		if (updateInfo.matchedCount === 0) throw `questions.js|updateQeustion(): review ${id} not found`
+		if (updateInfo.modifiedCount === 0) throw `questions.js|updateQeustion(): Nothing been updated.`
+		
+		let updatedUser = await this.getUserById(id);
+		return updatedUser
+		
+	},
 
-        if (deletionInfo.deletedCount === 0) {
-            throw new Error(`500: Could not delete user with id of ${id}`);
-        }
+    async removeReview(id,reviewId){},
 
-        return true;
+    async addAnswer(id,answerId){
+		//the answerId is the answer that the user answered
+		if(!id || !answerId) throw 'users.js|addReview: you need to input id and answerId'
+		if(typeof id !== 'string' || id.trim()==='') throw 'users.js|addReview: id must be non-empty string' 
+		if(typeof answerId !== 'string' || answerId.trim()==='') throw 'users.js|addReview: answerId must be non-empty string'
+		
+		let objectId = await myDBfunction(id)
+		const userCollection = await users();
+		const updateInfo = await userCollection.updateOne({ _id: objectId }, { $addToSet: { answers: answerId.trim() } })
+		
+		if (updateInfo.matchedCount === 0) throw `questions.js|updateQeustion(): answer ${id} not found`
+		if (updateInfo.modifiedCount === 0) throw `questions.js|updateQeustion(): Nothing been updated.`
+		
+		let updatedUser = await this.getUserById(id);
+		return updatedUser
+		
     },
-    async removeReview(userId,reviewId){
-        const user= await getUserById(userId);
-       ReviewId = user.ReviewId;
-       removeByValue(AnswerID,reviewId);
-       function removeByValue(arr, val) {
-        for (var i = 0; i < arr.length; i++) {
-            if (arr[i] == val) {
-                arr.splice(i, 1);
-                    break;
-    
-            }
-        }
-    
-    }
-    },
+    async removeAnswer(id,answerId){}
 
-    async addReview(userId,reviewId){
-        if (!userId) throw new Error('You must provide a userId');
-        if (!reviewId) throw new Error('You must provide a reviewId');
-        const user= await this.getUserById(userId);
-        let ReviewId = user.ReviewId;
-        ReviewId.push(reviewId);
-    },
-
-    async addAnswer(userId,answerId){
-        console.log("in add answer in user");
-        if (!userId) throw new Error('You must provide a userId');
-        if (!answerId) throw new Error('You must provide a answerId');
-        const user= await this.getUserById(userId);
-        let ReviewId = user.ReviewId;
-        ReviewId.push(answerId);
-        //the answerId is the answer that the user answered
-    },
-    async removeAnswer(userId,answerId){
-       const user= await getUserById(userId);
-       AnswerId = user.AnswerId;
-       removeByValue(AnswerID,answerId);
-       function removeByValue(arr, val) {
-        for (var i = 0; i < arr.length; i++) {
-            if (arr[i] == val) {
-                arr.splice(i, 1);
-                    break;
-    
-            }
-    
-        }
-    
-    } 
-    }
-}
   
+
+}
+
+//helper method--parse id to objectId
+async function myDBfunction(id) {
+	//check to make sure we have input at all
+	if (!id) throw 'Error: Id parameter must be supplied';
+	//check to make sure it's a string
+	if (typeof id !== 'string') throw "Error: Id must be a string";
+
+	let { ObjectId } = require('mongodb')
+	let parsedId = ObjectId(id);
+	return parsedId
+}
 
 module.exports = exportedMethods;

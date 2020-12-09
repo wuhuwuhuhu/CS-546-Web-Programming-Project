@@ -11,8 +11,6 @@ if(req.session.userInfo){
     res.render("pages/login", {})
   }
  
-
-});
 router.get("/regist", async (req, res) => {
   res.render("pages/register")
 })

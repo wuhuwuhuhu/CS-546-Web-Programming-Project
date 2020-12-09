@@ -120,19 +120,14 @@ let exportedMethods = {
         return true;
     },
     async removeReview(userId,reviewId){
-        const user= await getUserById(userId);
-       ReviewId = user.ReviewId;
-       removeByValue(AnswerID,reviewId);
-       function removeByValue(arr, val) {
-        for (var i = 0; i < arr.length; i++) {
-            if (arr[i] == val) {
-                arr.splice(i, 1);
-                    break;
+        const userCollection = await users();
+        const updateInfo = await userCollection.updateOne(
+            { _id: ObjectId(userId) },
+            { $pull: { reviewId: reviewId } }
+        );
+        if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw 'Update failed';
     
-            }
-        }
-    
-    }
+        return await this.getUserById(userId);
     },
 
     async addReview(userId,reviewId){
@@ -153,20 +148,14 @@ let exportedMethods = {
         //the answerId is the answer that the user answered
     },
     async removeAnswer(userId,answerId){
-       const user= await getUserById(userId);
-       AnswerId = user.AnswerId;
-       removeByValue(AnswerID,answerId);
-       function removeByValue(arr, val) {
-        for (var i = 0; i < arr.length; i++) {
-            if (arr[i] == val) {
-                arr.splice(i, 1);
-                    break;
+        const userCollection = await users();
+        const updateInfo = await userCollection.updateOne(
+            { _id: ObjectId(userId) },
+            { $pull: { reviewId: reviewId } }
+        );
+        if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw 'Update failed';
     
-            }
-    
-        }
-    
-    } 
+        return await this.getUserById(userId);
     }
 }
   

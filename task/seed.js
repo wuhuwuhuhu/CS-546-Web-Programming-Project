@@ -22,6 +22,7 @@ const questionsData = mongoCollections.questions;
 const answersData = mongoCollections.answers;
 const reviewsData = mongoCollections.reviews;
 const systemConfigsData = mongoCollections.systemConfigs;
+const updateMethods = data.updateMethods;
 
 async function myDBfunction(id) {
 	//check to make sure we have input at all
@@ -47,150 +48,6 @@ const main = async () => {
 	const topics = ["Books", "Music", "Movies", "Wine", "Cooking", "Travel", "Other"]
 	const insertInfo = await systemConfigsCollection.insertOne({ topics: topics });
 	if (insertInfo.insertedCount === 0) throw `Error: could not insert topics.`;
-	//
-	//    //create a new user
-	//    const newUser = {
-	//        userName: "abcd123",
-	//        email:"abcd123@gmail.com" ,
-	//        password:"safaDsfqe@caq42!" ,
-	//        dateSignedIn: new Date(),
-	//        questions: [],
-	//        answers: [],
-	//        reviews: [],
-	//        votedForReview:[],
-	//        votedForAnswers: []
-	//      };
-	//
-	//    const insertNewUserInfo = await usersCollection.insertOne(newUser);
-	//    if (insertNewUserInfo.insertedCount === 0) throw `Error: could not add user.`;
-	//    const newUserId = insertNewUserInfo.insertedId;
-	//
-	//    //create a new answerer
-	//    const newAnswerMan = {
-	//        userName: "tool_answer_man",
-	//        email:"tool_answer_man@gmail.com" ,
-	//        password:"safaDsfqe@caq42!" ,
-	//        dateSignedIn: new Date(),
-	//        questions: [],
-	//        answers: [],
-	//        reviews: [],
-	//        votedForReview:[],
-	//        votedForAnswers: []
-	//      };
-	//
-	//    const insertNewAnswerManInfo = await usersCollection.insertOne(newAnswerMan);
-	//    if (insertNewAnswerManInfo.insertedCount === 0) throw `Error: could not add the answer man.`;
-	//    const newAnswerManId = insertNewAnswerManInfo.insertedId;
-	//
-	//
-	//    //create a new question
-	//    const newQuestion = {
-	//        content:"Why this is a question?",
-	//        topic: ["Programming languages", "FootBall"],
-	//        questioner: newUserId.toString(),
-	//        questionCreatedTime:  new Date(),
-	//        answers: []
-	//        }
-	//    const insertNewQuestionInfo = await questionsCollection.insertOne(newQuestion);
-	//    if (insertNewQuestionInfo.insertedCount === 0) throw `Error: could not add question.`;
-	//    const newQuestionId = insertNewQuestionInfo.insertedId;
-	//    //add the question to the user
-	//    await usersCollection.updateOne(
-	//        { _id: newUserId },
-	//
-	//        { $addToSet: { 
-	//            questions: newQuestionId.toString(),
-	//         } }
-	//      );
-	//
-	//    //create a new answer
-	//    const newAnswer = {
-	//        content:"Because this is a answer.",
-	//        recentUpdatedTime:  new Date(),
-	//        answerer: newAnswerManId.toString(),
-	//        questionId: newQuestionId.toString(),
-	//        reviews:[] ,
-	//        voteUp: [] ,
-	//        voteDown: [],
-	//        }
-	//    const insertNewAnswerInfo = await answersCollection.insertOne(newAnswer);
-	//    if (insertNewAnswerInfo.insertedCount === 0) throw `Error: could not add Answer.`;
-	//    const newAnswerId = insertNewAnswerInfo.insertedId;
-	//    //add the Answer to the question
-	//    await questionsCollection.updateOne(
-	//        { _id: newQuestionId },
-	//
-	//        { $addToSet: { 
-	//            answers: newAnswerId.toString(),
-	//
-	//         } }
-	//      );
-	//    //add the Answer to the answerMan
-	//    await usersCollection.updateOne(
-	//        { _id: newAnswerManId },
-	//        { $addToSet: { 
-	//            answers: newAnswerId.toString(),
-	//         } }
-	//      );
-	//    //add a voteup to the answer
-	//    await answersCollection.updateOne(
-	//        { _id: newAnswerId },
-	//        { $addToSet: { 
-	//            voteUp: newAnswerManId.toString(),
-	//            voteDown: newUserId.toString(),
-	//         } }
-	//      );
-	//    //add a vote to the voter
-	//    await usersCollection.updateOne(
-	//        { _id: newAnswerManId },
-	//        { $addToSet: { 
-	//            votedForAnswers: newAnswerId.toString(),
-	//         } }
-	//      );
-	//
-	//    
-	//    //create a new review
-	//    const newReview = {
-	//        content:"This is a review",
-	//        recentUpdatedTime:  new Date(),
-	//        Reviewer: newUserId.toString(),
-	//        answerId: newAnswerId.toString(),
-	//        voteUp: [] ,
-	//        voteDown: [],
-	//        }
-	//    const insertNewReviewInfo = await reviewsCollection.insertOne(newReview);
-	//    if (insertNewReviewInfo.insertedCount === 0) throw `Error: could not add Review.`;
-	//    const newReviewId = insertNewReviewInfo.insertedId;
-	//    //add the review to the answer
-	//    await answersCollection.updateOne(
-	//        { _id: newAnswerId },
-	//        { $addToSet: { 
-	//            reviews: newReviewId.toString(),
-	//            } }
-	//        );
-	//    //add the review to the reviewer
-	//    await usersCollection.updateOne(
-	//        { _id: newUserId },
-	//        { $addToSet: { 
-	//            reviews: newReviewId.toString(),
-	//            } }
-	//        );
-	//    //add a voteup to the review
-	//    await reviewsCollection.updateOne(
-	//        { _id: newReviewId },
-	//        { $addToSet: { 
-	//            voteUp: newAnswerManId.toString(),
-	//            voteDown: newUserId.toString(),
-	//            } }
-	//        );
-	//    //add a vote to the voter
-	//    await usersCollection.updateOne(
-	//        { _id: newAnswerManId },
-	//        { $addToSet: { 
-	//            votedForReview: newReviewId.toString(),
-	//            } }
-	//		);
-	//		
 
 	//length 20
 	const userNameList = ["abyKristyButterfly", "angel", "bubbles", "shimmer", "glimmer", "doll", "JayChou", "VenomFate", "Frozen", "DarkSide",
@@ -493,7 +350,7 @@ const main = async () => {
 		console.log(error);
 
 	}
-	console.log(reviewsList1.length);
+	
 
 
 	//Shuffle review time
@@ -514,9 +371,75 @@ const main = async () => {
 	} catch (error) {
 		console.log(error);
 	}
-
-	//add Voteup and votedown for answers
 	
+	//add Voteup and votedown for answers
+	let answerIdList2 = answerIdList;
+	
+		try {
+			for(let i = 0; i< answerIdList2.length;i++){
+				let userIdList2 = userIdList.slice(0,userIdList.length)
+				
+				for(let j = 0; j< userIdList2.length; j++){
+					let voteUp = Math.floor(Math.random() * Math.floor(2))
+				//	console.log(voteUp)
+					if(voteUp){
+						await updateMethods.addVoteUpForAnswer(answerIdList2[i],userIdList2[j]);
+						userIdList2.splice(j,1)
+					
+					}
+				
+				}
+				for(let j = 0; j< userIdList2.length; j++){
+					let voteDown = Math.floor(Math.random() * Math.floor(2))
+				//	console.log(voteDown)
+					if(voteDown){
+						await updateMethods.addVoteDownForAnswer(answerIdList2[i],userIdList2[j]);
+						userIdList2.splice(j,1)
+					
+					}
+				
+				}
+
+			}
+			
+			
+		} catch (error) {
+			console.log(error)
+		}
+	
+		//add Voteup and votedown for reviews
+		
+		let reviewIdList2 = reviewIdList;
+		try {
+			for(let i = 0; i< reviewIdList2.length;i++){
+				let userIdList2 = userIdList.slice(0,userIdList.length)
+				for(let j = 0; j< userIdList2.length; j++){
+					let voteUp = Math.floor(Math.random() * Math.floor(2))
+					if(voteUp){
+						await updateMethods.addVoteUpForReview(reviewIdList2[i],userIdList2[j]);
+						userIdList2.splice(j,1)
+					
+					}
+				
+				}
+				for(let j = 0; j< userIdList2.length; j++){
+					let voteDown = Math.floor(Math.random() * Math.floor(2))
+					if(voteDown){
+						await updateMethods.addVoteDownForReview(reviewIdList2[i],userIdList2[j]);
+						userIdList2.splice(j,1)
+					
+					}
+				
+				}
+
+			}
+			
+			
+		} catch (error) {
+			console.log(error)
+		}
+
+		
 
 	console.log('Done seeding database');
 

@@ -90,7 +90,7 @@ const main = async () => {
 				questions: [],
 				answers: [],
 				reviews: [],
-				votedForReview: [],
+				votedForReviews: [],
 				votedForAnswers: []
 			};
 

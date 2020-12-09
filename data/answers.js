@@ -226,7 +226,7 @@ let exportedMethods = {
             if (!voterId || typeof voterId != 'string' || voterId.match(/^[ ]*$/) || !ObjectIdExp.test(voterId)) {
                 throw `voterId in /data/answers.js/updateVoteDown has error`
             }
-            const ans = await answersCollection.getAnswerById(answerId)
+            const ans = await this.getAnswerById(answerId)
             let voteUpArr = ans.voteUp
             if (voteUpArr.indexOf(voterId) == -1) {
                 // add voter id in answer
@@ -269,7 +269,7 @@ let exportedMethods = {
             if (!voterId || typeof voterId != 'string' || voterId.match(/^[ ]*$/) || !ObjectIdExp.test(voterId)) {
                 throw `voterId in /data/answer.js/updateVoteDown has error`
             }
-            const ans = await answersCollection.getAnswerById(answerId)
+            const ans = await this.getAnswerById(answerId)
             let voteDownArr = ans.voteDown
             if (voteDownArr.indexOf(voterId) == -1) {
                 // add vote

@@ -3,6 +3,7 @@ const reviewsMethods = require("./reviews");
 const questionsdMethods = require("./questions");
 const usersdMethods = require("./users");
 const answersMethods = require("./answers");
+const usersMethods = require("./users");
 async function test1() {
     try {
         const op1 = await reviewsMethods.getReviewById("5fb5cd906768a33e948daf2d");
@@ -75,6 +76,20 @@ async function test7(){
 async function test8(){
     console.log(await answersMethods.getAllAnswers());
 }
+/**
+ * getAllUsers
+ */
+async function test9(){
+    console.log(await usersMethods.getAllUsers());
+}
 
-test8()
+async function test10(){
+  try {
+    console.log(await answersMethods.addAnswer('test add ansewer',"5fd06366682082112a521508","5fd06366682082112a52151b"));
+  } catch (error) {
+      throw error
+  }
+}
+
+test10()
 

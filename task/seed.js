@@ -2,12 +2,6 @@
 Generate data to database for test.
 Just for test, all data in this file are hardcoded,
 but in each module we need to use the functions in data file(../data/) to operate the database.
-author: Wu Haodong
-date: 2020-11-13 11:44:27
-
-updated 1:
-change the format of the arrays of id to string
-date: 
 */
 const dbConnection = require('../config/mongoConnection');
 const mongoCollections = require('../config/mongoCollections');
@@ -389,3 +383,4 @@ const main = async () => {
 main().catch(console.log);
 
 module.exports = main;
+

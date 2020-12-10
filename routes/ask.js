@@ -7,7 +7,7 @@ const mongoCollections = require('../config/mongoCollections');
 const systemConfigs = mongoCollections.systemConfigs;
 const questions = mongoCollections.questions;
 //test mode setting, assign a dummy user
-const test = false;
+const test = true;
 
 let topics = []
 router.get('/', async (req, res) => {

@@ -1,9 +1,9 @@
 const mongoCollections = require('../config/mongoCollections');
 const questions = mongoCollections.questions;
-const answers = mongoCollections.anwsers;
+const answers = mongoCollections.answers;
 const users = mongoCollections.users;
 const reviews = mongoCollections.reviews;
-const usersData = require('./users')
+
 
 
 //helper method--parse id to objectId
@@ -194,6 +194,64 @@ let exportedMethods = {
 
 		const updatedQuestion = await this.getQuestionById(id);
 		return updatedQuestion;
+	},
+
+	//copyied from answers.js
+	// modified for test purpose 12-07-2020
+	async addAnswer2(content, answerer, questionId) {
+		//check whether AnswerName duplicated
+		//generate recentUpdatedTime
+		//generate empty arryays for reviews voteUp voteDown
+		var ObjectIdExp = /^[0-9a-fA-F]{24}$/
+		if (!content || content == null || typeof content != 'string' || content.match(/^[ ]*$/)) {
+			throw `content in /data/answers.js/addAnswer is blank`
+		}
+		if (!answerer || answerer == null || typeof answerer != 'string' || answerer.match(/^[ ]*$/) || !ObjectIdExp.test(answerer)) {
+			throw `answerer in /data/answers.js/addAnswer is blank or not match Object`
+		}
+		if (!questionId || questionId == null || typeof questionId != 'string' || questionId.match(/^[ ]*$/) || !ObjectIdExp.test(questionId)) {
+			throw `questionId in /data/answers.js/addAnswer has error`
+		}
+		try {
+			if (this.getQuestionById(questionId) == null) {
+				throw `did not find question by id ${questionId} in answers/addAnswer`
+			}
+			const realDate = new Date()
+			let voteUpArr = []
+			let voteDownArr = []
+			let reviewsArr = []
+			const newAnswer = {
+				content: content,
+				recentUpdatedTime: realDate,
+				answerer: answerer,
+				questionId: questionId,
+				reviews: reviewsArr,
+				voteUp: voteUpArr,
+				voteDown: voteDownArr
+			}
+			const answersCollection = await answers();
+			const insertInfor = await answersCollection.insertOne(newAnswer);
+			if (insertInfor.insertedCount === 0) {
+				throw 'Insert failed!';
+			}
+			const newId = insertInfor.insertedId.toString();
+			// add answer to question
+			const answerAddedInQus = await this.addAnswer(questionId, newId)
+			if (answerAddedInQus == null) {
+				throw 'Insert failed!';
+			}
+			//update user
+			const userCollection = await users();
+			const objectAnswererId = await myDBfunction(answerer)
+			const updateInfo = await userCollection.updateOne({ _id: objectAnswererId }, { $addToSet: { answers: newId } })
+			if (updateInfo.matchedCount === 0) throw `questions.js|addAnswer(): question ${answerer} not found`
+			if (updateInfo.modifiedCount === 0) throw `questions.js|addAnswer(): Nothing been updated.`
+			//const ans = await this.getAnswerById(newId.toString());
+			//return ans
+
+		} catch (error) {
+			throw error
+		}
 	},
 };
 

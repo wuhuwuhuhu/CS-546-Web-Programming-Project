@@ -2,6 +2,8 @@
 const reviewsMethods = require("./reviews");
 const questionsdMethods = require("./questions");
 const usersdMethods = require("./users");
+const answersMethods = require("./answers");
+const usersMethods = require("./users");
 async function test1() {
     try {
         const op1 = await reviewsMethods.getReviewById("5fb5cd906768a33e948daf2d");
@@ -44,32 +46,74 @@ async function createDate() {
  * addReview
  */
 async function test3() {
-    await reviewsMethods.addReview("test","5fb5cd906768a33e948daf29","5fb5cd906768a33e948daf2c");
+    await reviewsMethods.addReview("test", "5fb5cd906768a33e948daf29", "5fb5cd906768a33e948daf2c");
 }
 /**
  * updateReview
  */
-async function test4(){
-    const newDate= await reviewsMethods.updateReview("5fb73445e7ad9c8684f559bb","this is a new review");
+async function test4() {
+    const newDate = await reviewsMethods.updateReview("5fb73445e7ad9c8684f559bb", "this is a new review");
     console.log(newDate);
 }
 /**
  * updateVoteUp
  */
-async function test5(){
-    console.log(await reviewsMethods.updateVoteUp("5fb73445e7ad9c8684f559bb","5fb73445e7ad9c8684f559b7"));
+async function test5() {
+    console.log(await reviewsMethods.updateVoteUp("5fb73445e7ad9c8684f559bb", "5fb73445e7ad9c8684f559b7"));
 }
 
-async function test6(){
-    await usersdMethods.getUserById("5fb5cd906768a33e948daf29")
+async function test6() {
+    console.log(await usersdMethods.getUserById("5fd159ca2edebd22d81c39eb"));
 }
 
 /**
  * updateVoteDown
  */
-async function test7(){
-    console.log(await reviewsMethods.updateVoteDown("5fb73445e7ad9c8684f559bb","5fb73445e7ad9c8684f559b7"));
+async function test7() {
+    console.log(await reviewsMethods.updateVoteDown("5fb73445e7ad9c8684f559bb", "5fb73445e7ad9c8684f559b7"));
 }
 
-test7()
+async function test8() {
+    console.log(await answersMethods.getAllAnswers());
+}
+/**
+ * getAllUsers
+ */
+async function test9() {
+    console.log(await usersMethods.getAllUsers());
+}
+
+async function test10() {
+    try {
+        console.log(await answersMethods.addAnswer('test add ansewer', "5fd06366682082112a521508", "5fd06366682082112a52151b"));
+    } catch (error) {
+        throw error
+    }
+}
+async function test11() {
+    // console.log(await answersMethods.getAnswerById('5fd159ca2edebd22d81c3a26'));
+    // console.log(await answersMethods.addAnswer("test answer vote down","5fd159ca2edebd22d81c39eb","5fd159ca2edebd22d81c39ff"));
+    // await answersMethods.removeAnswer("5fd2a367565d903758198dfe","5fd159ca2edebd22d81c39eb","5fd159ca2edebd22d81c39ff")
+   console.log( await answersMethods.updateVoteDown("5fd2a6cc321e0739a65fac60","5fd159ca2edebd22d81c39eb"));
+}
+
+async function test12() {
+    // console.log(await reviewsMethods.getAllReviews());
+    // console.log("/////--//////////////---/////////");
+    // console.log(await reviewsMethods.getReviewById('5fd1557d04a52f20a62f11bf'));
+    // console.log("/////--//////////////---/////////");
+    console.log(await reviewsMethods.updateReview('5fd159ca2edebd22d81c3a64', 'this is second new review'));
+    console.log("/////--//////////////---/////////");
+    console.log(await usersdMethods.getUserById("5fd159ca2edebd22d81c39ec"));
+    console.log("/////--//////////////---/////////");
+    console.log(await reviewsMethods.updateVoteUp('5fd159ca2edebd22d81c3a64', '5fd159ca2edebd22d81c39ec'));
+    
+}
+
+async function test13() {
+    // console.log(await reviewsMethods.addReview("new review","5fd159ca2edebd22d81c39eb","5fd2a6cc321e0739a65fac60"));
+    await reviewsMethods.removeReview("5fd2a8ced8cba33b4f3341cc","5fd159ca2edebd22d81c39eb","5fd2a6cc321e0739a65fac60","5fd159ca2edebd22d81c39ff");
+}
+
+test13()
 

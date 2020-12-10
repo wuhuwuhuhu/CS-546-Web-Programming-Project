@@ -1,8 +1,9 @@
 const mongoCollections = require('../config/mongoCollections');
 const reviews = mongoCollections.reviews;
 const usersMethods = require("./users");
-const anwsersdMethods = require("./anwsers");
-const e = require('express');
+const answersdMethods = require("./answers");
+const questionMethods = require("./questions")
+const usrs = mongoCollections.users;
 const ObjectId = require('mongodb').ObjectId;
 
 
@@ -47,13 +48,16 @@ let exportedMethods = {
         if (!content || content == null || typeof content != 'string' || content.match(/^[ ]*$/)) {
             throw `content in /data/reviews.js/addReview is blank`
         }
-        if (!reviewer || reviewer == null || typeof reviewer != 'string' || reviewer.match(/^[ ]*$/)) {
-            throw `reviewer in /data/reviews.js/addReview is blank`
+        if (!reviewer || reviewer == null || typeof reviewer != 'string' || reviewer.match(/^[ ]*$/) || !ObjectIdExp.test(reviewer)) {
+            throw `reviewer in /data/reviews.js/addReview is blank or not match Object`
         }
         if (!answerId || answerId == null || typeof answerId != 'string' || answerId.match(/^[ ]*$/) || !ObjectIdExp.test(answerId)) {
             throw `answerId in /data/reviews.js/addReview has error`
         }
         try {
+            if (answersdMethods.getAnswerById(answerId) == null) {
+                throw `did not find answer by id ${answerId} in reviews/addReview`
+            }
             const realDate = new Date()
             let voteUpArr = []
             let voteDownArr = []
@@ -70,19 +74,59 @@ let exportedMethods = {
             if (insertInfor.insertedCount === 0) {
                 throw 'Insert failed!';
             }
-            const newId = insertInfor.insertedId;
-            const ansAndRev = await anwsersdMethods.addReview(answerId, newId);
+            const newId = insertInfor.insertedId.toString();
+            //upadte answer
+            const ansAndRev = await answersdMethods.addReview(answerId, newId);
             if (ansAndRev == null) {
                 throw 'Insert failed!';
             }
-            const review = await this.getReviewById(newId.toString());
+            //update user (reviewer)
+            const usrUpdate = await usersMethods.addReview(reviewer, newId)
+            const review = await this.getReviewById(newId);
             return review
         } catch (error) {
             throw error
         }
     },
-    async removeReview(id) {
-        //also remove comments related to the Review. 
+    async removeReview(id, userId, answerId, questionId) {
+        try {
+            var ObjectIdExp = /^[0-9a-fA-F]{24}$/
+            const reviewsCollection = await reviews();
+            if (!id || id == null || typeof id != 'string' || id.match(/^[ ]*$/) || !ObjectIdExp.test(id)) {
+                throw `id in /data/reviews.js/removeReview has error`
+            }
+            if (!userId || userId == null || typeof userId != 'string' || userId.match(/^[ ]*$/) || !ObjectIdExp.test(userId)) {
+                throw `userId in /data/reviews.js/removeReview has error`
+            }
+            if (!answerId || answerId == null || typeof answerId != 'string' || answerId.match(/^[ ]*$/) || !ObjectIdExp.test(answerId)) {
+                throw `answerId in /data/reviews.js/removeReview has error`
+            }
+            if (!questionId || questionId == null || typeof questionId != 'string' || questionId.match(/^[ ]*$/) || !ObjectIdExp.test(questionId)) {
+                throw `questionId in /data/reviews.js/removeReview has error`
+            }
+            const rev = await this.getReviewById(id);
+            if (rev != null) {
+                const deletionInfo = await reviewsCollection.deleteOne({ _id: ObjectId(id) });
+                if (deletionInfo.deletedCount === 0) {
+                    throw `Could not delete book with id of ${id}`;
+                }
+                //update answer
+                const ansUpdate = await answersdMethods.removeReview(answerId, id)
+                if (ansUpdate == null) {
+                    throw `answer updated failed in reviews.js/removeReview`
+                }
+                //update user
+                const usrUpdate = await usersMethods.removeReview(userId, id)
+                if (usrUpdate == null) {
+                    throw `user updated failed in reviews.js/removeReview`
+                }
+            } else {
+                throw `did not find review by id ${id} in reviews/removeReview`
+            }
+            console.log("successful delete review");
+        } catch (error) {
+            throw error
+        }
     },
 
     /**
@@ -106,7 +150,7 @@ let exportedMethods = {
             }
 
             try {
-                await reviewsCollection.updateOne({ _id: ObjectId(id) }, { $set: {'content':content}  });
+                await reviewsCollection.updateOne({ _id: ObjectId(id) }, { $set: { 'content': content } });
                 const newData = await this.getReviewById(id)
                 return newData
             } catch (error) {
@@ -123,6 +167,7 @@ let exportedMethods = {
      * when this function used, if the user already "vote up" this review, then delete it, or add it if the user didn't "vote up " the review 
      */
     async updateVoteUp(reviewId, voterId) {
+        const usrsCollection = await usrs()
         const reviewsCollection = await reviews();
         var ObjectIdExp = /^[0-9a-fA-F]{24}$/
         if (!reviewId || typeof reviewId != 'string' || reviewId.match(/^[ ]*$/) || !ObjectIdExp.test(reviewId)) {
@@ -140,14 +185,28 @@ let exportedMethods = {
             throw `didn't find user by id : ${voterId}`
         }
         try {
-            let voterArr=review.voteUp
-            if(voterArr.indexOf(voterId)==-1){
-                voterArr.push(voterId)
-            }else{
-                voterArr.splice(voterArr.indexOf(voterId),1)
+            let voterArr = review.voteUp
+            if (voterArr.indexOf(voterId) == -1) {
+                const addItTomArray = await reviewsCollection.updateOne({ _id: ObjectId(reviewId) },{$addToSet:{voteUp:voterId}})
+                if (addItTomArray.modifiedCount === 0) {
+                    throw `failed to update voteDown in user by adding voter in reviews.js/updateVoteUp`
+                }
+                //add voter id in user/votedForReview 
+                const voteInUser = await usrsCollection.updateOne({ _id: ObjectId(voterId) }, { $addToSet: { votedForReviews: reviewId } })
+                if (voteInUser.modifiedCount === 0) {
+                    throw `failed to update votedForReview in user by adding voter in reviews.js/updateVoteUp`
+                }
+            } else {
+                const deleItFromArray = await reviewsCollection.updateOne({ _id: ObjectId(reviewId) },{$pull:{voteDown:voterId}})
+                if (deleItFromArray.modifiedCount === 0) {
+                    throw `failed to update voteDown in user by deleting voter in reviews.js/updateVoteUp`
+                }
+                //delete voter id in user/votedForReview 
+                const voteInUser = await usrsCollection.updateOne({ _id: ObjectId(voterId) }, { $pull: { votedForReviews: reviewId } })
+                if (voteInUser.modifiedCount === 0) {
+                    throw `failed to update votedForReview in user by deleting voter in reviews.js/updateVoteUp`
+                }
             }
-            
-            await reviewsCollection.updateOne({ _id: ObjectId(reviewId) }, { $set: {'voteUp':voterArr} });
             const newData = await this.getReviewById(reviewId)
             return newData
         } catch (error) {
@@ -161,8 +220,9 @@ let exportedMethods = {
      * @param {*} voterId 
      * change the voteDown status
      */
-    async updateVoteDown(reviewId, voterId) { 
+    async updateVoteDown(reviewId, voterId) {
         const reviewsCollection = await reviews();
+        const usrsCollection=await usrs()
         var ObjectIdExp = /^[0-9a-fA-F]{24}$/
         if (!reviewId || typeof reviewId != 'string' || reviewId.match(/^[ ]*$/) || !ObjectIdExp.test(reviewId)) {
             throw `reviewId in /data/reviews.js/updateVoteDown has error`
@@ -180,13 +240,31 @@ let exportedMethods = {
             throw `didn't find user by id : ${voterId}`
         }
         try {
-            let voterArr=review.voteDown
-            if(voterArr.indexOf(voterId)==-1){
-                voterArr.push(voterId)
-            }else{
-                voterArr.splice(voterArr.indexOf(voterId),1)
+            let voterArr = review.voteDown
+            console.log(voterArr);
+            if (voterArr.indexOf(voterId) == -1) {
+                console.log("not in array");
+                const addItTomArray = await reviewsCollection.updateOne({ _id: ObjectId(reviewId) },{$addToSet:{voteDown:voterId}})
+                if (addItTomArray.modifiedCount === 0) {
+                    throw `failed to update voteDown in user by adding voter in reviews.js/updateVoteDown`
+                }
+                //add voter id in user/votedForReview 
+                const voteInUser = await usrsCollection.updateOne({ _id: ObjectId(voterId) }, { $addToSet: { votedForReviews: reviewId } })
+                if (voteInUser.modifiedCount === 0) {
+                    throw `failed to update votedForReview in user by adding voter in reviews.js/updateVoteDown`
+                }
+            } else {
+                console.log(" in array");
+                const deleItFromArray = await reviewsCollection.updateOne({ _id: ObjectId(reviewId) },{$pull:{voteDown:voterId}})
+                if (deleItFromArray.modifiedCount === 0) {
+                    throw `failed to update voteDown in user by deleting voter in reviews.js/updateVoteDown`
+                }
+                //delete voter id in user/votedForReview 
+                const voteInUser = await usrsCollection.updateOne({ _id: ObjectId(voterId) }, { $pull: { votedForReviews: reviewId } })
+                if (voteInUser.modifiedCount === 0) {
+                    throw `failed to update votedForReview in user by deleting voter in reviews.js/updateVoteDown`
+                }
             }
-            await reviewsCollection.updateOne({ _id: ObjectId(reviewId) }, { $set: {voteDown:voterArr} });
             const newData = await this.getReviewById(reviewId)
             return newData
         } catch (error) {

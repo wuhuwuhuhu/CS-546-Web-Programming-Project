@@ -1,6 +1,7 @@
     const mongoCollections = require('../config/mongoCollections');
     const users = mongoCollections.users;
     const { ObjectId } = require('mongodb');
+const data = require('.');
 
     let exportedMethods = {
         async getAllUsers() {
@@ -61,17 +62,18 @@
             
         },
         //userName不能重复
-        async addUser(email, hashedPassword, userName, city, state) {
+        async addUser(email, hashedPassword, userName) {
+            console.log("-------addd")
             if (!email) throw new Error('You must provide an email');
             if (!hashedPassword) throw new Error('You must provide a hashed password');
             if (!userName) throw new Error('You must provide a userNme');
-            if (!city) throw new Error('You must provide a city');
-            if (!state) throw new Error('You must provide a state');
+            // if (!city) throw new Error('You must provide a city');
+            // if (!state) throw new Error('You must provide a state');
             if (typeof email !== 'string') throw new TypeError('email must be a string');
             if (typeof hashedPassword !== 'string') throw new TypeError('hashedPassword must be a string');
             if (typeof userName !== 'string') throw new TypeError('userName must be a string');
-            if (typeof city !== 'string') throw new TypeError('city must be a string');
-            if (typeof state !== 'string') throw new TypeError('state must be a string');
+            // if (typeof city !== 'string') throw new TypeError('city must be a string');
+            // if (typeof state !== 'string') throw new TypeError('state must be a string');
 
             email = email.toLowerCase()
             // /需要在router写/
@@ -87,11 +89,12 @@
             // if (emailExists) throw new Error('500: Email already registered');
 
             let newUser = {
-                // _id: uuid.v4(),
+               // _id: uuid.v4(),
                 email: email,
                 hashedPassword: hashedPassword,
                 userName: userName,
                 questionId: [],
+                data:new Date,
                 ReviewId: [],
                 AnswerId: [],
                 VotedForReviews:[],
@@ -100,11 +103,19 @@
             };
 
             const userCollection = await users();
+            
+          
+            // userCollection.save(function(err){
+            //     if(!err){
+            //         console.log("save success")
+            //     }
+            // })
             const newInsertInformation = await userCollection.insertOne(newUser);
-
-            if (newInsertInformation.insertedCount === 0) throw new Error('Insert failed!');
-
-            return await this.getUserById(newInsertInformation.insertedId);
+            console.log("--------"+newInsertInformation)
+            // if (newInsertInformation.insertedCount === 0) throw new Error('Insert failed!');
+            // console.log("--------"+newInsertInformation)
+            console.log(newInsertInformation.ops[0])
+            return await this.getUserById(JSON.stringify(newInsertInformation.ops[0]._id) );
         },
 
         async removeUser(id) {
@@ -169,7 +180,7 @@
             return await this.getUserById(userId);
         },
         //更新user数据库里的answer
-        async addAnswer(userId,answerId){//通常这里需要传入string
+        async addAnswer(id,answerId){//通常这里需要传入string
 		//the answerId is the answer that the user answered
             if(!id || !answerId) throw 'users.js|addReview: you need to input id and answerId'
             if(typeof id !== 'string' || id.trim()==='') throw 'users.js|addReview: id must be non-empty string' 

@@ -95,10 +95,10 @@
                 email: email,
                 hashedPassword: hash,
                 userName: userName,
-                Questions: [],
+                questions: [],
                 data:new Date,
-                Reviews: [],
-                Answers: [],
+                reviews: [],
+                aswers: [],
                 VotedForReviews:[],
                 VotedForAnswers:[],
 

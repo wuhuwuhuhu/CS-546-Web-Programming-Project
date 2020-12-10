@@ -25,6 +25,17 @@ for(i=0;i<5;i++){
 }
 
 function searchAnswer(item){
+    let search ={
+        method:'GET',
+        url:'/main/searchAnswer',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            data = item
+        })
+    }
+    $.ajax(search).then(function(responseMessage){
+        
+    })
     //must return a Array of searchAnswer, the search answer must be a object, key:url and key:title(must be string);
 
 }

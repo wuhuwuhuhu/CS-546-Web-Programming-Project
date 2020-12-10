@@ -63,7 +63,7 @@ let exportedMethods = {
                 throw 'Insert failed!';
             }
             const newId = insertInfor.insertedId.toString();
-            console.log(newId);
+           // console.log(newId);
             // add answer to question
             const answerAddedInQus = await questionsMethods.addAnswer(questionId, newId)
             if (answerAddedInQus == null) {

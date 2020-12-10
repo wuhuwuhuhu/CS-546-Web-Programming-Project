@@ -31,13 +31,15 @@
         
 
         async getUserById(id) {
-            let x = ObjectId(id);
+            // const objId = ObjectId.createFromHexString(id);;
             if (!id) throw new Error('You must provide an id');
-            if (typeof id !== 'string') throw new TypeError('id must be a string');
+            if(typeof id === 'string')
+                id = ObjectId(id);
+            // if (typeof id !== 'string') throw new TypeError('id must be a string');
             
             const usersCollection = await users();
             try {
-                const user = await usersCollection.findOne({ _id: ObjectId(id) });
+                const user = await usersCollection.findOne({ _id: id });
                 return user;
             } catch (error) {
                 throw `there is an error in /data/users.js/getUser`
@@ -78,16 +80,16 @@
 
             email = email.toLowerCase()
             // write in router
-            // let emailExists = false;
-            // try {
-            //     const user = await this.getUserByEmail(email);
-            //     if(user != null)
-            //         emailExists = true;
-            // } catch (err) {
-            //     emailExists = false;
-            // }
+            let emailExists = false;
+            try {
+                const user = await this.getUserByEmail(email);
+                if(user != null)
+                    emailExists = true;
+            } catch (err) {
+                emailExists = false;
+            }
 
-            // if (emailExists) throw new Error('500: Email already registered');
+            if (emailExists) throw new Error('Email already registered');
             const salt = bcryptjs.genSaltSync(16);
             const hash = bcryptjs.hashSync(hashedPassword, salt);
             let newUser = {
@@ -98,7 +100,7 @@
                 questions: [],
                 data:new Date,
                 reviews: [],
-                aswers: [],
+                answers: [],
                 VotedForReviews:[],
                 VotedForAnswers:[],
 
@@ -116,8 +118,8 @@
             console.log("--------"+newInsertInformation)
             // if (newInsertInformation.insertedCount === 0) throw new Error('Insert failed!');
             // console.log("--------"+newInsertInformation)
-            console.log(newInsertInformation.ops[0])
-            return await this.getUserById(JSON.stringify(newInsertInformation.ops[0]._id) );
+            console.log(typeof newInsertInformation.ops[0])
+            return await this.getUserById((newInsertInformation.insertedId) );
         },
 
         // async removeUser(id) {
@@ -126,13 +128,13 @@
 
         //     const userCollection = await users();
         //     const deletionInfo = await userCollection.removeOne({ _id: ObjectId(id) });
-        //     // const curRewDeletedInReview = await reviewsCollection.deleteOne({ _id: ObjectId(rewId) });
+        
         //     if (deletionInfo.deletedCount === 0) {
         //         throw new Error(`Could not delete user with id of ${id}`);
         //     }
 
         //     return true;
-        // },s
+        // },
         async addQuestion(userId,QuestionId){
             if (!userId) throw new Error('You must provide a userId');
             if (!QuestionId) throw new Error('You must provide a questionId')

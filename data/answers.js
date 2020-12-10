@@ -132,6 +132,7 @@ let exportedMethods = {
             if (curRewDeletedInQus == null) {
                 throw `Failed to update question by deleting review by id ${rewId} in answer/removeAnswer`
             }
+            console.log("successful delete answer");
         } catch (error) {
             throw error
         }
@@ -235,7 +236,7 @@ let exportedMethods = {
                     throw `failed to update voteUpArr in answer by adding voter in answers.js/updateVoteUp`
                 }
                 //add answer id in user votedForAnswers
-                const voteInUser = await usrsCollection.updateOne({ _id: ObjectId(id) }, { $addToSet: { votedForAnswers: answerId } })
+                const voteInUser = await usrsCollection.updateOne({ _id: ObjectId(voterId) }, { $addToSet: { votedForAnswers: answerId } })
                 if (voteInUser.modifiedCount === 0) {
                     throw `failed to update votedForAnswers in user by adding voter in answer.js/updateVoteUp`
                 }
@@ -246,7 +247,7 @@ let exportedMethods = {
                     throw `failed to update voteUpArr by deleting voter in answers.js/updateVoteUp`
                 }
                 //delete answer id in user votedForAnswers
-                const voteInUser = await usrsCollection.updateOne({ _id: ObjectId(id) }, { $pull: { votedForAnswers: answerId } })
+                const voteInUser = await usrsCollection.updateOne({ _id: ObjectId(voterId) }, { $pull: { votedForAnswers: answerId } })
                 if (voteInUser.modifiedCount === 0) {
                     throw `failed to update votedForAnswers in user by deleting voter in answer.js/updateVoteUp`
                 }
@@ -278,7 +279,7 @@ let exportedMethods = {
                     throw `failed to update voteDownArr by adding voter in answer.js/updateVoteUp`
                 }
                 //add answer id in user votedForAnswers
-                const voteInUser = await usrsCollection.updateOne({ _id: ObjectId(id) }, { $addToSet: { votedForAnswers: answerId } })
+                const voteInUser = await usrsCollection.updateOne({ _id: ObjectId(voterId) }, { $addToSet: { votedForAnswers: answerId } })
                 if (voteInUser.modifiedCount === 0) {
                     throw `failed to update votedForAnswers in user by adding voter in answer.js/updateVoteDown`
                 }
@@ -289,7 +290,7 @@ let exportedMethods = {
                     throw `failed to update voteDownArr by deleting voter in answer.js/updateVoteUp`
                 }
                 //delete answer id in user votedForAnswers
-                const voteInUser = await usrsCollection.updateOne({ _id: ObjectId(id) }, { $pull: { votedForAnswers: answerId } })
+                const voteInUser = await usrsCollection.updateOne({ _id: ObjectId(voterId) }, { $pull: { votedForAnswers: answerId } })
                 if (voteInUser.modifiedCount === 0) {
                     throw `failed to update votedForAnswers in user by deleting voter in answer.js/updateVoteUp`
                 }

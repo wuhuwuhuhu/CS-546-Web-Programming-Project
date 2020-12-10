@@ -91,6 +91,7 @@ let exportedMethods = {
     async removeReview(id, userId, answerId, questionId) {
         try {
             var ObjectIdExp = /^[0-9a-fA-F]{24}$/
+            const reviewsCollection = await reviews();
             if (!id || id == null || typeof id != 'string' || id.match(/^[ ]*$/) || !ObjectIdExp.test(id)) {
                 throw `id in /data/reviews.js/removeReview has error`
             }
@@ -122,6 +123,7 @@ let exportedMethods = {
             } else {
                 throw `did not find review by id ${id} in reviews/removeReview`
             }
+            console.log("successful delete review");
         } catch (error) {
             throw error
         }

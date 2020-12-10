@@ -1,7 +1,7 @@
     const mongoCollections = require('../config/mongoCollections');
     const users = mongoCollections.users;
     const { ObjectId } = require('mongodb');
-const data = require('.');
+    const bcryptjs = require("bcryptjs")
 
     let exportedMethods = {
         async getAllUsers() {
@@ -43,7 +43,7 @@ const data = require('.');
                 throw `there is an error in /data/users.js/getUser`
             }
         },
-        //没有用name
+        //name is not used
         async getUserByName(name) {
             if (!name) throw new Error('You must provide an name');
             if (typeof name !== 'string') throw new TypeError('name must be a string');
@@ -61,8 +61,9 @@ const data = require('.');
 
             
         },
-        //userName不能重复
+        //userName cant be same 
         async addUser(email, hashedPassword, userName) {
+           
             console.log("-------addd")
             if (!email) throw new Error('You must provide an email');
             if (!hashedPassword) throw new Error('You must provide a hashed password');
@@ -76,7 +77,7 @@ const data = require('.');
             // if (typeof state !== 'string') throw new TypeError('state must be a string');
 
             email = email.toLowerCase()
-            // /需要在router写/
+            // write in router
             // let emailExists = false;
             // try {
             //     const user = await this.getUserByEmail(email);
@@ -87,16 +88,17 @@ const data = require('.');
             // }
 
             // if (emailExists) throw new Error('500: Email already registered');
-
+            const salt = bcryptjs.genSaltSync(16);
+            const hash = bcryptjs.hashSync(hashedPassword, salt);
             let newUser = {
                // _id: uuid.v4(),
                 email: email,
-                hashedPassword: hashedPassword,
+                hashedPassword: hash,
                 userName: userName,
-                questionId: [],
+                Questions: [],
                 data:new Date,
-                ReviewId: [],
-                AnswerId: [],
+                Reviews: [],
+                Answers: [],
                 VotedForReviews:[],
                 VotedForAnswers:[],
 
@@ -118,37 +120,42 @@ const data = require('.');
             return await this.getUserById(JSON.stringify(newInsertInformation.ops[0]._id) );
         },
 
-        async removeUser(id) {
-            if (!id) throw new Error('You must provide an id');
-            if (typeof id !== 'string') throw new TypeError('id must be a string');
+        // async removeUser(id) {
+        //     if (!id) throw new Error('You must provide an id');
+        //     if (typeof id !== 'string') throw new TypeError('id must be a string');
 
-            const userCollection = await users();
-            const deletionInfo = await userCollection.removeOne({ _id: ObjectId(id) });
+        //     const userCollection = await users();
+        //     const deletionInfo = await userCollection.removeOne({ _id: ObjectId(id) });
+        //     // const curRewDeletedInReview = await reviewsCollection.deleteOne({ _id: ObjectId(rewId) });
+        //     if (deletionInfo.deletedCount === 0) {
+        //         throw new Error(`Could not delete user with id of ${id}`);
+        //     }
 
-            if (deletionInfo.deletedCount === 0) {
-                throw new Error(`Could not delete user with id of ${id}`);
-            }
-
-            return true;
-        },
+        //     return true;
+        // },s
         async addQuestion(userId,QuestionId){
             if (!userId) throw new Error('You must provide a userId');
-            if (!answerId) throw new Error('You must provide a QuestionId')
+            if (!QuestionId) throw new Error('You must provide a questionId')
             const userCollection = await users();
             const updateInfo = await userCollection.updateOne(
                 { _id: ObjectId(userId) },
-                { $addToSet: { QuestionId: QuestionId } }
+                { $addToSet: { questions: QuestionId } }
             );
             if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw 'Update failed';
             return await this.getUserById(userId);
         },
-        async removeQuestion(userId,questionId){
+        async removeQuestion(userId,QuestionId){
             if (!userId) throw new Error('You must provide a userId');
-            if (!answerId) throw new Error('You must provide a questionId')
+            if (!QuestionId) throw new Error('You must provide a QuestionId')
             const userCollection = await users();
+            // let user = await this.getUserById(userId);
+            // // console.log(user);
+            // for(let questionId of user.questions){
+            //     // console.log(questionId);
+            // }
             const updateInfo = await userCollection.updateOne(
                 { _id: ObjectId(userId) },
-                { $pull: { questionId: questionId } }
+                { $pull: { questions: QuestionId } }
             );
             if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw 'Update failed';
         
@@ -157,52 +164,48 @@ const data = require('.');
         
         async removeReview(userId,reviewId){
             if (!userId) throw new Error('You must provide a userId');
-            if (!answerId) throw new Error('You must provide a reviewId')
+            if (!reviewId) throw new Error('You must provide a reviewId')
             const userCollection = await users();
             const updateInfo = await userCollection.updateOne(
                 { _id: ObjectId(userId) },
-                { $pull: { reviewId: reviewId } }
+                { $pull: { reviews: reviewId } }
             );
             if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw 'Update failed';
         
             return await this.getUserById(userId);
         },
 
-        async addReview(userId,reviewId){
+        async addReview(userId,ReviewId){
             if (!userId) throw new Error('You must provide a userId');
-            if (!answerId) throw new Error('You must provide a reviewId')
+            if (!ReviewId) throw new Error('You must provide a reviewId')
             const userCollection = await users();
             const updateInfo = await userCollection.updateOne(
                 { _id: ObjectId(userId) },
-                { $addToSet: { reviewId: reviewId } }
+                { $addToSet: { reviews: ReviewId } }
             );
             if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw 'Update failed';
             return await this.getUserById(userId);
         },
-        //更新user数据库里的answer
-        async addAnswer(id,answerId){//通常这里需要传入string
-		//the answerId is the answer that the user answered
-            if(!id || !answerId) throw 'users.js|addReview: you need to input id and answerId'
-            if(typeof id !== 'string' || id.trim()==='') throw 'users.js|addReview: id must be non-empty string' 
-            if(typeof answerId !== 'string' || answerId.trim()==='') throw 'users.js|addReview: answerId must be non-empty string'
-            
-            let objectId = await myDBfunction(id)
-            const userCollection = await users();
-            const updateInfo = await userCollection.updateOne({ _id: objectId }, { $addToSet: { answers: answerId.trim() } })
-            
-            if (updateInfo.matchedCount === 0) throw `questions.js|updateQeustion(): answer ${id} not found`
-            if (updateInfo.modifiedCount === 0) throw `questions.js|updateQeustion(): Nothing been updated.`
-            
-            let updatedUser = await this.getUserById(id);
-            return updatedUser
+        //update user answer
+            async addAnswer(userId,answerId){//string
+		    //the answerId is the answer that the user answered
+            if (!userId) throw new Error('You must provide a userId');
+            if (!answerId) throw new Error('You must provide a answerId')
+            const updateInfo = await userCollection.updateOne(
+                { _id: ObjectId(userId) },
+                { $addToSet: { answers: answerId } }
+        );
+            if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw 'Update failed';
+            return await this.getUserById(userId);
         },
         async removeAnswer(userId,answerId){
             if (!userId) throw new Error('You must provide a userId');
             if (!answerId) throw new Error('You must provide a answerId')
             const userCollection = await users();
+            
             const updateInfo = await userCollection.updateOne(
                 { _id: ObjectId(userId) },
-                { $pull: { answerId: answerId } }
+                { $pull: { answers: answerId } }
             );
             if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw 'Update failed';
         
@@ -210,6 +213,26 @@ const data = require('.');
         }
 
     }
+
+    // removeUser(userId){
+    //     1. remove user
+    //     2. requireQuestion : remove(questionId)
+    //     // user.deleteOne()
+    //     const questionUtil = require("./questions");
+    //     let user = this.getUserById(userId);
+    //     questionList = user.questionList;
+    //     for(let questionId in questionList){
+    //         questionUtil.removeAnswer(questionId);
+    //     }
+
+    // }
     
 
-    module.exports = exportedMethods;
+   module.exports = exportedMethods;
+    // //quetion removeAnswer
+    // removeAnswer(questionId, answerId) 拿到question 删掉它里面的answerId就行
+    // //answer removeAnswer
+    // 首先删掉answer表里answer
+    // 拿到questionId 调用question的removeAnswer()
+    // 调用review的removeReviewById
+    

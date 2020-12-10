@@ -6,7 +6,7 @@
 	
 	askForm.on('submit',function(event){
 		
-		if(!askInput.val() && askInput.val().trim() === ''){
+		if(!askInput.val() || askInput.val().trim() === ''){
 			event.preventDefault()
 			askInput.focus();
 			inputErrorDiv1.show()

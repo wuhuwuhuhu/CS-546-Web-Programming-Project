@@ -177,7 +177,7 @@ async function addVoteUpForReview(reviewId, userId){
 	try {
 		const voteUser = await this.updateUserVoteForReviews(reviewId.trim(),userId.trim())
 	} catch (error) {
-		if(error === -1) throw `updateMethods|addVoteUpForreview(): user ${userId} alreay voted for this review ${reviewId}`
+		if(error === -2) throw `updateMethods|addVoteUpForreview(): user ${userId} alreay voted for this review ${reviewId}`
 	}
 	const objectReviewId = await myDBfunction(reviewId)
 	const reviewCollection = await reviews();
@@ -203,7 +203,7 @@ async function addVoteDownForReview(reviewId, userId){
 	try {
 		const voteUser = await this.updateUserVoteForreviews(reviewId.trim(),userId.trim())
 	} catch (error) {
-		if(error === -1) throw `updateMethods|addVoteDownForreview(): user ${userId} alreay voted for this review ${reviewId}`
+		if(error === -2) throw `updateMethods|addVoteDownForreview(): user ${userId} alreay voted for this review ${reviewId}`
 	}
 	const objectReviewId = await myDBfunction(reviewId)
 	const reviewCollection = await reviews();

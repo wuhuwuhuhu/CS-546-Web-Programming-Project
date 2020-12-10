@@ -1,34 +1,34 @@
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcryptjs');
+//const bcrypt = require('bcryptjs');
 const userData = require('../data/users');
-const xss = require('xss');
+//const xss = require('xss');
 
-if(req.session.userInfo){
-    let { userInfo } = req.session
-    res.render("pages/home", { userInfo: userInfo })
-  }else{
-    res.render("pages/login", {})
-  }
+// if(req.session.userInfo){
+//     let { userInfo } = req.session
+//     res.render("pages/home", { userInfo: userInfo })
+//   }else{
+//     res.render("pages/login", {})
+//   }
  
 router.get("/regist", async (req, res) => {
   res.render("pages/register")
 })
 router.post("/regist", async (req, res) => {
-  //需要email, password, userName, city, state
-  let { username, password } = req.body
-  if (username == "" || username.length < 5) {
-    res.render("pages/register", { error: "please check username length >5 and not empty" })
-    return
-  }
-  if (password == "" || password.length < 5) {
-    res.render("pages/register", { error: "please check password length >5  and not empty" })
-    return
-  }
-  if(email == ""){
-    res.render("pages/register", { error: "please check email not empty" })
-    return
-  }
+
+  let {email, hashedPassword, userName} = req.body
+  // if (userName == "" || userName.length < 5) {
+  //   res.render("pages/register", { error: "please check username length >5 and not empty" })
+  //   return
+  // }
+  // if (hashedPassword == "" || hashedPassword.length < 5) {
+  //   res.render("pages/register", { error: "please check hashedPassword length >5  and not empty" })
+  //   return
+  // }
+  // if(email == ""){
+  //   res.render("pages/register", { error: "please check email not empty" })
+  //   return
+  // }
   // let list = userList.filter(item => item.username == username)
   // if (list.length > 0) {
   //   res.render("pages/register", { error: "The user name is already registered" })
@@ -38,13 +38,8 @@ router.post("/regist", async (req, res) => {
   //   res.json({ status: 1, msg: "regist success" })
   //   return
   // }
-  try{
-    userData.addUser(email, password, username, city, state);
-  }catch(err){
-      // res.render("pages/registerFail", {error:err});
-  }
-  
- 
+  await userData.addUser(email, hashedPassword, userName)
+
 })
 
 router.post("/login", async (req, res) => {

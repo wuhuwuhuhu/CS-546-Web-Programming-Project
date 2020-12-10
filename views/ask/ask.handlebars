@@ -19,11 +19,16 @@
 					{{/each}}
 				</select>
 				<br>
-				<input id="question" name="question" placeholder="Ask Something Here..." value="{{question}}">
-				<button id="ask-submit-btn" type="submit">Submit</button>
+				<input id="question-input" name="question" placeholder="Ask Something Here..." value="{{question}}">
+				<button id="ask-submit-btn" type ='submit'>Submit</button>
 			</form>
 		</div>
-		<div id="ask-error-div">
+
+		<div class = "error" id = "ask-error-div1" hidden>
+			<p>Your input is empty</p>
+		</div>
+
+		<div class = "error" id="ask-error-div2" >
 			<ul id="ask-error-ul"> {{#each errors}} <li id="ask-error-li">{{this}}</li> {{/each}} </ul>
 		</div>
 		{{#if oldQuestionId}}
@@ -35,7 +40,13 @@
 		<div id="logout-div">
 			<a href='/logout'>Log out</a>
 		</div>
+
 	</main>
+	   <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
+        crossorigin="anonymous"></script>
+    <script src="../../public/js/askForm.js"></script>
 </body>
 
 </html>

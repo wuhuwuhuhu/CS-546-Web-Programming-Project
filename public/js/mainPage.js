@@ -1,9 +1,11 @@
 $('#Myform').submit((event)=>{
     event.preventDefault();
+    $('#popularQuestion').hide();
     if($('#text_input').val()){
-        $('#searchError').hide();
+        $('#searchResult').children().remove();
         $('#searchResult').show();
-        let searchAnswer = searchAnswer($('#text_input'));
+        let searchAnswer = search($('#text_input').val());
+        console.log(searchAnswer);
         for(let i=0;i<searchAnswer.length;i++){
             let li = '<li href='+searchAnswer[i][url]+' >'+searchAnswer[i][title]+'</li>';
             $('#searchResult').append(li);
@@ -11,35 +13,48 @@ $('#Myform').submit((event)=>{
         }
     }
     else{
-        $('#searchError').show();
-        $('#searchError').html('You must enter something to search');
-        $('text_input').focus();
+        alert("You must input something to search!")
     }
 });
-
-let mostPopularQuestion = mostPopularQuestion();
-for(i=0;i<5;i++){
-    let li='<li href='+mostPopularQuestion[i][url]+' >'+mostPopularQuestion[i][title]+'</li>';
-    $('popularQuestion').append(li);
-    
+let mostPopular = {
+    method:'POST',
+    url:'/popular',
+    contentType: 'application/json',
+    data: JSON.stringify({
+        ask:true
+    })
 }
+$('#popularQuestion').show()
+$.ajax(mostPopular).then(function(responseMessage){
+    for(let i=0;i<5;i++){
+        let li = '<li><a href='+responseMessage.returnPopular[i].url+' >'+responseMessage.returnPopular[i].name+'</a></li>';
+        $('#popularQuestion').append(li);
+    }
+    
+})
 
-function searchAnswer(item){
+
+
+
+
+
+function search(item){
     let search ={
-        method:'GET',
-        url:'/main/searchAnswer',
+        method:'POST',
+        url:'/search',
         contentType: 'application/json',
         data: JSON.stringify({
-            data = item
+            data: item
         })
     }
+
     $.ajax(search).then(function(responseMessage){
-        
+        for(i=0;i<responseMessage.returnSearch.length;i++){
+            let li ='<li><a href='+responseMessage.returnSearch[i].url+'>'+responseMessage.returnSearch[i].name+'</a></li>' ;
+            $('#searchResult').append(li);
+        }
     })
+
     //must return a Array of searchAnswer, the search answer must be a object, key:url and key:title(must be string);
 
-}
-
-function mostPopularQuestion(){
-    //must renturn a Array of Question, with the 5 most popular questions, each element must be a object, key:url, key:title(must be string)
 }

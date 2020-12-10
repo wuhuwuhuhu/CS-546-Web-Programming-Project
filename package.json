@@ -4,7 +4,7 @@
   "description": "CS-546 project: A social Question & Answer Community, users can ask questions and answer other users’ questions.",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha",
     "start": "node app.js",
     "seed": "node task/seed.js"
   },
@@ -20,9 +20,13 @@
   "homepage": "https://github.com/wuhuwuhuhu/CS-546-Web-Programming-Project#readme",
   "dependencies": {
     "bcrypt": "^5.0.0",
+    "bcryptjs": "^2.4.3",
     "express": "^4.17.1",
     "express-handlebars": "^5.2.0",
     "express-session": "^1.17.1",
     "mongodb": "^3.6.3"
+  },
+  "devDependencies": {
+    "mocha": "3.0.2"
   }
 }

@@ -26,6 +26,11 @@ let exportedMethods = {
             throw `there is an error in /data/answers.js/getAnswerById`
         }
     },
+
+    /*
+        1.创建一个answer
+        2.根据answerer/userName找到user， 然后再user.addAnswer() 
+    */
     async addAnswer(content, answerer, questionId) {
         //check whether AnswerName duplicated
         //generate recentUpdatedTime
@@ -62,6 +67,7 @@ let exportedMethods = {
             if (insertInfor.insertedCount === 0) {
                 throw 'Insert failed!';
             }
+            //newId userId和ObjectId以及userName问题
             const newId = insertInfor.insertedId.toString();
             console.log(newId);
             // add answer to question
@@ -71,12 +77,12 @@ let exportedMethods = {
             }
             //update user
             try {
-                const answerAddedInUsr = await usersMethods.addAnswer(answerer, newId)
-            if (answerAddedInUsr == null) {
-                throw 'Insert failed!';
-            }
+                const answerAddedInUsr = await usersMethods.addAnswer(answerer, newId);
             } catch (error) {
                 throw error
+            }
+            if (answerAddedInUsr == null) {
+                throw 'Insert failed!';
             }
             const ans = await this.getAnswerById(newId);
             return ans

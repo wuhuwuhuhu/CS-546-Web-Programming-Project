@@ -59,7 +59,7 @@ let exportedMethods = {
 		if (typeof topic !== 'string' || topic.trim() === '') {
 			throw 'questions.js|addQuestion(): must be non-empty string'
 		}
-
+		//验证questioner存在
 		if (typeof questioner !== 'string' || questioner.trim() === '') {
 			throw 'questions.js|addQuestion():questioner must be non-empty string'
 		}

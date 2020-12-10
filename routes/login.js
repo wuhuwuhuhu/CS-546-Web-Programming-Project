@@ -15,7 +15,7 @@ router.get("/regist", async (req, res) => {
   res.render("pages/register")
 })
 router.post("/regist", async (req, res) => {
-
+  //需要email, password, userName, city, state
   let { username, password } = req.body
   if (username == "" || username.length < 5) {
     res.render("pages/register", { error: "please check username length >5 and not empty" })
@@ -29,15 +29,22 @@ router.post("/regist", async (req, res) => {
     res.render("pages/register", { error: "please check email not empty" })
     return
   }
-  let list = userList.filter(item => item.username == username)
-  if (list.length > 0) {
-    res.render("pages/register", { error: "The user name is already registered" })
-    return
-  } else {
-    userList.push(req.body)
-    res.json({ status: 1, msg: "regist success" })
-    return
+  // let list = userList.filter(item => item.username == username)
+  // if (list.length > 0) {
+  //   res.render("pages/register", { error: "The user name is already registered" })
+  //   return
+  // } else {
+  //   userList.push(req.body)
+  //   res.json({ status: 1, msg: "regist success" })
+  //   return
+  // }
+  try{
+    userData.addUser(email, password, username, city, state);
+  }catch(err){
+      // res.render("pages/registerFail", {error:err});
   }
+  
+ 
 })
 
 router.post("/login", async (req, res) => {

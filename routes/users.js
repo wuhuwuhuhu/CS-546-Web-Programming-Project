@@ -9,7 +9,7 @@ const router = express.Router();
 const usersData = require('../data/users');
 const questionsData = require('../data/questions');
 const reviewsData = require("../data/reviews");
-const answerData = require("../data/anwsers");
+// const answerData = require("../data/anwsers");
 
 router.get('/', async(req,res) => {
     const userid = "5faf0ec9dd212c3f1a74cef1";

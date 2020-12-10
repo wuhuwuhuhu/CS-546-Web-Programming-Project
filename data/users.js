@@ -1,7 +1,6 @@
     const mongoCollections = require('../config/mongoCollections');
     const users = mongoCollections.users;
     const { ObjectId } = require('mongodb');
-    const uuid = require("uuid");
 
     let exportedMethods = {
         async getAllUsers() {
@@ -31,6 +30,7 @@
         
 
         async getUserById(id) {
+            let x = ObjectId(id);
             if (!id) throw new Error('You must provide an id');
             if (typeof id !== 'string') throw new TypeError('id must be a string');
             
@@ -74,34 +74,35 @@
             if (typeof state !== 'string') throw new TypeError('state must be a string');
 
             email = email.toLowerCase()
+            // /需要在router写/
+            // let emailExists = false;
+            // try {
+            //     const user = await this.getUserByEmail(email);
+            //     if(user != null)
+            //         emailExists = true;
+            // } catch (err) {
+            //     emailExists = false;
+            // }
 
-            let emailExists = false;
-            try {
-                const user = await this.getUserByEmail(email);
-                if(user != null)
-                    emailExists = true;
-            } catch (err) {
-                emailExists = false;
-            }
-
-            if (emailExists) throw new Error('500: Email already registered');
+            // if (emailExists) throw new Error('500: Email already registered');
 
             let newUser = {
-                _id: uuid.v4(),
+                // _id: uuid.v4(),
                 email: email,
                 hashedPassword: hashedPassword,
                 userName: userName,
-                city: city,
-                state: state,
                 questionId: [],
                 ReviewId: [],
-                AnswerId: []
+                AnswerId: [],
+                VotedForReviews:[],
+                VotedForAnswers:[],
+
             };
 
             const userCollection = await users();
             const newInsertInformation = await userCollection.insertOne(newUser);
 
-            if (newInsertInformation.insertedCount === 0) throw new Error('500: Insert failed!');
+            if (newInsertInformation.insertedCount === 0) throw new Error('Insert failed!');
 
             return await this.getUserById(newInsertInformation.insertedId);
         },
@@ -114,12 +115,38 @@
             const deletionInfo = await userCollection.removeOne({ _id: ObjectId(id) });
 
             if (deletionInfo.deletedCount === 0) {
-                throw new Error(`500: Could not delete user with id of ${id}`);
+                throw new Error(`Could not delete user with id of ${id}`);
             }
 
             return true;
         },
+        async addQuestion(userId,QuestionId){
+            if (!userId) throw new Error('You must provide a userId');
+            if (!answerId) throw new Error('You must provide a QuestionId')
+            const userCollection = await users();
+            const updateInfo = await userCollection.updateOne(
+                { _id: ObjectId(userId) },
+                { $addToSet: { QuestionId: QuestionId } }
+            );
+            if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw 'Update failed';
+            return await this.getUserById(userId);
+        },
+        async removeQuestion(userId,questionId){
+            if (!userId) throw new Error('You must provide a userId');
+            if (!answerId) throw new Error('You must provide a questionId')
+            const userCollection = await users();
+            const updateInfo = await userCollection.updateOne(
+                { _id: ObjectId(userId) },
+                { $pull: { questionId: questionId } }
+            );
+            if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw 'Update failed';
+        
+            return await this.getUserById(userId);
+        },
+        
         async removeReview(userId,reviewId){
+            if (!userId) throw new Error('You must provide a userId');
+            if (!answerId) throw new Error('You must provide a reviewId')
             const userCollection = await users();
             const updateInfo = await userCollection.updateOne(
                 { _id: ObjectId(userId) },
@@ -132,31 +159,45 @@
 
         async addReview(userId,reviewId){
             if (!userId) throw new Error('You must provide a userId');
-            if (!reviewId) throw new Error('You must provide a reviewId');
-            const user= await this.getUserById(userId);
-            let ReviewId = user.ReviewId;
-            ReviewId.push(reviewId);
-        },
-        //更新user数据库里的answer
-        async addAnswer(userId,answerId){
-            console.log("in add answer in user");
-            if (!userId) throw new Error('You must provide a userId');
-            if (!answerId) throw new Error('You must provide a answerId');
-            const user= await this.getUserById(userId);
-            let ReviewId = user.ReviewId;
-            ReviewId.push(answerId);
-            //the answerId is the answer that the user answered
-        },
-        async removeAnswer(userId,answerId){
+            if (!answerId) throw new Error('You must provide a reviewId')
             const userCollection = await users();
             const updateInfo = await userCollection.updateOne(
                 { _id: ObjectId(userId) },
-                { $pull: { reviewId: reviewId } }
+                { $addToSet: { reviewId: reviewId } }
+            );
+            if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw 'Update failed';
+            return await this.getUserById(userId);
+        },
+        //更新user数据库里的answer
+        async addAnswer(userId,answerId){//通常这里需要传入string
+		//the answerId is the answer that the user answered
+            if(!id || !answerId) throw 'users.js|addReview: you need to input id and answerId'
+            if(typeof id !== 'string' || id.trim()==='') throw 'users.js|addReview: id must be non-empty string' 
+            if(typeof answerId !== 'string' || answerId.trim()==='') throw 'users.js|addReview: answerId must be non-empty string'
+            
+            let objectId = await myDBfunction(id)
+            const userCollection = await users();
+            const updateInfo = await userCollection.updateOne({ _id: objectId }, { $addToSet: { answers: answerId.trim() } })
+            
+            if (updateInfo.matchedCount === 0) throw `questions.js|updateQeustion(): answer ${id} not found`
+            if (updateInfo.modifiedCount === 0) throw `questions.js|updateQeustion(): Nothing been updated.`
+            
+            let updatedUser = await this.getUserById(id);
+            return updatedUser
+        },
+        async removeAnswer(userId,answerId){
+            if (!userId) throw new Error('You must provide a userId');
+            if (!answerId) throw new Error('You must provide a answerId')
+            const userCollection = await users();
+            const updateInfo = await userCollection.updateOne(
+                { _id: ObjectId(userId) },
+                { $pull: { answerId: answerId } }
             );
             if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw 'Update failed';
         
             return await this.getUserById(userId);
         }
+
     }
     
 

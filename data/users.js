@@ -3,7 +3,6 @@
     const { ObjectId } = require('mongodb');
     const uuid = require("uuid");
 
-
     let exportedMethods = {
         async getAllUsers() {
             const userCollection = await users();

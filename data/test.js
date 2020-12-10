@@ -91,7 +91,10 @@ async function test10() {
     }
 }
 async function test11() {
-    console.log(await answersMethods.getAnswerById('5fd1357a424e5a1902528ea8'));
+    // console.log(await answersMethods.getAnswerById('5fd159ca2edebd22d81c3a26'));
+    // console.log(await answersMethods.addAnswer("test answer vote down","5fd159ca2edebd22d81c39eb","5fd159ca2edebd22d81c39ff"));
+    // await answersMethods.removeAnswer("5fd2a367565d903758198dfe","5fd159ca2edebd22d81c39eb","5fd159ca2edebd22d81c39ff")
+   console.log( await answersMethods.updateVoteDown("5fd2a6cc321e0739a65fac60","5fd159ca2edebd22d81c39eb"));
 }
 
 async function test12() {
@@ -104,6 +107,13 @@ async function test12() {
     console.log(await usersdMethods.getUserById("5fd159ca2edebd22d81c39ec"));
     console.log("/////--//////////////---/////////");
     console.log(await reviewsMethods.updateVoteUp('5fd159ca2edebd22d81c3a64', '5fd159ca2edebd22d81c39ec'));
+    
 }
-test12()
+
+async function test13() {
+    // console.log(await reviewsMethods.addReview("new review","5fd159ca2edebd22d81c39eb","5fd2a6cc321e0739a65fac60"));
+    await reviewsMethods.removeReview("5fd2a8ced8cba33b4f3341cc","5fd159ca2edebd22d81c39eb","5fd2a6cc321e0739a65fac60","5fd159ca2edebd22d81c39ff");
+}
+
+test13()
 

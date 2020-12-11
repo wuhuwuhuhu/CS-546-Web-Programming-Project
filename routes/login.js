@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 //const bcrypt = require('bcryptjs');
 const userData = require('../data/users');
+const session = require('express-session');
 //const xss = require('xss');
 
 // if(req.session.userInfo){

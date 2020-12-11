@@ -24,9 +24,9 @@ let exportedMethods = {
 		const questionCollection = await questions();
 		const questionList = await questionCollection.find({}).toArray();
 		//change objectId to string id
-		for (let i = 0; i < questionList.length; i++) {
-			questionList[i]._id = questionList[i]._id.toString()
-		}
+		//for (let i = 0; i < questionList.length; i++) {
+		//	questionList[i]._id = questionList[i]._id.toString()
+		//}
 		return questionList;
 	},
 
@@ -41,7 +41,7 @@ let exportedMethods = {
 		if (find == null) throw 'questions.js|getQestionById():question not found';
 		//change objectId to string id
 		const result = Object.assign({}, find);
-		result._id = find._id.toString();
+	//	result._id = find._id.toString();
 
 		return result;
 	},
@@ -253,6 +253,74 @@ let exportedMethods = {
 			throw error
 		}
 	},
+
+	async getQuestionsByTopic(topic){
+		if(!topic) throw 'questions.js|getQuestionsByTopic: you need to input topic'
+		if(typeof topic !== 'string' || topic.trim() === '') throw 'questions.js|getQuestionsByTopic: topic should be non-empty string'
+
+		const questionCollection = await questions();
+		const find = await questionCollection.find({topic:topic.trim()}).toArray()
+		if(!find) throw '-1' // not find any
+		return find
+
+	},
+	async getQuestionsByKeywords(keywords){
+		if(!keywords) throw 'questions.js|getQuestionsByKeywords: you need to input keywords'
+		if(typeof keywords !== 'string' || keywords.trim() === '') throw 'questions.js|getQuestionsByKeywords: keywords must be non-empty string' 
+		const newKeywords = keywords.replace(/[^a-zA-Z]/, ' ')
+
+		
+		const questionCollection = await questions()
+		await questionCollection.createIndex({content:"text"})
+	//	const find = await questionCollection.find({$text:{$search: newKeywords}}).toArray()
+		const find = await questionCollection.find({$text:{$search: newKeywords}},{ score: { $meta: "textScore" } }
+		).sort( { score: { $meta: "textScore" } } ).toArray()
+		if(!find) throw 'questions.js|getQuestionsByKeywords: not found any match'
+		return find
+	},
+
+	//sort arry by time with output in limit number, no limit if limit < 0
+	async sortQuestionsByTime(questionlist,limit){
+		if(!questionlist) throw 'questions.js|sortQuestionByTime: questionlist does not exist'
+		if(!Array.isArray(questionlist) || questionlist.length === 0) throw 'questions.js|sortQuestionByTime: input questionlist should be non-empty array'
+		if(typeof limit === 'undefined') throw 'questions.js|sortQuestionByTime: limit number does not exist'
+		if(typeof limit !== 'number' ) throw 'questions.js|sortQuestionByTime:limit is a number'
+
+		if(questionlist.length >=2){
+			questionlist.sort(function compare(a,b){
+				let x = new Date(a.questionCreatedTime);
+				let y = new Date(b.questionCreatedTime)
+				return y - x;
+			})
+			if(questionlist.length >= limit && limit >= 0){
+				let result = questionlist.slice(0,limit);
+				return result
+			}
+
+		}
+		return questionlist;
+	
+	},
+	//sort arry by answers number with output in limit number, no limit if limit < 0
+	async sortQuestionsByAnsNum(questionlist,limit){
+		if(!questionlist) throw 'questions.js|sortQuestionByTime: questionlist does not exist'
+		if(!Array.isArray(questionlist) || questionlist.length === 0) throw 'questions.js|sortQuestionByTime: input questionlist should be non-empty array'
+		if(typeof limit === 'undefined') throw 'questions.js|sortQuestionByTime: limit number does not exist'
+		if(typeof limit !== 'number') throw 'questions.js|sortQuestionByTime:limit is a number'
+
+		if(questionlist.length >=2){
+			questionlist.sort(function compare(a,b){				
+				return b.answers.length - a.answers.length;
+			})
+			if(questionlist.length >= limit && limit >= 0){
+				let result = questionlist.slice(0,limit);
+				return result
+			}
+		}
+
+		return questionlist;
+	
+	}
 };
 
 module.exports = exportedMethods;

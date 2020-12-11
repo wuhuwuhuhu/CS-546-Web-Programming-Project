@@ -12,8 +12,9 @@ const reviewsData = require("../data/reviews");
 const answerData = require("../data/answers");
 
 router.get('/', async(req,res) => {
-    const userid = "5faf0ec9dd212c3f1a74cef1";
+    const userid = "5fd2b0e9f293b535faad70ea";
     //const userid = req.session.user._id
+
     let user = await usersData.getUserById(userid);
     let userName = user["userName"];
     let userEmail = user["email"];
@@ -21,7 +22,7 @@ router.get('/', async(req,res) => {
     let userQuestions = user["questions"];
     let userAnswers = user["answers"];
     let userReviews = user["reviews"]
-    let userVotedForReviews = user["votedForReview"];
+    let userVotedForReviews = user["votedForReviews"];
     let userVotedForAnswers = user["votedForAnswers"];
 
     let userQuestionsList = [];
@@ -39,7 +40,7 @@ router.get('/', async(req,res) => {
     let userAnswersList = [];
     for(let i = 0; i < userAnswers.length; i++)
     {
-        let answer = await answerData.getAnwserById(userAnswers[i]);
+        let answer = await answerData.getAnswerById(userAnswers[i]);
         let question = await questionsData.getQuestionById(answer["questionId"]);
         let questionName = question["content"];
         let questionUrl = `questions/${question["_id"]}`;
@@ -54,7 +55,7 @@ router.get('/', async(req,res) => {
     let userReviewsList = [];
     for(let i = 0; i < userReviews.length; i++)
     {   let review = await reviewsData.getReviewById(userReviews[i]);
-        let answer = await answerData.getAnwserById(review["answerId"]);
+        let answer = await answerData.getAnswerById(review["answerId"]);
         let question = await questionsData.getQuestionById(answer["questionId"]);
         let questionName = question["content"];
         let questionUrl = `questions/${question["_id"]}`;
@@ -71,7 +72,7 @@ router.get('/', async(req,res) => {
     let userVotedAnswersList = [];
     for(let i = 0; i < userVotedForAnswers.length; i++)
     {
-        let answer = await answerData.getAnwserById(userVotedForAnswers[i]);
+        let answer = await answerData.getAnswerById(userVotedForAnswers[i]);
         let question = await questionsData.getQuestionById(answer["questionId"]);
         let questionName = question["content"];
         let questionUrl = `questions/${question["_id"]}`;
@@ -86,7 +87,7 @@ router.get('/', async(req,res) => {
     let userVotedReviewsList = [];
     for(let i = 0; i < userVotedForReviews.length; i++)
     {   let review = await reviewsData.getReviewById(userVotedForReviews[i]);
-        let answer = await answerData.getAnwserById(review["answerId"]);
+        let answer = await answerData.getAnswerById(review["answerId"]);
         let question = await questionsData.getQuestionById(answer["questionId"]);
         let questionName = question["content"];
         let questionUrl = `questions/${question["_id"]}`;

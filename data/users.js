@@ -101,8 +101,8 @@
                 data:new Date,
                 reviews: [],
                 answers: [],
-                VotedForReviews:[],
-                VotedForAnswers:[],
+                votedForReviews:[],
+                votedForAnswers:[],
 
             };
 
@@ -193,6 +193,7 @@
 		    //the answerId is the answer that the user answered
             if (!userId) throw new Error('You must provide a userId');
             if (!answerId) throw new Error('You must provide a answerId')
+            const userCollection = await users();
             const updateInfo = await userCollection.updateOne(
                 { _id: ObjectId(userId) },
                 { $addToSet: { answers: answerId } }

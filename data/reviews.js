@@ -2,7 +2,7 @@ const mongoCollections = require('../config/mongoCollections');
 const reviews = mongoCollections.reviews;
 const usersMethods = require("./users");
 const answersdMethods = require("./answers");
-const questionMethods = require("./questions")
+const questionMethods = require("./questions");
 const usrs = mongoCollections.users;
 const ObjectId = require('mongodb').ObjectId;
 
@@ -88,6 +88,13 @@ let exportedMethods = {
             throw error
         }
     },
+    /**
+     * 
+     * @param {*} id 
+     * @param {*} userId 
+     * @param {*} answerId 
+     * @param {*} questionId 
+     */
     async removeReview(id, userId, answerId, questionId) {
         try {
             var ObjectIdExp = /^[0-9a-fA-F]{24}$/
@@ -191,6 +198,15 @@ let exportedMethods = {
                 if (addItTomArray.modifiedCount === 0) {
                     throw `failed to update voteDown in user by adding voter in reviews.js/updateVoteUp`
                 }
+                 // find the people already vote voteDown
+                 if(await this.judgeVoteDownInReviews(voterId,reviewId)){
+                    const removeFromVoteDown = await reviewsCollection.updateOne({ _id: ObjectId(reviewId) },{$pull:{voteDown:voterId}})
+                    if (removeFromVoteDown.modifiedCount === 0) {
+                        throw `failed to update voteDown in review by removing voter id in voteDown in reviews.js/updateVoteUp`
+                    }
+                    //update user
+                    await usrsCollection.updateOne({ _id: ObjectId(voterId) }, { $pull: { votedForReviews: reviewId } })
+                }
                 //add voter id in user/votedForReview 
                 const voteInUser = await usrsCollection.updateOne({ _id: ObjectId(voterId) }, { $addToSet: { votedForReviews: reviewId } })
                 if (voteInUser.modifiedCount === 0) {
@@ -248,6 +264,15 @@ let exportedMethods = {
                 if (addItTomArray.modifiedCount === 0) {
                     throw `failed to update voteDown in user by adding voter in reviews.js/updateVoteDown`
                 }
+                // find the people already vote voteup
+                if(await this.judgeVoteUpInReviews(voterId,reviewId)){
+                    const removeFromVoteUp = await reviewsCollection.updateOne({ _id: ObjectId(reviewId) },{$pull:{voteUp:voterId}})
+                    if (removeFromVoteUp.modifiedCount === 0) {
+                        throw `failed to update voteDown in review by removing voter id in voteUp in reviews.js/updateVoteDown`
+                    }
+                    //update user
+                    await usrsCollection.updateOne({ _id: ObjectId(voterId) }, { $pull: { votedForReviews: reviewId } })
+                }
                 //add voter id in user/votedForReview 
                 const voteInUser = await usrsCollection.updateOne({ _id: ObjectId(voterId) }, { $addToSet: { votedForReviews: reviewId } })
                 if (voteInUser.modifiedCount === 0) {
@@ -270,7 +295,113 @@ let exportedMethods = {
         } catch (error) {
             throw error
         }
-    }
+    },
+
+    /**
+     * 
+     * @param {*} reviewList 
+     * @param {*} limit 
+     */
+    async sortReviewsByTime(reviewList,limit){
+        if(!reviewList) throw 'reviewList.js|sortReviewsByTime: reviewList does not exist'
+		if(!Array.isArray(reviewList) || reviewList.length === 0) throw 'reviews.js|sortReviewsByTime: input reviewList should be non-empty array'
+		if(typeof limit === 'undefined') throw 'reviews.js|sortReviewsByTime: limit number does not exist'
+        if(typeof limit !== 'number' ) throw 'reviews.js|sortReviewsByTime:limit is a number'
+        if(reviewList.length >=2){
+			reviewList.sort(function compare(a,b){
+				let x = new Date(a.recentUpdatedTime);
+				let y = new Date(b.recentUpdatedTime)
+				return y - x;
+			})
+			if(reviewList.length >= limit && limit >= 0){
+				let result = reviewList.slice(0,limit);
+				return result
+			}
+
+		}
+		return reviewList;
+    },
+
+    /**
+     * 
+     * @param {*} reviewList 
+     * @param {*} limit 
+     * return reviewlist from most upvoted-downvoted
+     */
+    async sortReviewsByVote(reviewList,limit){
+        if(!reviewList) throw 'reviews.js|sortReviewsByVote: reviewList does not exist'
+		if(!Array.isArray(reviewList) || reviewList.length === 0) throw 'reviews.js|sortReviewsByVote: input reviewList should be non-empty array'
+		if(typeof limit === 'undefined') throw 'reviews.js|sortReviewsByVote: limit number does not exist'
+        if(typeof limit !== 'number' ) throw 'reviews.js|sortReviewsByVote:limit is a number'
+        if(reviewList.length >=2){
+			reviewList.sort(function compare(a,b){
+				let x = a.voteUp.length-a.voteDown.length;
+				let y = b.voteUp.length-b.voteDown.length
+				return y - x;
+			})
+			if(reviewList.length >= limit && limit >= 0){
+				let result = reviewList.slice(0,limit);
+				return result
+			}
+
+		}
+		return reviewList;
+    },
+
+    
+    /**
+     * 
+     * @param {*} userId 
+     * @param {*} reviewId 
+     * * return true if find user vote up in review by id reviewId,
+     * else return false
+     */
+    async judgeVoteUpInReviews(userId,reviewId){
+        var ObjectIdExp = /^[0-9a-fA-F]{24}$/
+        if (!reviewId || typeof reviewId != 'string' || reviewId.match(/^[ ]*$/) || !ObjectIdExp.test(reviewId)) {
+            throw `reviewId in /data/reviews.js/judgeVoteUpInReviews has error`
+        }
+        if (!userId || typeof userId != 'string' || userId.match(/^[ ]*$/) || !ObjectIdExp.test(userId)) {
+            throw `userId in /data/reviews.js/judgeVoteUpInReviews has error`
+        }
+        const review=await this.getReviewById(reviewId)
+        if(review==null){
+            throw `didn't find review by id : ${reviewId} in /data/reviews.js/judgeVoteUpInReviews  `
+        }
+        const voteUpInReview=review.voteUp
+        if(voteUpInReview.indexOf(userId)==-1){
+            return false
+        }else{
+            return true
+        }
+    },
+
+    /**
+     * 
+     * @param {*} userId 
+     * @param {*} reviewId 
+     * return true if find user vote down in review by id reviewId,
+     * else return false
+     */
+    async judgeVoteDownInReviews(userId,reviewId){
+        var ObjectIdExp = /^[0-9a-fA-F]{24}$/
+        if (!reviewId || typeof reviewId != 'string' || reviewId.match(/^[ ]*$/) || !ObjectIdExp.test(reviewId)) {
+            throw `reviewId in /data/reviews.js/judgeVoteDownInReviews has error`
+        }
+        if (!userId || typeof userId != 'string' || userId.match(/^[ ]*$/) || !ObjectIdExp.test(userId)) {
+            throw `userId in /data/reviews.js/judgeVoteDownInReviews has error`
+        }
+        const review=await this.getReviewById(reviewId)
+        if(review==null){
+            throw `didn't find review by id : ${reviewId} in /data/reviews.js/judgeVoteDownInReviews  `
+        }
+        const voteDownInReview=review.voteDown
+        if(voteDownInReview.indexOf(userId)==-1){
+            return false
+        }else{
+            return true
+        }
+    },
 };
 
 module.exports = exportedMethods;

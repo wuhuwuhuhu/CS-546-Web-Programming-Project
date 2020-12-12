@@ -63,7 +63,7 @@ let exportedMethods = {
                 throw 'Insert failed!';
             }
             const newId = insertInfor.insertedId.toString();
-           // console.log(newId);
+            // console.log(newId);
             // add answer to question
             const answerAddedInQus = await questionsMethods.addAnswer(questionId, newId)
             if (answerAddedInQus == null) {
@@ -72,9 +72,9 @@ let exportedMethods = {
             //update user
             try {
                 const answerAddedInUsr = await usersMethods.addAnswer(answerer, newId)
-            if (answerAddedInUsr == null) {
-                throw 'Insert failed!';
-            }
+                if (answerAddedInUsr == null) {
+                    throw 'Insert failed!';
+                }
             } catch (error) {
                 throw error
             }
@@ -235,6 +235,15 @@ let exportedMethods = {
                 if (updateInfo.modifiedCount === 0) {
                     throw `failed to update voteUpArr in answer by adding voter in answers.js/updateVoteUp`
                 }
+                // find the people already vote down
+                if (await this.judgeVoteDownInAnswers(voterId, answerId)) {
+                    const removeFromVoteDown = await answersCollection.updateOne({ _id: ObjectId(answerId) }, { $pull: { voteDown: voterId } })
+                    if (removeFromVoteDown.modifiedCount === 0) {
+                        throw `failed to update voteDown in answer by removing voter id in voteDown in answer.js/updateVoteUp`
+                    }
+                    //update user
+                    await usrsCollection.updateOne({ _id: ObjectId(voterId) }, { $pull: { votedForAnswers: answerId } })
+                }
                 //add answer id in user votedForAnswers
                 const voteInUser = await usrsCollection.updateOne({ _id: ObjectId(voterId) }, { $addToSet: { votedForAnswers: answerId } })
                 if (voteInUser.modifiedCount === 0) {
@@ -278,6 +287,15 @@ let exportedMethods = {
                 if (updateInfo.modifiedCount === 0) {
                     throw `failed to update voteDownArr by adding voter in answer.js/updateVoteUp`
                 }
+                // find the people already vote voteup
+                if (await this.judgeVoteUpInAnswers(voterId, answerId)) {
+                    const removeFromVoteUp = await answersCollection.updateOne({ _id: ObjectId(answerId) }, { $pull: { voteUp: voterId } })
+                    if (removeFromVoteUp.modifiedCount === 0) {
+                        throw `failed to update voteDown in answer by removing voter id in voteUp in answer.js/updateVoteDown`
+                    }
+                    //update user
+                    await usrsCollection.updateOne({ _id: ObjectId(voterId) }, { $pull: { votedForAnswers: answerId } })
+                }
                 //add answer id in user votedForAnswers
                 const voteInUser = await usrsCollection.updateOne({ _id: ObjectId(voterId) }, { $addToSet: { votedForAnswers: answerId } })
                 if (voteInUser.modifiedCount === 0) {
@@ -301,6 +319,89 @@ let exportedMethods = {
             throw error
         }
     },
+
+    /**
+     * 
+     * @param {*} answersList 
+     * @param {*} limit 
+     */
+    async sortAnswersByVote(answersList, limit) {
+        if (!answersList) throw 'answer.js|sortAnswersByVote: answersList does not exist'
+        if (!Array.isArray(answersList) || answersList.length === 0) throw 'answer.js|sortAnswersByVote: input answersList should be non-empty array'
+        if (typeof limit === 'undefined') throw 'answer.js|sortAnswersByVote: limit number does not exist'
+        if (typeof limit !== 'number') throw 'answer.js|sortAnswersByVote:limit is a number'
+        if (answersList.length >= 2) {
+            answersList.sort(function compare(a, b) {
+                let x = a.voteUp.length - a.voteDown.length;
+                let y = b.voteUp.length - b.voteDown.length
+                return y - x;
+            })
+            if (answersList.length >= limit && limit >= 0) {
+                let result = answersList.slice(0, limit);
+                return result
+            }
+        }
+        return answersList;
+    },
+
+    async sortAnswersByTime(answersList, limit) {
+        if (!answersList) throw 'answer.js|sortAnswersByTime: answersList does not exist'
+        if (!Array.isArray(answersList) || answersList.length === 0) throw 'answer.js|sortAnswersByTime: input answersList should be non-empty array'
+        if (typeof limit === 'undefined') throw 'answer.js|sortAnswersByTime: limit number does not exist'
+        if (typeof limit !== 'number') throw 'answer.js|sortAnswersByTime:limit is a number'
+        if (answersList.length >= 2) {
+            answersList.sort(function compare(a, b) {
+                let x = new Date(a.recentUpdatedTime);
+                let y = new Date(b.recentUpdatedTime)
+                return y - x;
+            })
+            if (answersList.length >= limit && limit >= 0) {
+                let result = answersList.slice(0, limit);
+                return result
+            }
+        }
+        return answersList;
+    },
+
+    async judgeVoteDownInAnswers(userId, answerId) {
+        var ObjectIdExp = /^[0-9a-fA-F]{24}$/
+        if (!answerId || typeof answerId != 'string' || answerId.match(/^[ ]*$/) || !ObjectIdExp.test(answerId)) {
+            throw `reviewId in /data/answer.js/judgeVoteDownInAnswers has error`
+        }
+        if (!userId || typeof userId != 'string' || userId.match(/^[ ]*$/) || !ObjectIdExp.test(userId)) {
+            throw `userId in /data/answer.js/judgeVoteDownInAnswers has error`
+        }
+        const answer = await this.getAnswerById(answerId)
+        if (answer == null) {
+            throw `didn't find answer by id : ${answerId} in /data/answer.js/judgeVoteDownInAnswers`
+        }
+        const voteDownInAnswer = answer.voteDown
+        if (voteDownInAnswer.indexOf(userId) == -1) {
+            return false
+        } else {
+            return true
+        }
+    },
+
+    async judgeVoteUpInAnswers(userId, answerId) {
+        var ObjectIdExp = /^[0-9a-fA-F]{24}$/
+        if (!answerId || typeof answerId != 'string' || answerId.match(/^[ ]*$/) || !ObjectIdExp.test(answerId)) {
+            throw `answerId in /data/answer.js/judgeVoteUpInAnswers has error`
+        }
+        if (!userId || typeof userId != 'string' || userId.match(/^[ ]*$/) || !ObjectIdExp.test(userId)) {
+            throw `userId in /data/answer.js/judgeVoteUpInAnswers has error`
+        }
+        const answer = await this.getAnswerById(answerId)
+        if (answer == null) {
+            throw `didn't find answer by id : ${answerId} in /data/answer.js/judgeVoteUpInAnswers`
+        }
+        const voteUpInAnswer = answer.voteUp
+        if (voteUpInAnswer.indexOf(userId) == -1) {
+            return false
+        } else {
+            return true
+        }
+    }
 };
 
 module.exports = exportedMethods;

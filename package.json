@@ -24,7 +24,8 @@
     "express": "^4.17.1",
     "express-handlebars": "^5.2.0",
     "express-session": "^1.17.1",
-    "mongodb": "^3.6.3"
+    "mongodb": "^3.6.3",
+    "xss": "^1.0.8"
   },
   "devDependencies": {
     "mocha": "3.0.2"

@@ -1,14 +1,16 @@
 const userRoutes = require("./users");
 const askRoutes = require('./ask')
-const mainRoutes = require('./main')
-
+const loginRoutes = require('./login');
+const mainRoutes = require('./main');
+const regist = require("./registration")
+const logout = require("./logout")
 const constructorMethod = (app) => {
     app.use('/user', userRoutes);
     app.use('/ask', askRoutes);
-    app.use('/login', loginRoutes);
-    app.use('/logout', logoutRoutes);
-    app.use('/registration',registRoutes)
-
+    app.use(regist);
+    app.use('/login',loginRoutes);
+    app.use('/logout',logout);
+    app.use('/',mainRoutes)
     app.use("*", (req, res) => {
         res.sendStatus(400);
     })

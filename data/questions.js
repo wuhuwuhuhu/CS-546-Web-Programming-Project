@@ -256,15 +256,14 @@ let exportedMethods = {
 	async getQuestionsByKeywords(keywords){
 		if(!keywords) throw 'questions.js|getQuestionsByKeywords: you need to input keywords'
 		if(typeof keywords !== 'string' || keywords.trim() === '') throw 'questions.js|getQuestionsByKeywords: keywords must be non-empty string' 
-		const newKeywords = keywords.replace(/[^a-zA-Z0123456789]/, ' ')
-
-		
+		const newKeywords = '\"'+ keywords.trim().replace(/[^a-zA-Z0123456789]/, '\" \"') +'\"'
+	//	console.log(newKeywords)
 		const questionCollection = await questions()
 		await questionCollection.createIndex({content:"text"})
-	//	const find = await questionCollection.find({$text:{$search: newKeywords}}).toArray()
-		const find = await questionCollection.find({$text:{$search: newKeywords}},{ score: { $meta: "textScore" } }
-		).sort( { score: { $meta: "textScore" } } ).toArray()
+		const find = await questionCollection.find({$text:{$search: newKeywords}},{score: { $meta: "textScore" } }).sort( { score: { $meta: "textScore" } } ).toArray()
+		//const find = await questionCollection.find({content:{$regex:/newKeywords/,$options:'si'}}).toArray()
 		if(!find) throw 'questions.js|getQuestionsByKeywords: not found any match'
+		
 		return find
 	},
 
@@ -274,9 +273,9 @@ let exportedMethods = {
 		if(typeof topic !== 'string' || topic.trim() === '') throw 'questions.js|getQuestionsByTopic: topic should be non-empty string'
 		if(typeof keywords !== 'string' || keywords.trim() === '') throw 'questions.js|getQuestionsByKeywords: keywords must be non-empty string' 
 		const newKeywords = '\"'+ keywords.trim().replace(/[^a-zA-Z0123456789]/, '\" \"') +'\"'
-		console.log(newKeywords)
+	//	console.log(newKeywords)
 		const questionCollection = await questions()
-		//await questionCollection.createIndex({content:"text"})
+		await questionCollection.createIndex({content:"text"})
 		const find = await questionCollection.find({$text:{$search: newKeywords}},{score: { $meta: "textScore" } }).sort( { score: { $meta: "textScore" } } ).toArray()
 		//const find = await questionCollection.find({content:{$regex:/newKeywords/,$options:'si'}}).toArray()
 		if(!find) throw 'questions.js|getQuestionsByKeywords: not found any match'

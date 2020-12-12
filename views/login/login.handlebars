@@ -8,19 +8,13 @@
 </head>
  {{#if loginError}}
               <div class="alert-heading errorHeading">Error</div>
-          
- 
-
-
             <div class="alert alert-danger text-left">
                 <div class="alert-heading errorHeading">Error</div>
                 {{loginError}}
    
     </div>
     {{/if}}
-</div>
-
-
+    </div>  
               <h1 >  Log in</h1>
             <form id="loginForm" action="/login/result" method="POST">
 
@@ -28,12 +22,9 @@
                     <input id="email" type="text" class="form-control" name="email" aria-describedby="emailHelp"
                         placeholder="Enter email" />
                     <small id="emailHelp" class="form-text text-muted">Using emaill address to log in .</small>
-         
-              
-                    <h2><label for="password">Password</label></h2>
+                                <h2><label for="password">Password</label></h2>
                     <input id="password" type="password" class="form-control" name="password" placeholder="password" />
-          
-                <button type="submit" class="btn btn-primary align-center">Login</button>
+                          <button type="submit" class="btn btn-primary align-center">Login</button>
             </form>
             <a href="/registration" class="btn btn-info register" role="button">Register</a>
     

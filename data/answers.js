@@ -301,6 +301,49 @@ let exportedMethods = {
             throw error
         }
     },
+
+    /**
+     * 
+     * @param {*} answersList 
+     * @param {*} limit 
+     */
+    async sortAnswersByVote(answersList,limit){
+        if(!answersList) throw 'answer.js|sortAnswersByVote: answersList does not exist'
+		if(!Array.isArray(answersList) || answersList.length === 0) throw 'answer.js|sortAnswersByVote: input answersList should be non-empty array'
+		if(typeof limit === 'undefined') throw 'answer.js|sortAnswersByVote: limit number does not exist'
+        if(typeof limit !== 'number' ) throw 'answer.js|sortAnswersByVote:limit is a number'
+        if(answersList.length >=2){
+			answersList.sort(function compare(a,b){
+				let x = a.voteUp.length-a.voteDown.length;
+				let y = b.voteUp.length-b.voteDown.length
+				return y - x;
+			})
+			if(answersList.length >= limit && limit >= 0){
+				let result = answersList.slice(0,limit);
+				return result
+			}
+		}
+		return answersList;
+    },
+
+    async sortAnswersByTime(answersList,limit){
+        if(!answersList) throw 'answer.js|sortAnswersByTime: answersList does not exist'
+		if(!Array.isArray(answersList) || answersList.length === 0) throw 'answer.js|sortAnswersByTime: input answersList should be non-empty array'
+		if(typeof limit === 'undefined') throw 'answer.js|sortAnswersByTime: limit number does not exist'
+        if(typeof limit !== 'number' ) throw 'answer.js|sortAnswersByTime:limit is a number'
+        if(answersList.length >=2){
+			answersList.sort(function compare(a,b){
+                let x = new Date(a.recentUpdatedTime);
+				let y = new Date(b.recentUpdatedTime)
+				return y - x;
+			})
+			if(answersList.length >= limit && limit >= 0){
+				let result = answersList.slice(0,limit);
+				return result
+			}
+		}
+		return answersList;
+    }
 };
 
 module.exports = exportedMethods;

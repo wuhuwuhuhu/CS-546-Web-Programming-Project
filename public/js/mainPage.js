@@ -5,24 +5,25 @@ $('#timeButton').click((event)=>{
     $('#Myform').hide();
     $('#searchResult').hide();
     $('#popularQuestion').hide();
-
+    $('#myNewForm').show();
+    $("#newSearchResult").show();
+    $('#newPopularQuestion').show();
+    $('#myHotForm').hide();
+    $('#hotSearchResult').hide();
+    $('hotPopularQuestion').hide();
 })
 
+showMostPopularItem()
 $('#Myform').submit((event)=>{
     event.preventDefault();
     $('#error-container').hide();
     if($('#text_input').val()){
         $('#popularQuestion').hide();
         $('#searchResult').children().remove();
-        $('#timeButton').show();
-        $('#popularButton').show();
         let searchAnswer = search($('#text_input').val());
         console.log(searchAnswer);
     }
     else{
-        $('#timeButton').hide();
-        $('#popularButton').hide();
-        $('#searchResult').hide();
         $('#error-container').show();
         let tag ="<a>You must enter some words to search!!</a>"
         $('#error-container').append(tag)
@@ -31,6 +32,22 @@ $('#Myform').submit((event)=>{
 });
 
 
+$('#myNewForm').submit((event)=>{
+    event.preventDefault();
+    $('#error-container').hide();
+    if($('#text_input2').val()){
+        $('#newPopularQuestion').hide();
+        $('#newSearchResult').children().remove();
+        let searchAnswer = searchNew($('#text_input2').val());
+        console.log(searchAnswer);
+    }
+    else{
+        $('#error-container').show();
+        let tag ="<a>You must enter some words to search!!</a>"
+        $('#error-container').append(tag)
+
+    }
+});
 
 function showMostPopularItem(){
     $('#searchResult').hide();
@@ -71,53 +88,32 @@ function search(item){
             $('#error-container').append("<p>No search answer!!</p>")
         }
         else{
-            return responseMessage.returnSearch;
+            for(i=0;i<responseMessage.returnSearch.length;i++){
+                let li ='<li><a href=question/'+responseMessage.returnSearch[i]._id+'>'+responseMessage.returnSearch[i].content+'</a></li>' ;
+                $('#searchResult').append(li);
+            }
         }
     })
 
     //must return a Array of searchAnswer, the search answer must be a object, key:url and key:title(must be string);
 
 }
-
-
-async  function sortQuestionsByTime(questionlist,limit){
-    if(!questionlist) throw 'questions.js|sortQuestionByTime: questionlist does not exist'
-    if(!Array.isArray(questionlist) || questionlist.length === 0) throw 'questions.js|sortQuestionByTime: input questionlist should be non-empty array'
-    if(typeof limit === 'undefined') throw 'questions.js|sortQuestionByTime: limit number does not exist'
-    if(typeof limit !== 'number' ) throw 'questions.js|sortQuestionByTime:limit is a number'
-
-    if(questionlist.length >=2){
-        questionlist.sort(function compare(a,b){
-            let x = new Date(a.questionCreatedTime);
-            let y = new Date(b.questionCreatedTime)
-            return y - x;
+function searchNew(item){
+    $('#newSearchResult').show();
+    let search ={
+        method:'POST',
+        url:'/searchNew',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            data: item
         })
-        if(questionlist.length >= limit && limit >= 0){
-            let result = questionlist.slice(0,limit);
-            return result
-        }
-
-    }
-    return questionlist;
-
-}
-//sort arry by answers number with output in limit number, no limit if limit < 0
-async function sortQuestionsByAnsNum(questionlist,limit){
-    if(!questionlist) throw 'questions.js|sortQuestionByTime: questionlist does not exist'
-    if(!Array.isArray(questionlist) || questionlist.length === 0) throw 'questions.js|sortQuestionByTime: input questionlist should be non-empty array'
-    if(typeof limit === 'undefined') throw 'questions.js|sortQuestionByTime: limit number does not exist'
-    if(typeof limit !== 'number') throw 'questions.js|sortQuestionByTime:limit is a number'
-
-    if(questionlist.length >=2){
-        questionlist.sort(function compare(a,b){				
-            return b.answers.length - a.answers.length;
-        })
-        if(questionlist.length >= limit && limit >= 0){
-            let result = questionlist.slice(0,limit);
-            return result
-        }
     }
 
-    return questionlist;
-
+    $.ajax(search).then(function(responseMessage){
+        console.log(responseMessage)
+        for(i=0;i<responseMessage.returnSearch.length;i++){
+            let li ='<li><a href=question/'+responseMessage.returnSearch[i]._id+'>'+responseMessage.returnSearch[i].content+'</a></li>' ;
+            $('#searchResult').append(li);
+        }
+    })
 }

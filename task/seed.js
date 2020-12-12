@@ -20,16 +20,6 @@ const reviewsData = mongoCollections.reviews;
 const systemConfigsData = mongoCollections.systemConfigs;
 const updateMethods = data.updateMethods;
 
-async function myDBfunction(id) {
-	//check to make sure we have input at all
-	if (!id) throw 'Error: Id parameter must be supplied';
-	//check to make sure it's a string
-	if (typeof id !== 'string') throw "Error: Id must be a string";
-
-	let { ObjectId } = require('mongodb')
-	let parsedId = ObjectId(id);
-	return parsedId
-}
 const main = async () => {
 	const usersCollection = await usersData();
 	const questionsCollection = await questionsData();
@@ -46,15 +36,15 @@ const main = async () => {
 	if (insertInfo.insertedCount === 0) throw `Error: could not insert topics.`;
 
 	//length 20
-	const userNameList = ["abyKristyButterfly", "angel", "bubbles", "shimmer", "glimmer", "doll", "JayChou", "VenomFate", "Frozen", "DarkSide",
+	const userNameList = ["test", "angel", "bubbles", "shimmer", "glimmer", "doll", "JayChou", "VenomFate", "Frozen", "DarkSide",
 		"hateJava", "hateCPP", "UltimateBeast", "RockieMountain", "MusicViking", "SloppyJoe", "Marry2020", "Avatar2022", "McDon2020", "SupperBug2020"]
 
-	const emailList = ["qrym.rayax@taikz.com", "yholako.vip9@brackettmail.com", "linsaf10insafe@eshtaholdings.com", "6medo.shagareen2@emphasysav.com", "khassnha@chanmelon.com",
+	const emailList = ["test@test.com", "yholako.vip9@brackettmail.com", "linsaf10insafe@eshtaholdings.com", "6medo.shagareen2@emphasysav.com", "khassnha@chanmelon.com",
 		"4akra@wikirefs.com", "wtarekmasaoo@fogmart.com", "zelegant.youn@garagedoorselmirage.com", "nlkalbef@vermontamazon.com", "ishala@malomiesed.com",
 		"0jorgearman@factorypeople.com", "4owtrageous.pe@esbuah.nl", "graysalinax@aloftventure.com", "phamza_evan@encodium.com", "pmido_mahmoud5217@lttmobile.com",
 		"0sweet.ismarica4@kittiza.com", "izahra@chatur21bate.com", "0meyree.int@aristockphoto.com", "ipras@atourfinest.com", "ymoham@texasaol.com"]
 
-	//const passwordList = ["qRy27pEux#_*L7", "jPpG>oe2BFH74(%", "eo7x701)aFJz1H;1", "iwE[p+i}1.3Wq,9)", "cX8zOu:A:ZqFK:Hk", "NV>]D>O)24ay_MM{", "d3=PX#X$8y'DORS", "v6{k{&~IA5$Rkl8-", "gu>HT]53rk{E}V7t",
+	//const passwordList = ["Test1234", "jPpG>oe2BFH74(%", "eo7x701)aFJz1H;1", "iwE[p+i}1.3Wq,9)", "cX8zOu:A:ZqFK:Hk", "NV>]D>O)24ay_MM{", "d3=PX#X$8y'DORS", "v6{k{&~IA5$Rkl8-", "gu>HT]53rk{E}V7t",
 	//	"J|JCtR;uw9??pnd3", "TYj!i%ode&hKg@49", "u9bwsJ8X0JpU|I;E", "dw*PAX7Yl)Owl>bW", "Rx]%4KF>=j~)x/X_", "x04*xMsK@a!&m(L", "-TDWH4C!%ayhXft%",
 	//	"#8yaB!Pw4B8H6nPL", "=qj8f&k@rLb#fKEH", "5w_EY__*2kkq#ub*", "B%p88Ps_6A+qLU#s"]
 	////
@@ -74,7 +64,7 @@ const main = async () => {
 	// create 20 users
 	const userIdList = []
 	const hashList = [
-		'$2b$16$VsW17pwzFag4miJxlY2NQe3YeNcJyozdscF8V0NmfFB2UqCofuLbS',
+		'$2b$16$Jjmo2eR7GwDq6l6LRPVTM.y2LQyS.ohv94ec50PuMrZupz87L2fbe',
 		'$2b$16$ZxelqfOgz/LEi7RSdCEIUu.Poi2XEwtWA27SCuvWVyQqLjKd.I9mO',
 		'$2b$16$aLinh35hbMUIHrUS1uSSZe/OOn.8X0iw8aMW0OE441tWelZ.agspa',
 		'$2b$16$UWMZbQWjA7IEfTGniLIn0eQKEG.yTNmiGOI442qlhn5/nfXRQ315i',
@@ -95,12 +85,14 @@ const main = async () => {
 		'$2b$16$RKt5IbwRqBQwX3KTjsHtLeNii9jwUmkF5GDLwCROaIVUx1snR6pqe',
 		'$2b$16$LfdX7neQbi6S4.AM11bnzuZ4b8A/56pZvBH76mM4xxGOLikp2xjUK'
 	  ]
+//
+//	  const hash = await bcrypt.hash('Test1234',saltRounds);
+//			console.log(hash)
 	try {
 		for (let i = 0; i < userNameList.length; i++) {
 			let newTime = randomTime('July 20, 2000 00:20:18 GMT+00:00', 'December 02, 2010 00:20:18 GMT+00:00');
 			//console.log(newTime);
-		//	const hash = await bcrypt.hash(passwordList[i],saltRounds);
-		//	hashList.push(hash)
+			
 			const newUser = {
 				userName: userNameList[i],
 				email: emailList[i],
@@ -166,7 +158,7 @@ const main = async () => {
 			for (let i = 0; i < questionList.length; i++) {
 				if (questionList[i].length !== 0) {
 					const newQuestion = await questions.addQuestion(questionList[i][0], topics[i], userIdList[j]);
-					questionIdList.push(newQuestion._id)
+					questionIdList.push(newQuestion._id.toString())
 					questionList[i].splice(0, 1);
 				}
 
@@ -258,7 +250,7 @@ const main = async () => {
 	try {
 		const questionList = await questions.getAllQuestions()
 		for (let i = 0; i < questionList.length; i++) {
-			const objectId = await myDBfunction(questionList[i]._id)
+			const objectId = questionList[i]._id
 			let newTime = randomTime('July 20, 2010 00:30:18 GMT+00:00', 'December 02, 2015 00:20:18 GMT+00:00');
 			const updatedInfo = await questionsCollection.updateOne({ _id: objectId }, { $set: { questionCreatedTime: newTime } });
 			if (updatedInfo.matchedCount === 0 || updatedInfo.modifiedCount === 0) {

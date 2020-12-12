@@ -5,6 +5,7 @@ author: Wu Haodong
 date: 2020-11-13 16:01:40
 */
 const express = require('express');
+const xss = require('xss');
 const router = express.Router();
 const usersData = require('../data/users');
 const questionsData = require('../data/questions');
@@ -106,7 +107,7 @@ router.get('/', async(req,res) => {
         title: "Personal Information",
         userName: userName,
         userEmail: userEmail,
-        userRegistDate: userRegistDate,
+        userRegistDate: new Date(userRegistDate).toDateString(),
         userQuestionsList: userQuestionsList,
         userAnswersList: userAnswersList,
         userReviewsList: userReviewsList,
@@ -114,5 +115,65 @@ router.get('/', async(req,res) => {
         userVotedReviewsList: userVotedReviewsList
     })
     return;
+});
+router.post('/changePassword', async(req,res) => {
+    let newPassword = xss(req.body.newPassword);
+    let oldPassword = xss(req.body.oldPassword);
+    const user = 
+    res.json ({
+        status: false,
+        message: "没连user数据呢"
+    });
+});
+
+router.post('/getQuestions', async(req,res) => {
+    let limit = parseInt(xss(req.body.limit));
+    let sort = xss(req.body.sort);
+
+    const userid = "5fd2b0e9f293b535faad70ea";
+    //const userid = req.session.user._id
+    const user = await usersData.getUserById(userid);
+    let userQuestions = user["questions"];
+    let userQuestionsObjectsList = [];
+    let userQuestionsList = [];
+    for(let i = 0; i < userQuestions.length; i++)
+    {
+        let question = await questionsData.getQuestionById(userQuestions[i]);
+        userQuestionsObjectsList.push(question);
+    }
+    if(sort === "Answers number from high to low"){
+        userQuestionsObjectsList = await questionsData.sortQuestionsByAnsNum(userQuestionsObjectsList, limit);
+    }
+    else{
+        userQuestionsObjectsList = await questionsData.sortQuestionsByTime(userQuestionsObjectsList, limit);
+    }
+    
+    for(let i = 0; i < userQuestionsObjectsList.length; i++)
+    {
+        let question = userQuestionsObjectsList[i];
+        let questionName = question["content"];
+        let questionUrl = `questions/${question["_id"]}`;
+        let createdAt = new Date(question["questionCreatedTime"]).toDateString();
+
+        userQuestionsList.push({
+            questionId: question._id.toString(),
+            questionName: questionName,
+            questionUrl: questionUrl,
+            numberOfAnswers: question["answers"].length,
+            createdAt: createdAt
+
+        });
+    }
+    res.json({
+        userQuestionsList:userQuestionsList
+    });
+
+});
+router.post('/deleteQuestion', async(req,res) => {
+    let id = xss(req.body.questionId);
+    console.log(`delete ${id}`);
+    res.json({
+        status: true
+    });
 });
 module.exports = router;

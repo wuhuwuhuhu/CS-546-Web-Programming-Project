@@ -116,6 +116,7 @@ async function test13() {
     await reviewsMethods.removeReview("5fd2a8ced8cba33b4f3341cc","5fd159ca2edebd22d81c39eb","5fd2a6cc321e0739a65fac60","5fd159ca2edebd22d81c39ff");
 }
 
+
 async function test14(){
     const reviewList=await reviewsMethods.getAllReviews();
     // console.log(await reviewsMethods.sortReviewsByTime(reviewList,-1));
@@ -134,5 +135,8 @@ async function test16(){
     console.log(await reviewsMethods.judgeVoteUpInReviews("5fd2bcbadc020240556f3a91","5fd2bcbadc020240556f3b06"));
 
 }
-test11()
+
+
+test13()
+
 

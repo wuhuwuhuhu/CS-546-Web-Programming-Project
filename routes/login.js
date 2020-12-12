@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcryptjs');
+//const bcrypt = require('bcryptjs');
 const userData = require('../data/users');
-const xss = require('xss');
+//const xss = require('xss');
 
 // if(req.session.userInfo){
 //     let { userInfo } = req.session
@@ -10,49 +10,71 @@ const xss = require('xss');
 //   }else{
 //     res.render("pages/login", {})
 //   }
-// const title = "login";
-router.get('/', async (req, res) => {
-    if (req.session.fromOtherPage === true) {
-        req.session.fromOtherPage = null;
-        res.render('login/login', {
-            fromCoursePage: true,
-            loginError: `You must be logged in to perform that action.`
-        });
-    } else {
-        res.render('login/login',{title:"login"});
-    }
-});
-router.post('/result', async (req, res) => {
-  let { email, password } = req.body;
-  email = xss(email);
-  password = xss(password);
-  email = email.toLowerCase();
-  console.log(email);
-  if (!email || !password) {
-      console.log('error in first');
-      return res.json({error: "You must provide a valid email and password."});
-  }
-  let userInfo;
-  let passwordMatch = false;
-  try {
-      userInfo = await userData.getUserByEmail(email);
-  } catch (e) {
-      return res.json({error: "Invalid email and/or password."});
-  }
-  try {
-      passwordMatch = await bcrypt.compare(password, userInfo.hashedPassword);
-  } catch (e) {
-      console.log(e);
-  }
-  if (passwordMatch === false) {
-      return res.json({error: "Invalid email and/or password."});
-  } else {
-      req.session.user = userInfo._id;
-      res.redirect("/");
-  }
-});
-
  
+router.get("/regist", async (req, res) => {
+  res.render("pages/register")
+})
+router.post("/regist", async (req, res) => {
+
+  let {email, hashedPassword, userName} = req.body
+  // if (userName == "" || userName.length < 5) {
+  //   res.render("pages/register", { error: "please check username length >5 and not empty" })
+  //   return
+  // }
+  // if (hashedPassword == "" || hashedPassword.length < 5) {
+  //   res.render("pages/register", { error: "please check hashedPassword length >5  and not empty" })
+  //   return
+  // }
+  // if(email == ""){
+  //   res.render("pages/register", { error: "please check email not empty" })
+  //   return
+  // }
+  // let list = userList.filter(item => item.username == username)
+  // if (list.length > 0) {
+  //   res.render("pages/register", { error: "The user name is already registered" })
+  //   return
+  // } else {
+  //   userList.push(req.body)
+  //   res.json({ status: 1, msg: "regist success" })
+  //   return
+  // }
+  await userData.addUser(email, hashedPassword, userName)
+
+})
+
+router.post("/login", async (req, res) => {
+  const { username, password } = req.body
+  let list = userList.filter(item => item.username == username)
+  if (list.length > 0) {
+    if (list[0].password == password) {
+      req.session.userInfo = list[0]
+      res.render("pages/home", { userInfo: list[0] })
+    } else {
+      res.render("pages/login", { error: "Please check that the user name and password are correct " })
+      return
+    }
+  } else {
+    res.render("pages/login", { error: "Please check that the user name and password are correct " })
+    return
+  }
+
+})
+function islogin(req, res, next) {
+  if (req.session.userInfo) {
+    next()
+  } else {
+    res.render("pages/login", {})
+  }
+}
+
+router.get("/private", islogin, async (req, res) => {
+  let { userInfo } = req.session
+  res.render("pages/home", { userInfo: userInfo })
+})
+router.get('/logout', async (req, res) => {
+	req.session.destroy();
+	res.render('logout', {title: 'Logged Out'});
+});
 
 
 module.exports = router;

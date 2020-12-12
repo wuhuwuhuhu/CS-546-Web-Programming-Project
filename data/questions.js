@@ -11,7 +11,7 @@ async function myDBfunction(id) {
 	//check to make sure we have input at all
 	if (!id) throw 'Error: Id parameter must be supplied';
 	//check to make sure it's a string
-	if (typeof id !== 'string') throw "questions.js|myDbfunction:Id must be a string";
+	if (typeof id !== 'string') throw "Error: Id must be a string";
 
 	let { ObjectId } = require('mongodb')
 	let parsedId = ObjectId(id);
@@ -41,7 +41,7 @@ let exportedMethods = {
 		if (find == null) throw 'questions.js|getQestionById():question not found';
 		//change objectId to string id
 		const result = Object.assign({}, find);
-	
+	//	result._id = find._id.toString();
 
 		return result;
 	},
@@ -89,12 +89,23 @@ let exportedMethods = {
 		if (updatedInfo.matchedCount === 0 || updatedInfo.modifiedCount === 0) {
 			throw 'questions.js|addQuestion():No user being updated.'
 		}
-	
-		//let result = Object.assign({}, newQuestion);
-		//result['_id'] = newId;
-		let result = this.getQuestionById(newId)
-	
-		return  result
+		//using method from users.js
+		//        try {
+		//            const updatedUser = await usersData.addQuestion(questioner,newId);
+		//        } catch (error) {
+		//
+		//            console.log(error);
+		//            throw 'questions.js|addQuestion(): could not update user';
+		//        }
+
+		//change id to string for output use
+		let result = Object.assign({}, newQuestion);
+		result['_id'] = newId;
+
+		//change dateformat for output use
+		// let outputDate = formatDate(newBook.datePublished)
+		//  result.datePublished = outputDate
+		return result
 
 
 	},
@@ -256,38 +267,16 @@ let exportedMethods = {
 	async getQuestionsByKeywords(keywords){
 		if(!keywords) throw 'questions.js|getQuestionsByKeywords: you need to input keywords'
 		if(typeof keywords !== 'string' || keywords.trim() === '') throw 'questions.js|getQuestionsByKeywords: keywords must be non-empty string' 
-		const newKeywords = '\"'+ keywords.trim().replace(/[^a-zA-Z0123456789]/, '\" \"') +'\"'
-	//	console.log(newKeywords)
+		const newKeywords = keywords.replace(/[^a-zA-Z]/, ' ')
+
+		
 		const questionCollection = await questions()
 		await questionCollection.createIndex({content:"text"})
-		const find = await questionCollection.find({$text:{$search: newKeywords}},{score: { $meta: "textScore" } }).sort( { score: { $meta: "textScore" } } ).toArray()
-		//const find = await questionCollection.find({content:{$regex:/newKeywords/,$options:'si'}}).toArray()
+	//	const find = await questionCollection.find({$text:{$search: newKeywords}}).toArray()
+		const find = await questionCollection.find({$text:{$search: newKeywords}},{ score: { $meta: "textScore" } }
+		).sort( { score: { $meta: "textScore" } } ).toArray()
 		if(!find) throw 'questions.js|getQuestionsByKeywords: not found any match'
-		
 		return find
-	},
-
-	//
-	async getQuestionsByKeywordsAndTopic(keywords,topic){
-		if(!keywords || !topic) throw 'questions.js|getQuestionsByKeywordsAndTopic:'
-		if(typeof topic !== 'string' || topic.trim() === '') throw 'questions.js|getQuestionsByTopic: topic should be non-empty string'
-		if(typeof keywords !== 'string' || keywords.trim() === '') throw 'questions.js|getQuestionsByKeywords: keywords must be non-empty string' 
-		const newKeywords = '\"'+ keywords.trim().replace(/[^a-zA-Z0123456789]/, '\" \"') +'\"'
-	//	console.log(newKeywords)
-		const questionCollection = await questions()
-		await questionCollection.createIndex({content:"text"})
-		const find = await questionCollection.find({$text:{$search: newKeywords}},{score: { $meta: "textScore" } }).sort( { score: { $meta: "textScore" } } ).toArray()
-		//const find = await questionCollection.find({content:{$regex:/newKeywords/,$options:'si'}}).toArray()
-		if(!find) throw 'questions.js|getQuestionsByKeywords: not found any match'
-		let result = []
-		for(let element of find){
-			if(element.topic == topic.trim()){
-				result.push(element)
-			}
-		}
-		return result
-
-		
 	},
 
 	//sort arry by time with output in limit number, no limit if limit < 0
@@ -307,10 +296,6 @@ let exportedMethods = {
 				let result = questionlist.slice(0,limit);
 				return result
 			}
-
-
-
-
 
 		}
 		return questionlist;

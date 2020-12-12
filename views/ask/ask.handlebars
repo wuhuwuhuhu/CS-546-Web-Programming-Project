@@ -15,7 +15,7 @@
 				<select id="topic" name="topic" required>
 					<option value="" disabled selected>Select question topic</option>
 					{{#each topic}}
-					<option value="{{this}}"> {{this}}</option>
+					<option id="topic-option" value="{{this}}"> {{this}}</option>
 					{{/each}}
 				</select>
 				<br>
@@ -36,10 +36,6 @@
 			<a href="/questions/{{oldQuestionId}}" >View the question</a>
 		</div>
 		{{/if}}
-
-		<div id="back-home">
-			<a href='/'>Homepage</a>
-		</div>
 
 		<div id="logout-div">
 			<a href='/logout'>Log out</a>

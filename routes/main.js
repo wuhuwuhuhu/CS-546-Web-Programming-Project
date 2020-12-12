@@ -11,8 +11,11 @@ router.get('/', function(req,res)  {
 });
 router.post('/search', async(req,res)=>{
     let search = req.body.data;
+
     let searchQuestion = await getQuestionsByKeywords(search);
     // get the name for all question , using loop to return 
+    console.log(search)
+    console.log(searchQuestion)
     let A = {returnSearch:searchQuestion};
     res.json(A);
 })
@@ -27,7 +30,4 @@ router.post('/popular',async(req,res)=>{
     }
 })
 
-router.post('/searchNew',async(req,res)=>{
-
-})
 module.exports = router;

@@ -19,6 +19,37 @@ app.use(session({
 
 app.engine('handlebars', exphbs({ defaultLayout: 'main' }));
 app.set('view engine', 'handlebars');
+app.use('/private', (req, res, next) => {
+  console.log(req.session.id);
+  if (!req.session.user) {
+    return res.redirect('/');
+  } else {
+    next();
+  }
+});
+app.use('/login', (req, res, next) => {
+  if (req.session.user) {
+    return res.redirect('/private');
+  } else {
+    //here I',m just manually setting the req.method to post since it's usually coming from a form
+    next();
+  }
+});
+app.use('/logout', async (req, res, next) => {
+  if (!req.session.user) {
+      req.session.fromOtherPage = true;
+      return res.redirect('/login');
+  } else {
+      next();
+  }
+});
+app.use('/registration', async (req, res, next) => {
+  if (req.session.user) {
+      return res.redirect('/');
+  } else {
+      next();
+  }
+});
 // app.use('/ask',(req,res,next)=>{
 //   if(!req.session.user){
 //     res.redirect('/login');

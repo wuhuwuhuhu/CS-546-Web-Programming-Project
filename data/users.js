@@ -70,16 +70,10 @@
             if (!email) throw new Error('You must provide an email');
             if (!hashedPassword) throw new Error('You must provide a hashed password');
             if (!userName) throw new Error('You must provide a userNme');
-            // if (!city) throw new Error('You must provide a city');
-            // if (!state) throw new Error('You must provide a state');
             if (typeof email !== 'string') throw new TypeError('email must be a string');
             if (typeof hashedPassword !== 'string') throw new TypeError('hashedPassword must be a string');
             if (typeof userName !== 'string') throw new TypeError('userName must be a string');
-            // if (typeof city !== 'string') throw new TypeError('city must be a string');
-            // if (typeof state !== 'string') throw new TypeError('state must be a string');
-
             email = email.toLowerCase()
-            // write in router
             let emailExists = false;
             try {
                 const user = await this.getUserByEmail(email);
@@ -103,23 +97,9 @@
                 answers: [],
                 votedForReviews:[],
                 votedForAnswers:[],
-
-
             };
-
             const userCollection = await users();
-            
-          
-            // userCollection.save(function(err){
-            //     if(!err){
-            //         console.log("save success")
-            //     }
-            // })
             const newInsertInformation = await userCollection.insertOne(newUser);
-            console.log("--------"+newInsertInformation)
-            // if (newInsertInformation.insertedCount === 0) throw new Error('Insert failed!');
-            // console.log("--------"+newInsertInformation)
-            console.log(typeof newInsertInformation.ops[0])
             return await this.getUserById((newInsertInformation.insertedId) );
         },
 

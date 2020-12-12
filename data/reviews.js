@@ -270,6 +270,57 @@ let exportedMethods = {
         } catch (error) {
             throw error
         }
+    },
+
+    /**
+     * 
+     * @param {*} reviewList 
+     * @param {*} limit 
+     */
+    async sortReviewsByTime(reviewList,limit){
+        if(!reviewList) throw 'reviewList.js|sortReviewsByTime: reviewList does not exist'
+		if(!Array.isArray(reviewList) || reviewList.length === 0) throw 'reviews.js|sortReviewsByTime: input reviewList should be non-empty array'
+		if(typeof limit === 'undefined') throw 'reviews.js|sortReviewsByTime: limit number does not exist'
+        if(typeof limit !== 'number' ) throw 'reviews.js|sortReviewsByTime:limit is a number'
+        if(reviewList.length >=2){
+			reviewList.sort(function compare(a,b){
+				let x = new Date(a.recentUpdatedTime);
+				let y = new Date(b.recentUpdatedTime)
+				return y - x;
+			})
+			if(reviewList.length >= limit && limit >= 0){
+				let result = reviewList.slice(0,limit);
+				return result
+			}
+
+		}
+		return reviewList;
+    },
+
+    /**
+     * 
+     * @param {*} reviewList 
+     * @param {*} limit 
+     * return reviewlist from most upvoted-downvoted
+     */
+    async sortReviewsByVote(reviewList,limit){
+        if(!reviewList) throw 'reviews.js|sortReviewsByVote: reviewList does not exist'
+		if(!Array.isArray(reviewList) || reviewList.length === 0) throw 'reviews.js|sortReviewsByVote: input reviewList should be non-empty array'
+		if(typeof limit === 'undefined') throw 'reviews.js|sortReviewsByVote: limit number does not exist'
+        if(typeof limit !== 'number' ) throw 'reviews.js|sortReviewsByVote:limit is a number'
+        if(reviewList.length >=2){
+			reviewList.sort(function compare(a,b){
+				let x = a.voteUp.length-a.voteDown.length;
+				let y = b.voteUp.length-b.voteDown.length
+				return y - x;
+			})
+			if(reviewList.length >= limit && limit >= 0){
+				let result = reviewList.slice(0,limit);
+				return result
+			}
+
+		}
+		return reviewList;
     }
 };
 

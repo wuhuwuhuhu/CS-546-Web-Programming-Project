@@ -10,7 +10,7 @@ const router = express.Router();
 const usersData = require('../data/users');
 const questionsData = require('../data/questions');
 const reviewsData = require("../data/reviews");
-const answerData = require("../data/answers");
+const answersData = require("../data/answers");
 
 router.get('/', async(req,res) => {
     const userid = "5fd2b0e9f293b535faad70ea";
@@ -41,7 +41,7 @@ router.get('/', async(req,res) => {
     let userAnswersList = [];
     for(let i = 0; i < userAnswers.length; i++)
     {
-        let answer = await answerData.getAnswerById(userAnswers[i]);
+        let answer = await answersData.getAnswerById(userAnswers[i]);
         let question = await questionsData.getQuestionById(answer["questionId"]);
         let questionName = question["content"];
         let questionUrl = `questions/${question["_id"]}`;
@@ -56,7 +56,7 @@ router.get('/', async(req,res) => {
     let userReviewsList = [];
     for(let i = 0; i < userReviews.length; i++)
     {   let review = await reviewsData.getReviewById(userReviews[i]);
-        let answer = await answerData.getAnswerById(review["answerId"]);
+        let answer = await answersData.getAnswerById(review["answerId"]);
         let question = await questionsData.getQuestionById(answer["questionId"]);
         let questionName = question["content"];
         let questionUrl = `questions/${question["_id"]}`;
@@ -73,7 +73,7 @@ router.get('/', async(req,res) => {
     let userVotedAnswersList = [];
     for(let i = 0; i < userVotedForAnswers.length; i++)
     {
-        let answer = await answerData.getAnswerById(userVotedForAnswers[i]);
+        let answer = await answersData.getAnswerById(userVotedForAnswers[i]);
         let question = await questionsData.getQuestionById(answer["questionId"]);
         let questionName = question["content"];
         let questionUrl = `questions/${question["_id"]}`;
@@ -88,7 +88,7 @@ router.get('/', async(req,res) => {
     let userVotedReviewsList = [];
     for(let i = 0; i < userVotedForReviews.length; i++)
     {   let review = await reviewsData.getReviewById(userVotedForReviews[i]);
-        let answer = await answerData.getAnswerById(review["answerId"]);
+        let answer = await answersData.getAnswerById(review["answerId"]);
         let question = await questionsData.getQuestionById(answer["questionId"]);
         let questionName = question["content"];
         let questionUrl = `questions/${question["_id"]}`;
@@ -171,6 +171,67 @@ router.post('/getQuestions', async(req,res) => {
 });
 router.post('/deleteQuestion', async(req,res) => {
     let id = xss(req.body.questionId);
+    console.log(`delete ${id}`);
+    res.json({
+        status: true
+    });
+});
+
+router.post('/getAnswers', async(req,res) => {
+    let limit = parseInt(xss(req.body.limit));
+    let sort = xss(req.body.sort);
+
+    const userid = "5fd2b0e9f293b535faad70ea";
+    //const userid = req.session.user._id
+    const user = await usersData.getUserById(userid);
+    let userAnswers = user["answers"];
+    let userAnswersObjectsList = [];
+    let userAnswersList = [];
+    for(let i = 0; i < userAnswers.length; i++)
+    {
+        let answer = await answersData.getAnswerById(userAnswers[i]);
+        userAnswersObjectsList.push(answer);
+    }
+    if(sort === "Voted score from high to low"){
+        userAnswersObjectsList = await answersData.sortAnswersByVote
+(userAnswersObjectsList, limit);
+    }
+    else{
+        userAnswersObjectsList = await answersData.sortAnswersByTime(userAnswersObjectsList, limit);
+    }
+    
+    for(let i = 0; i < userAnswersObjectsList.length; i++)
+    {
+        let answer = userAnswersObjectsList[i];
+        let answerQuestion = await questionsData.getQuestionById(answer["questionId"])
+        let answerQuestionName = answerQuestion["content"];
+        let answerQuestionUrl = `questions/${answerQuestion["_id"]}`;
+        let recentUpdatedTime
+        = new Date(answer["recentUpdatedTime"]).toDateString();
+        let answerReviews = [];
+        for(let j = 0; j < answer["reviews"].length; j++){
+            let review = await reviewsData.getReviewById(answer["reviews"][j]);
+            answerReviews.push(review["content"]);
+        }
+        userAnswersList.push({
+            answerId: answer._id.toString(),
+            questionName: answerQuestionName,
+            questionUrl: answerQuestionUrl,
+            answerContent: answer["content"],
+            numberOfVoteUp: answer["voteUp"].length,
+            numberOfVoteDown: answer["voteDown"].length,
+            reviews: answerReviews,
+            recentUpdatedTime: recentUpdatedTime
+
+        });
+    }
+    res.json({
+        userAnswersList:userAnswersList
+    });
+
+});
+router.post('/deleteAnswer', async(req,res) => {
+    let id = xss(req.body.answerId);
     console.log(`delete ${id}`);
     res.json({
         status: true

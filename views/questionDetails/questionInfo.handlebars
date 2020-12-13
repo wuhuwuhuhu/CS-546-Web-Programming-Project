@@ -27,7 +27,7 @@
             </div>
             <div id='questionInfo' class="col-md-9">
                 {{#if answersInQuestion.length}}
-                <table class="table">
+                <table class="table" id="mainTable">
                     <caption>Show your ideas</caption>
                     <thead>
                         <tr>
@@ -39,14 +39,32 @@
                         {{#if this.answerId}}
                         <tr>
                             <td>
-                                <p class="text-primary">{{this.content}}</p>
-                                {{#if this.reviews}}
-                                {{#each this.reviews}}
-                                <p>{{this.content}}</p>
-                                {{/each}}
-                                {{else}}
-                                <p>there is no review</p>
-                                {{/if}}
+                                <table class="questionInnerTable">
+                                    <tr>
+                                        <td class="questionInnerTableTr-1">
+                                            <p class="text-primary">{{this.content}}</p>
+                                        </td>
+                                        <td class="questionInnerTableTr-1">
+                                            <button>Vote Up</button>
+                                            <button>Vote Down</button>
+                                        </td>
+                                    </tr>
+                                    {{#if this.reviews}}
+                                    {{#each this.reviews}}
+                                    <tr>
+                                        <td>
+                                            <p>{{this.content}}</p>
+                                        </td>
+                                        <td>
+                                            <button>Vote Up</button>
+                                            <button>Vote Down</button>
+                                        </td>
+                                    </tr>
+                                    {{/each}}
+                                    {{else}}
+                                    <p>there is no review</p>
+                                    {{/if}}
+                                </table>
                             </td>
                         </tr>
                         {{/if}}

@@ -9,8 +9,8 @@
 
 <body>
     <div id="personalInfo">
-        <form>
-            <fieldset>
+        <fieldset>
+            <form>
                 <legend>Personal Information</legend>
                 {{!-- <h2>Personal Information</h2> --}}
                 <label for="username">username</label>
@@ -19,28 +19,79 @@
                 <input type="text" value="{{userEmail}}" id="email" readonly><br>
                 <label for="registDate">Registration Date</label>
                 <input type="text" value="{{userRegistDate}}" id="registDate" readonly><br>
-            </fieldset>
-        </form>
+                <button id="personalInfoChangePasswordButton">change password</button>
+            </form>
+        </fieldset>
+
     </div>
-    <div id="questions">
+    <div id='changePassword'>
         <fieldset>
-            <legend>Questions</legend>
-            {{#each userQuestionsList}}
-            <article>
-                <h2><a href="{{this.questionUrl}}">{{this.questionName}}</a></h2><br>
-            </article>
-            {{/each}}
+            <legend>Change Password</legend>
+            <form id="changePasswordForm">
+                <label for="changePasswordFormOldPassword">Password</label>
+                <input type="password" id="changePasswordFormOldPassword"><br>
+                <label for="changePasswordFormNewPassword">New Password</label>
+                <input type="password" id="changePasswordFormNewPassword"><br>
+                <label for="changePasswordFormNewPasswordCheck">Please input new password again</label>
+                <input type="password" id="changePasswordFormNewPasswordCheck"><br>
+                <button id="changePasswordFormSubmitButton">submit change</button>
+                <p id="changePasswordFormStatus"></p>
+            </form>
         </fieldset>
     </div>
-    <div id="answers">
+    <div id="questionsDiv">
+        <fieldset>
+            <legend>Questions</legend>
+            <div id="questionsSelector">
+                <label for="questionsSortSelect">Sort: </label>
+                <select id="questionsSortSelect">
+                    <option value="Date from new to old" selected="selected">Date from new to old</option>
+                    <option value="Answers number from high to low">Answers number from high to low</option>
+                </select>
+                <br>
+                <label for="questionsLimitSelect">Limit: </label>
+                <select id="questionsLimitSelect">
+                    <option value="10" selected="selected">10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                </select>
+                <br>
+            </div>
+            <div id="userQuestionsList">
+                {{#each userQuestionsList}}
+                <article>
+                    <h2><a href="{{this.questionUrl}}">{{this.questionName}}</a></h2><br>
+                </article>
+                {{/each}}
+            </div>
+        </fieldset>
+    </div>
+    <div id="answersDiv">
         <fieldset>
             <legend>Answers</legend>
-            {{#each userAnswersList}}
-            <article>
-                <h2><a href="{{this.questionUrl}}">{{this.questionName}}</a></h2><br>
-                <h3>{{this.answerContent}}</h3>
-            </article>
-            {{/each}}
+            <div id="answersSelector">
+                <label for="answersSortSelect">Sort: </label>
+                <select id="answersSortSelect">
+                    <option value="Date from new to old" selected="selected">Date from new to old</option>
+                    <option value="Voted score from high to low">Voted score from high to low</option>
+                </select>
+                <br>
+                <label for="answersLimitSelect">Limit: </label>
+                <select id="answersLimitSelect">
+                    <option value="10" selected="selected">10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                </select>
+                <br>
+            </div>
+            <div id="userAnswersList">
+                {{#each userAnswersList}}
+                <article>
+                    <h2><a href="{{this.questionUrl}}">{{this.questionName}}</a></h2><br>
+                    <h3>{{this.answerContent}}</h3>
+                </article>
+                {{/each}}
+            </div>
         </fieldset>
     </div>
     <div id="reviews">
@@ -78,6 +129,13 @@
             {{/each}}
         </fieldset>
     </div>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"
+        integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
+        integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
+        crossorigin="anonymous"></script>
+    <script src="/public/js/basic_ajax_with_jquery.js"></script>
+    <script src="public/js/user.js"></script>
 </body>
 
 </html>

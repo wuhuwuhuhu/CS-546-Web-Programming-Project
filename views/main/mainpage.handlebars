@@ -1,34 +1,36 @@
-<button id="timeButton" type="click" hidden>Sort by time</button>
-<button id="popularButton" type="click" hidden>Sort by Popularity</button>
-
 <form id ="Myform">
     <label>
-        Search
+        Search Questions
         <input type="text" name="search"  placeholder="Search" id="text_input">
         <button type="submit">Search for that</button>
     </label>
 </form>
+<div id="questionsSelector" hidden>
+    <label for="questionsSortSelect">Sort: </label>
+    <select id="questionsSortSelect">
+        <option value="Date from new to old" selected="selected">Date from new to old</option>
+        <option value="Answers number from high to low">Answers number from high to low</option>
+    </select>
+    <br>
+        <label for="questionsLimitSelect">Limit: </label>
+        <select id="questionsLimitSelect">
+            <option value="10" selected="selected">10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+        </select>
+    <br>
+        <label for="questionsTopicSelect">Topic: </label>
+        <select id="questionsTopicSelect">
+            <option value="allTopic" selected="selected">allTopic</option>
+            <option value="Books">Books</option>
+            <option value="Music">Music</option>
+            <option value="Moives">Moives</option>
+            <option value="Wine">Wine</option>
+            <option value="Cooking">Cooking</option>
+            <option value="Travel">Travel</option>
+            <option value="Other">Other</option>
+        </select>
+</div>
 <div>
-    <ul id="searchResult" hidden></ul>
-    <ol id="popularQuestion" hidden></ol>
-</div>
-
-<div id="newList">
-
-</div>
-
-<div id="popularList">
-
-</div>
-
-<div>
-
-</div>
-
-<div>
-<ul id="hotSearchResult" hidden></ul>
-</div>
-
-<div>
-<ol id="hotPopularQuestion" hidden></ol>
+    <ol id="questionList"></ol>
 </div>

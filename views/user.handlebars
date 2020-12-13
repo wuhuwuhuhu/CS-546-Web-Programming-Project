@@ -43,21 +43,21 @@
         <fieldset>
             <legend>Questions</legend>
             <div id="questionsSelector">
-                <label for="sortSelect">Sort: </label>
-                <select id="sortSelect">
+                <label for="questionsSortSelect">Sort: </label>
+                <select id="questionsSortSelect">
                     <option value="Date from new to old" selected="selected">Date from new to old</option>
                     <option value="Answers number from high to low">Answers number from high to low</option>
                 </select>
                 <br>
-                <label for="LimitSelect">Limit: </label>
-                <select id="LimitSelect">
+                <label for="questionsLimitSelect">Limit: </label>
+                <select id="questionsLimitSelect">
                     <option value="10" selected="selected">10</option>
                     <option value="20">20</option>
                     <option value="50">50</option>
                 </select>
                 <br>
             </div>
-            <div id="questionsList">
+            <div id="userQuestionsList">
                 {{#each userQuestionsList}}
                 <article>
                     <h2><a href="{{this.questionUrl}}">{{this.questionName}}</a></h2><br>
@@ -66,15 +66,32 @@
             </div>
         </fieldset>
     </div>
-    <div id="answers">
+    <div id="answersDiv">
         <fieldset>
             <legend>Answers</legend>
-            {{#each userAnswersList}}
-            <article>
-                <h2><a href="{{this.questionUrl}}">{{this.questionName}}</a></h2><br>
-                <h3>{{this.answerContent}}</h3>
-            </article>
-            {{/each}}
+            <div id="answersSelector">
+                <label for="answersSortSelect">Sort: </label>
+                <select id="answersSortSelect">
+                    <option value="Date from new to old" selected="selected">Date from new to old</option>
+                    <option value="Voted score from high to low">Voted score from high to low</option>
+                </select>
+                <br>
+                <label for="answersLimitSelect">Limit: </label>
+                <select id="answersLimitSelect">
+                    <option value="10" selected="selected">10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                </select>
+                <br>
+            </div>
+            <div id="userAnswersList">
+                {{#each userAnswersList}}
+                <article>
+                    <h2><a href="{{this.questionUrl}}">{{this.questionName}}</a></h2><br>
+                    <h3>{{this.answerContent}}</h3>
+                </article>
+                {{/each}}
+            </div>
         </fieldset>
     </div>
     <div id="reviews">

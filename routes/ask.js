@@ -6,8 +6,9 @@ const session = require('express-session');
 const mongoCollections = require('../config/mongoCollections');
 const systemConfigs = mongoCollections.systemConfigs;
 const questions = mongoCollections.questions;
+const xss = require('xss');
 //test mode setting, assign a dummy user
-const test = false;
+const test = true;
 
 let topics = []
 router.get('/', async (req, res) => {
@@ -32,7 +33,7 @@ router.post('/', async (req, res) => {
 	}
 	//------Test Code ------------
 	if (test) {
-		req.session.user = Object.assign({}, { _id: '5fb7f013d1fad944a36029d1', userName: "TestUser" });
+		req.session.user = Object.assign({}, { _id: '5fd4fdf681b3bb139040e42f', userName: "TestUser" });
 	}
 	//-----------------------------
 	if (!req.session.user) {
@@ -40,15 +41,15 @@ router.post('/', async (req, res) => {
 		res.status(403).redirect('/login')
 		return;
 	}
-	let questioner = req.session.user._id;
-	let content = req.body.question;
+	let questioner = xss(req.session.user._id);
+	let content = xss(req.body.question);
 	if (!content) {
 		const errorMsg = 'You need to ask something';
 		errors.push(errorMsg);
 	}
 
 	//check topic selection
-	let topic = req.body.topic;
+	let topic = xss(req.body.topic);
 	if (!topic) {
 		const errorMsg = 'You need to select a topic';
 		errors.push(errorMsg);
@@ -62,7 +63,7 @@ router.post('/', async (req, res) => {
 
 	//check whether QuestionName duplicated
 	const questionCollection = await questions();
-	const findQuestion = await questionCollection.findOne({ content: content.trim() })
+	const findQuestion = await questionCollection.findOne({ content: content })
 	if (findQuestion) {
 		const errorMsg = 'Question already exists.';
 		errors.push(errorMsg);
@@ -78,12 +79,16 @@ router.post('/', async (req, res) => {
 	}
 
 	try {
+		console.log(content)
+		console.log(topic)
+		console.log(questioner)
 		const newQuestion = await questionsData.addQuestion(content, topic, questioner);
-		res.render('ask/askSuccess', { questionId: newQuestion._id });
+		res.render('ask/askSuccess', { questionId: newQuestion._id.toString() });
+		console.log(newQuestion._id.toString())
 	} catch (error) {
 	
 		const errorMsg = "Ask question failed."
-		errors.push(errorMsg);
+		errors.push(error);
 		res.render('ask/ask', { errors: errors, topic: topics, question: content });
 		return;
 	}

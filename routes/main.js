@@ -1,5 +1,5 @@
 const express = require('express');
-const { sortQuestionsByTime, sortQuestionsByAnsNum, getQuestionsByKeywords } = require('../data/questions');
+const { sortQuestionsByTime, sortQuestionsByAnsNum, getQuestionsByKeywords, getQuestionsByKeywordsAndTopic } = require('../data/questions');
 const router = express.Router();
 const questions = require('../data/questions')
 const userData = require('../data/users');
@@ -10,14 +10,34 @@ router.get('/', function(req,res)  {
     return;
 });
 router.post('/search', async(req,res)=>{
-    let search = req.body.data;
+    let keywords = req.body.keywords;
+    let sort = req.body.sort;
+    let topic =req.body.topic;
+    let limit =parseInt(req.body.limit);
+    console.log(sort=="Date from new to old");
+    if(topic=="allTopic"){
+        if(topic=="allTopic"){
+            let A = await sortQuestionsByTime(await getQuestionsByKeywords(keywords),limit);
+            res.json({A});
+        }
+        else{
+            let A = await sortQuestionsByTime(await getQuestionsByKeywordsAndTopic(keywords,topic),limit);
+            res.json({A});
+        }
+    }
 
-    let searchQuestion = await getQuestionsByKeywords(search);
+    else{
+        if(topic=="allTopic"){
+            let A = await sortQuestionsByAnsNum(await getQuestionsByKeywords(keywords),limit);
+            res.json({A});
+        }
+        else{
+            let A = await sortQuestionsByAnsNum(await getQuestionsByKeywordsAndTopic(keywords,topic),limit);
+            res.json({A});
+        }
+    }
+    
     // get the name for all question , using loop to return 
-    console.log(search)
-    console.log(searchQuestion)
-    let A = {returnSearch:searchQuestion};
-    res.json(A);
 })
 
 router.post('/popular',async(req,res)=>{

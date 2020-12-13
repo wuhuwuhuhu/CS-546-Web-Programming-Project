@@ -1,3 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>My Site</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+        integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+</head>
+
 <body>
-    test
+
+    <div class="container">
+        <div class="row">
+            <div id='questionArea' class="col-md-3">
+                <h1>
+                    {{questionText}}
+                </h1>
+                <form>
+                    <textarea class="form-control" rows="16" style="min-width: 90%"
+                        placeholder="Welcome to share your idea"></textarea>
+                    <button type="button" class="btn btn-default">submit</button>
+                </form>
+            </div>
+            <div id='questionInfo' class="col-md-9">
+                {{#if answersInQuestion.length}}
+                <table class="table">
+                    <caption>Show your ideas</caption>
+                    <thead>
+                        <tr>
+                            <th>{{answersInQuestion.length}} answers</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each answersInQuestion}}
+                        {{#if this.answerId}}
+                        <tr>
+                            <td>
+                                <p class="text-primary">{{this.content}}</p>
+                                {{#if this.reviews}}
+                                {{#each this.reviews}}
+                                <p>{{this.content}}</p>
+                                {{/each}}
+                                {{else}}
+                                <p>there is no review</p>
+                                {{/if}}
+                            </td>
+                        </tr>
+                        {{/if}}
+                        {{/each}}
+                    </tbody>
+                </table>
+                {{else}}
+                <p>there is no answer</p>
+                {{/if}}
+
+            </div>
+            <div id='rightSide'>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"
+        integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
+        integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
+        crossorigin="anonymous"></script>
+    <script src="/public/js/basic_ajax_with_jquery.js"></script>
 </body>
+
+</html>

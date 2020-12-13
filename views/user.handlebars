@@ -94,39 +94,96 @@
             </div>
         </fieldset>
     </div>
-    <div id="reviews">
+    <div id="reviewsDiv">
         <fieldset>
             <legend>Reviews</legend>
-            {{#each userReviewsList}}
-            <article>
-                <h2><a href="{{this.questionUrl}}">{{this.questionName}}</a></h2><br>
-                <h3>{{this.answerContent}}</h3><br>
-                <h4>{{this.reviewContent}}</h4>
-            </article>
-            {{/each}}
+            <div id="reviewsSelector">
+                <label for="reviewsSortSelect">Sort: </label>
+                <select id="reviewsSortSelect">
+                    <option value="Date from new to old" selected="selected">Date from new to old</option>
+                    <option value="Voted score from high to low">Voted score from high to low</option>
+                </select>
+                <br>
+                <label for="reviewsLimitSelect">Limit: </label>
+                <select id="reviewsLimitSelect">
+                    <option value="10" selected="selected">10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                </select>
+                <br>
+            </div>
+            <div id="userReviewsList">
+                {{#each userReviewsList}}
+                <article>
+                    <h2><a href="{{this.questionUrl}}">{{this.questionName}}</a></h2><br>
+                    <h3>{{this.answerContent}}</h3><br>
+                    <h4>{{this.reviewContent}}</h4>
+                </article>
+                {{/each}}
+            </div>
         </fieldset>
     </div>
-    <div id="votedAnswers">
+    <div id="votedAnswersDiv">
         <fieldset>
             <legend>VotedAnswers</legend>
-            {{#each userVotedAnswersList}}
-            <article>
-                <h2><a href="{{this.questionUrl}}">{{this.questionName}}</a></h2><br>
-                <h3>{{this.answerContent}}</h3>
-            </article>
-            {{/each}}
+            <div id="reviewsSelector">
+                <label for="votedAnswersSortSelect">Sort: </label>
+                <select id="votedAnswersSortSelect">
+                    <option value="Updated date of the answer from new to old" selected="selected">Updated date of the
+                        answer from new to old
+                    </option>
+                    <option value="Voted score of the answer from high to low">Voted score of the answer from high to
+                        low</option>
+                </select>
+                <br>
+                <label for="votedAnswersLimitSelect">Limit: </label>
+                <select id="votedAnswersLimitSelect">
+                    <option value="10" selected="selected">10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                </select>
+                <br>
+            </div>
+            <div id="userVotedAnswersList">
+                {{#each userVotedAnswersList}}
+                <article>
+                    <h2><a href="{{this.questionUrl}}">{{this.questionName}}</a></h2><br>
+                    <h3>{{this.answerContent}}</h3>
+                </article>
+                {{/each}}
+            </div>
         </fieldset>
     </div>
-    <div id="votedReviews">
+    <div id="votedReviewsAnswersDiv">
         <fieldset>
             <legend>VotedReviews</legend>
-            {{#each userVotedReviewsList}}
-            <article>
-                <h2><a href="{{this.questionUrl}}">{{this.questionName}}</a></h2><br>
-                <h3>{{this.answerContent}}</h3><br>
-                <h4>{{this.reviewContent}}</h4>
-            </article>
-            {{/each}}
+            <div id="votedReviewsSelector">
+                <label for="votedReviewsSortSelect">Sort: </label>
+                <select id="votedReviewsSortSelect">
+                    <option value="Updated date of the review from new to old" selected="selected">Updated date of the
+                        review from new to old
+                    </option>
+                    <option value="Voted score of the review from high to low">Voted score of the review from high to
+                        low</option>
+                </select>
+                <br>
+                <label for="votedReviewsLimitSelect">Limit: </label>
+                <select id="votedReviewsLimitSelect">
+                    <option value="10" selected="selected">10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                </select>
+                <br>
+            </div>
+            <div id="userVotedReviewsList">
+                {{#each userVotedReviewsList}}
+                <article>
+                    <h2><a href="{{this.questionUrl}}">{{this.questionName}}</a></h2><br>
+                    <h3>{{this.answerContent}}</h3><br>
+                    <h4>{{this.reviewContent}}</h4>
+                </article>
+                {{/each}}
+            </div>
         </fieldset>
     </div>
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"

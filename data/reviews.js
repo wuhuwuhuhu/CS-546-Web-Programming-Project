@@ -91,6 +91,7 @@ let exportedMethods = {
     async removeReview(id, userId, answerId, questionId) {
         try {
             var ObjectIdExp = /^[0-9a-fA-F]{24}$/
+            const reviewsCollection = await reviews();
             if (!id || id == null || typeof id != 'string' || id.match(/^[ ]*$/) || !ObjectIdExp.test(id)) {
                 throw `id in /data/reviews.js/removeReview has error`
             }
@@ -122,6 +123,7 @@ let exportedMethods = {
             } else {
                 throw `did not find review by id ${id} in reviews/removeReview`
             }
+            console.log("successful delete review");
         } catch (error) {
             throw error
         }
@@ -185,21 +187,26 @@ let exportedMethods = {
         try {
             let voterArr = review.voteUp
             if (voterArr.indexOf(voterId) == -1) {
-                voterArr.push(voterId)
+                const addItTomArray = await reviewsCollection.updateOne({ _id: ObjectId(reviewId) },{$addToSet:{voteUp:voterId}})
+                if (addItTomArray.modifiedCount === 0) {
+                    throw `failed to update voteDown in user by adding voter in reviews.js/updateVoteUp`
+                }
                 //add voter id in user/votedForReview 
-                const voteInUser = await usrsCollection.updateOne({ _id: ObjectId(voterId) }, { $addToSet: { votedForReview: reviewId } })
+                const voteInUser = await usrsCollection.updateOne({ _id: ObjectId(voterId) }, { $addToSet: { votedForReviews: reviewId } })
                 if (voteInUser.modifiedCount === 0) {
                     throw `failed to update votedForReview in user by adding voter in reviews.js/updateVoteUp`
                 }
             } else {
-                voterArr.splice(voterArr.indexOf(voterId), 1)
+                const deleItFromArray = await reviewsCollection.updateOne({ _id: ObjectId(reviewId) },{$pull:{voteDown:voterId}})
+                if (deleItFromArray.modifiedCount === 0) {
+                    throw `failed to update voteDown in user by deleting voter in reviews.js/updateVoteUp`
+                }
                 //delete voter id in user/votedForReview 
-                const voteInUser = await usrsCollection.updateOne({ _id: ObjectId(voterId) }, { $pull: { votedForReview: reviewId } })
+                const voteInUser = await usrsCollection.updateOne({ _id: ObjectId(voterId) }, { $pull: { votedForReviews: reviewId } })
                 if (voteInUser.modifiedCount === 0) {
                     throw `failed to update votedForReview in user by deleting voter in reviews.js/updateVoteUp`
                 }
             }
-            await reviewsCollection.updateOne({ _id: ObjectId(reviewId) }, { $set: { 'voteUp': voterArr } });
             const newData = await this.getReviewById(reviewId)
             return newData
         } catch (error) {
@@ -215,6 +222,7 @@ let exportedMethods = {
      */
     async updateVoteDown(reviewId, voterId) {
         const reviewsCollection = await reviews();
+        const usrsCollection=await usrs()
         var ObjectIdExp = /^[0-9a-fA-F]{24}$/
         if (!reviewId || typeof reviewId != 'string' || reviewId.match(/^[ ]*$/) || !ObjectIdExp.test(reviewId)) {
             throw `reviewId in /data/reviews.js/updateVoteDown has error`
@@ -233,27 +241,86 @@ let exportedMethods = {
         }
         try {
             let voterArr = review.voteDown
+            console.log(voterArr);
             if (voterArr.indexOf(voterId) == -1) {
-                voterArr.push(voterId)
+                console.log("not in array");
+                const addItTomArray = await reviewsCollection.updateOne({ _id: ObjectId(reviewId) },{$addToSet:{voteDown:voterId}})
+                if (addItTomArray.modifiedCount === 0) {
+                    throw `failed to update voteDown in user by adding voter in reviews.js/updateVoteDown`
+                }
                 //add voter id in user/votedForReview 
-                const voteInUser = await usrsCollection.updateOne({ _id: ObjectId(voterId) }, { $addToSet: { votedForReview: reviewId } })
+                const voteInUser = await usrsCollection.updateOne({ _id: ObjectId(voterId) }, { $addToSet: { votedForReviews: reviewId } })
                 if (voteInUser.modifiedCount === 0) {
-                    throw `failed to update votedForReview in user by adding voter in reviews.js/votedForReview`
+                    throw `failed to update votedForReview in user by adding voter in reviews.js/updateVoteDown`
                 }
             } else {
-                voterArr.splice(voterArr.indexOf(voterId), 1)
+                console.log(" in array");
+                const deleItFromArray = await reviewsCollection.updateOne({ _id: ObjectId(reviewId) },{$pull:{voteDown:voterId}})
+                if (deleItFromArray.modifiedCount === 0) {
+                    throw `failed to update voteDown in user by deleting voter in reviews.js/updateVoteDown`
+                }
                 //delete voter id in user/votedForReview 
-                const voteInUser = await usrsCollection.updateOne({ _id: ObjectId(voterId) }, { $pull: { votedForReview: reviewId } })
+                const voteInUser = await usrsCollection.updateOne({ _id: ObjectId(voterId) }, { $pull: { votedForReviews: reviewId } })
                 if (voteInUser.modifiedCount === 0) {
                     throw `failed to update votedForReview in user by deleting voter in reviews.js/updateVoteDown`
                 }
             }
-            await reviewsCollection.updateOne({ _id: ObjectId(reviewId) }, { $set: { voteDown: voterArr } });
             const newData = await this.getReviewById(reviewId)
             return newData
         } catch (error) {
             throw error
         }
+    },
+
+    /**
+     * 
+     * @param {*} reviewList 
+     * @param {*} limit 
+     */
+    async sortReviewsByTime(reviewList,limit){
+        if(!reviewList) throw 'reviewList.js|sortReviewsByTime: reviewList does not exist'
+		if(!Array.isArray(reviewList) || reviewList.length === 0) throw 'reviews.js|sortReviewsByTime: input reviewList should be non-empty array'
+		if(typeof limit === 'undefined') throw 'reviews.js|sortReviewsByTime: limit number does not exist'
+        if(typeof limit !== 'number' ) throw 'reviews.js|sortReviewsByTime:limit is a number'
+        if(reviewList.length >=2){
+			reviewList.sort(function compare(a,b){
+				let x = new Date(a.recentUpdatedTime);
+				let y = new Date(b.recentUpdatedTime)
+				return y - x;
+			})
+			if(reviewList.length >= limit && limit >= 0){
+				let result = reviewList.slice(0,limit);
+				return result
+			}
+
+		}
+		return reviewList;
+    },
+
+    /**
+     * 
+     * @param {*} reviewList 
+     * @param {*} limit 
+     * return reviewlist from most upvoted-downvoted
+     */
+    async sortReviewsByVote(reviewList,limit){
+        if(!reviewList) throw 'reviews.js|sortReviewsByVote: reviewList does not exist'
+		if(!Array.isArray(reviewList) || reviewList.length === 0) throw 'reviews.js|sortReviewsByVote: input reviewList should be non-empty array'
+		if(typeof limit === 'undefined') throw 'reviews.js|sortReviewsByVote: limit number does not exist'
+        if(typeof limit !== 'number' ) throw 'reviews.js|sortReviewsByVote:limit is a number'
+        if(reviewList.length >=2){
+			reviewList.sort(function compare(a,b){
+				let x = a.voteUp.length-a.voteDown.length;
+				let y = b.voteUp.length-b.voteDown.length
+				return y - x;
+			})
+			if(reviewList.length >= limit && limit >= 0){
+				let result = reviewList.slice(0,limit);
+				return result
+			}
+
+		}
+		return reviewList;
     }
 };
 

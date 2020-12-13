@@ -9,7 +9,7 @@ async function myDBfunction(id) {
 	//check to make sure we have input at all
 	if (!id) throw 'Error: Id parameter must be supplied';
 	//check to make sure it's a string
-	if (typeof id !== 'string') throw "Error: Id must be a string";
+	if (typeof id !== 'string') throw "updateMethods|myDBfunction: id must be a string";
 
 	let { ObjectId } = require('mongodb')
 	let parsedId = ObjectId(id);
@@ -34,11 +34,9 @@ async function addAnswer2(id, answerId) {
 
 	const find = await userCollection.findOne({ _id: objectId });
 	if (find == null) throw 'questions.js|addAnswer2():user not found';
-	//change objectId to string id
-	const result = Object.assign({}, find);
-	result._id = find._id.toString();
 
-	return result;
+
+	return find;
 
 
 }
@@ -134,9 +132,8 @@ async function addVoteUpForAnswer(answerId, userId){
 	//return updated answer
 	const find = await answerCollection.findOne({_id:objectAnswerId})
 	if(find == null) throw 'questions.js|addVoteUpForAnswer():user not found'
-	let result = Object.assign({},find)
-	result._id = find._id.toString()
-	return result
+	
+	return find
 	
 }
 //addVoteDown for answer
@@ -160,9 +157,8 @@ async function addVoteDownForAnswer(answerId, userId){
 	//return updated answer
 	const find = await answerCollection.findOne({_id:objectAnswerId})
 	if(find == null) throw 'questions.js|addVoteDownForAnswer():user not found'
-	let result = Object.assign({},find)
-	result._id = find._id.toString()
-	return result
+	
+	return find
 	
 }
 
@@ -177,7 +173,7 @@ async function addVoteUpForReview(reviewId, userId){
 	try {
 		const voteUser = await this.updateUserVoteForReviews(reviewId.trim(),userId.trim())
 	} catch (error) {
-		if(error === -1) throw `updateMethods|addVoteUpForreview(): user ${userId} alreay voted for this review ${reviewId}`
+		if(error === -2) throw `updateMethods|addVoteUpForreview(): user ${userId} alreay voted for this review ${reviewId}`
 	}
 	const objectReviewId = await myDBfunction(reviewId)
 	const reviewCollection = await reviews();
@@ -203,7 +199,7 @@ async function addVoteDownForReview(reviewId, userId){
 	try {
 		const voteUser = await this.updateUserVoteForreviews(reviewId.trim(),userId.trim())
 	} catch (error) {
-		if(error === -1) throw `updateMethods|addVoteDownForreview(): user ${userId} alreay voted for this review ${reviewId}`
+		if(error === -2) throw `updateMethods|addVoteDownForreview(): user ${userId} alreay voted for this review ${reviewId}`
 	}
 	const objectReviewId = await myDBfunction(reviewId)
 	const reviewCollection = await reviews();

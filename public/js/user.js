@@ -7,15 +7,24 @@
     
 
     //init questions
-    const questionsDivList = $('#questionsList');
-    const LimitSelect = $('#LimitSelect');
-    const sortSelect = $('#sortSelect');
-    LimitSelect.change(init_questions);
-    sortSelect.change(init_questions);
+    const questionsDivList = $('#userQuestionsList');
+    const questionsLimitSelect = $('#questionsLimitSelect');
+    const questionsSortSelect = $('#questionsSortSelect');
+    questionsLimitSelect.change(init_questions);
+    questionsSortSelect.change(init_questions);
+
+    //init answers
+    const answersDivList = $('#userAnswersList');
+    const answersLimitSelect = $('#answersLimitSelect');
+    const answersSortSelect = $('#answersSortSelect');
+    answersLimitSelect.change(init_answers);
+    answersSortSelect.change(init_answers);
 
 
     init_page();
     init_questions();
+    init_answers();
+
     personalInfoChangePasswordButton.click(function(event){
         event.preventDefault();
         changePasswordDiv.show();
@@ -85,8 +94,8 @@
 
     function init_questions(limit = "10", sort = "date"){
 
-        limit = LimitSelect.find(":selected").text();
-        sort = sortSelect.find(":selected").text();
+        limit = questionsLimitSelect.find(":selected").text();
+        sort = questionsSortSelect.find(":selected").text();
         questionsDivList.empty();
         let targetUrl = `/user/getQuestions`;
         let requestConfig = {
@@ -129,7 +138,7 @@
             // questionsDivList.append($('<br>'));
             let questionTable = $(`
                 <table>
-                    <caption>Questions you answered</caption>         
+                    <caption>Questions you asked</caption>         
                 <tr>
                     <th>Question</th>
                     <th>Number of answers</th>
@@ -189,5 +198,99 @@
             } 
         });
     }
-    
+
+    function init_answers(limit = "10", sort = "date"){
+
+        limit = answersLimitSelect.find(":selected").text();
+        sort = answersSortSelect.find(":selected").text();
+        answersDivList.empty();
+        let targetUrl = `/user/getAnswers`;
+        let requestConfig = {
+            method: 'POST',
+            url: targetUrl,
+            contentType: 'application/json',
+            data: JSON.stringify({
+            limit: limit,
+            sort: sort
+        })
+        };
+        $.ajax(requestConfig).then(function (responseMessage) {
+            const userAnswersList = responseMessage.userAnswersList;
+
+            let answerTable = $(`
+                <table>
+                    <caption>Questions you answered</caption>         
+                <tr>
+                    <th>Question</th>
+                    <th>Your Answer</th>
+                    <th>Vote Up</th>
+                    <th>Vote Down</th>
+                    <th>Reviews</th>
+                    <th>Created at</th>
+                    <th>Delete the Answer?</th>
+                </tr>
+                </table>
+            `)
+            //add the answers list
+            for(let i =0; i < userAnswersList.length; i++)
+            {
+                let answer = userAnswersList[i];
+                let answerQuestionA = $(`<a class="answersListQuestion" href="${answer.questionUrl}">${answer.questionName}</a>`);
+                
+                let answerDelete = $(`<a href="" id="answer_delete_${answer.answerId}"></a>`);
+                answerDelete.text("delete");
+                answerDelete.click(deleteAnswer);
+                let answerQuestionATD = $(`<td></td>`);
+                answerQuestionATD.append(answerQuestionA);
+                let answerDeleteTD = $(`<td></td>`);
+                answerDeleteTD.append(answerDelete);
+
+                //generate reviews
+                let answerReviewsTD = $('<td></td>');
+                let AnswerReviewsUL = $('<ul></ul>');
+                for(let j = 0; j < answer["reviews"].length; j++ ){
+                    let reviewLI = $(`<li>${answer["reviews"][j]}</li>`);
+                    AnswerReviewsUL.append(reviewLI);
+                }
+                answerReviewsTD.append(AnswerReviewsUL);
+
+                //add table data to new row
+                let newTableRow = $(`<tr></tr>`);
+                newTableRow.append(answerQuestionATD);
+                newTableRow.append($(`<td><P>${answer["answerContent"]}</P></td>`));
+                newTableRow.append($(`<td><P>${answer["numberOfVoteUp"]}</P></td>`));
+                newTableRow.append($(`<td><P>${answer["numberOfVoteDown"]}</P></td>`));
+                newTableRow.append(answerReviewsTD);
+                newTableRow.append($(`<td><P>${answer["recentUpdatedTime"]}</P></td>`));
+                newTableRow.append(answerDeleteTD);
+                answerTable.append(newTableRow);
+            }
+            answersDivList.append(answerTable);
+            answersDivList.show();
+        });
+    }
+
+    function deleteAnswer(event){
+        event.preventDefault();
+        let id = event.target.id.split("_")[2];
+        let targetUrl = "/user/deleteAnswer";
+        let requestConfig = {
+            method: 'POST',
+            url: targetUrl,
+            contentType: 'application/json',
+            data: JSON.stringify({
+            answerId: id
+        })
+        };
+        $.ajax(requestConfig).then(function (responseMessage) {
+            if(responseMessage.status === true){
+                let answerDelete = $(`#answer_delete_${id}`);
+                answerDelete.removeAttr("href");
+                answerDelete.text("deleted");
+            }
+            else{
+                console.log("fail");
+            } 
+        });
+    }
 })(window.jQuery);

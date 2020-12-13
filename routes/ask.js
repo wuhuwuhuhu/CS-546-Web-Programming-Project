@@ -8,7 +8,7 @@ const systemConfigs = mongoCollections.systemConfigs;
 const questions = mongoCollections.questions;
 const xss = require('xss');
 //test mode setting, assign a dummy user
-const test = true;
+const test = false;
 
 let topics = []
 router.get('/', async (req, res) => {

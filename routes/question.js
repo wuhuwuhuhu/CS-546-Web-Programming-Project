@@ -29,7 +29,6 @@ router.get('/:id', async (req, res) => {
         let userId = req.session.user
         let id = req.params.id;
         const question = await questionsData.getQuestionById(id)
-        console.log(question);
         questionContent = question.content
         const answersId = question.answers
         let answersInQuestion = new Array()     //obj array 
@@ -53,7 +52,6 @@ router.get('/:id', async (req, res) => {
         }
         questionObj.questionId=id
         questionObj.answer=answersInQuestion
-        console.log(answersInQuestion.length);
         res.render('questionDetails/questionInfo.handlebars', {
             userId: userId,
             questionId:id,

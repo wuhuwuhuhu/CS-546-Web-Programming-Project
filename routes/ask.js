@@ -4,7 +4,7 @@ const data = require('../data');
 const questionsData = data.questions;
 const session = require('express-session');
 const mongoCollections = require('../config/mongoCollections');
-const systemConfigs = mongoCollections.systemConfigs;
+const systemConfigs = data.systemConfigs;
 const questions = mongoCollections.questions;
 const xss = require('xss');
 //test mode setting, assign a dummy user
@@ -12,13 +12,15 @@ const test = false;
 
 let topics = []
 router.get('/', async (req, res) => {
-	const topicCollection = await systemConfigs();
-	const find = await topicCollection.findOne({ topics: { $exists: true } })
-	if (find == null) {
-		res.status(404).json('topics initial wrong.')
+	try {
+		topics = await systemConfigs.getTopics()
+		res.render('ask/ask', { topic: topics });
+	} catch (error) {
+		const errorMsg = "Page inital wrong, try again later.";
+		errors.push(errorMsg);
+		res.render('ask/ask', { errors: errors, topic: [], question: ''});
 	}
-	topics = find.topics;
-	res.render('ask/ask', { topic: topics });
+	
 
 })
 
@@ -31,35 +33,47 @@ router.post('/', async (req, res) => {
 		errors.push(errorMsg);
 
 	}
-	//------Test Code ------------
-	if (test) {
-		req.session.user = Object.assign({}, { _id: '5fd4fdf681b3bb139040e42f', userName: "TestUser" });
+	if (!req.body.question) {
+		const errorMsg = 'You need to ask something';
+		errors.push(errorMsg);
 	}
-	//-----------------------------
+	if (!req.body.topic) {
+		const errorMsg = 'You need to select a topic';
+		errors.push(errorMsg);
+	}
 	if (!req.session.user) {
 		//if user not exist, redirect to login page
 		res.status(403).redirect('/login')
 		return;
 	}
-	let questioner = xss(req.session.user._id);
-	let content = xss(req.body.question);
-	if (!content) {
-		const errorMsg = 'You need to ask something';
-		errors.push(errorMsg);
+	//------Test Code ------------
+	if (test) {
+		req.session.user = Object.assign({}, { _id: '5fd4fdf681b3bb139040e42f', userName: "TestUser" });
 	}
+	//-----------------------------
 
-	//check topic selection
+	
+	let questioner = xss(req.session.user);
+
+	let content = xss(req.body.question);
 	let topic = xss(req.body.topic);
-	if (!topic) {
-		const errorMsg = 'You need to select a topic';
-		errors.push(errorMsg);
+
+	//const topicCollection = await systemConfigs();
+	//const findTopic = await topicCollection.findOne({ topics: { $exists: true } })
+	let topics = []
+	try {
+		topics = await systemConfigs.getTopics()
+		if (topics == null) {
+			res.status(404).json('topics initial wrong.')
+			return
+		}
+	} catch (error) {
+		const errorMsg = "Get topics wrong."
+		errors.push(errorMsg)
+		res.render('ask/ask', { errors: errors, topic: topics, question: content });
+		return;
+		
 	}
-	const topicCollection = await systemConfigs();
-	const findTopic = await topicCollection.findOne({ topics: { $exists: true } })
-	if (findTopic == null) {
-		res.status(404).json('topics initial wrong.')
-	}
-	topics = findTopic.topics;
 
 	//check whether QuestionName duplicated
 	const questionCollection = await questions();
@@ -79,12 +93,10 @@ router.post('/', async (req, res) => {
 	}
 
 	try {
-		console.log(content)
-		console.log(topic)
-		console.log(questioner)
+		
 		const newQuestion = await questionsData.addQuestion(content, topic, questioner);
 		res.render('ask/askSuccess', { questionId: newQuestion._id.toString() });
-		console.log(newQuestion._id.toString())
+	//	console.log(newQuestion._id.toString())
 	} catch (error) {
 	
 		const errorMsg = "Ask question failed."

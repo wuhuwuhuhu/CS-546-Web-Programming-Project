@@ -6,7 +6,14 @@ const { getAllUserVoteList } = require('../data/vote');
 const voteData = require('../data/vote')
 
 router.get('/', function(req,res)  {
-    res.render("main/mainpage");
+    console.log("12312")
+    if(req.session.user){
+        res.render("main/mainpage");
+    }else{
+        res.redirect("/login")
+    }
+   
+    
     return;
 });
 router.post('/search', async(req,res)=>{

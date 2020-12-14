@@ -130,7 +130,6 @@ let exportedMethods = {
             } else {
                 throw `did not find review by id ${id} in reviews/removeReview`
             }
-            console.log("successful delete review");
         } catch (error) {
             throw error
         }
@@ -251,15 +250,12 @@ let exportedMethods = {
             throw `didn't find review by id : ${reviewId}`
         }
         const voter = await usersMethods.getUserById(voterId)
-        console.log(voter);
         if (voter == null) {
             throw `didn't find user by id : ${voterId}`
         }
         try {
             let voterArr = review.voteDown
-            console.log(voterArr);
             if (voterArr.indexOf(voterId) == -1) {
-                console.log("not in array");
                 const addItTomArray = await reviewsCollection.updateOne({ _id: ObjectId(reviewId) },{$addToSet:{voteDown:voterId}})
                 if (addItTomArray.modifiedCount === 0) {
                     throw `failed to update voteDown in user by adding voter in reviews.js/updateVoteDown`
@@ -279,7 +275,6 @@ let exportedMethods = {
                     throw `failed to update votedForReview in user by adding voter in reviews.js/updateVoteDown`
                 }
             } else {
-                console.log(" in array");
                 const deleItFromArray = await reviewsCollection.updateOne({ _id: ObjectId(reviewId) },{$pull:{voteDown:voterId}})
                 if (deleItFromArray.modifiedCount === 0) {
                     throw `failed to update voteDown in user by deleting voter in reviews.js/updateVoteDown`

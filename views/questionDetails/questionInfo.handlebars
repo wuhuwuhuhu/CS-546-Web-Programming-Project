@@ -10,23 +10,24 @@
 
 <body>
 
-    <div class="container">
+    <div>
         <div style="display: none;">
             <p id="quesId">{{questionId}}</p>
         </div>
+        <div id='questionArea' class="col-md-3">
+            <h1>
+                {{questionText}}
+            </h1>
+            <form>
+                <textarea class="form-control" id="answerContent" rows="8" style="min-width: 400%"
+                    placeholder="Welcome to share your idea"></textarea>
+                <button type="button" id="answerSubmit" class="btn btn-default">submit</button>
+                <div id="addAnswerSuccessful">Successful </div>
+                <div id="addAnswerFailed">Failed </div>
+            </form>
+        </div>
         <div class="row">
-            <div id='questionArea' class="col-md-3">
-                <h1>
-                    {{questionText}}
-                </h1>
-                <form>
-                    <textarea class="form-control" id="answerContent" rows="16" style="min-width: 90%"
-                        placeholder="Welcome to share your idea"></textarea>
-                    <button type="button" id="answerSubmit" class="btn btn-default">submit</button>
-                    <div id="addAnswerSuccessful">Successful </div>
-                    <div id="addAnswerFailed">Failed </div>
-                </form>
-            </div>
+
             <div id='questionInfo' class="col-md-9">
                 {{#if answersInQuestion.length}}
                 <table class="table" id="mainTable">
@@ -34,9 +35,11 @@
                     <thead>
                         <tr>
                             <th>{{answersInQuestion.length}} answers
-                                <button style="margin:5px" class="btn btn-primary pull-right">sorted by most
+                                <button style="margin:5px" class="btn btn-primary pull-right" id="sortByrecent">sorted
+                                    by most
                                     recent</button>
-                                <button style="margin:5px" class="btn btn-primary pull-right">sorted by most
+                                <button style="margin:5px" class="btn btn-primary pull-right" id="shortByPopular">sorted
+                                    by most
                                     popular</button>
                             </th>
                         </tr>
@@ -57,10 +60,11 @@
                                                 reviews</button>
                                         </td>
                                         <td>
-                                            <button class="btn" data-toggle="modal" data-target="#myReview{{this.answerId}}"
-                                                type="button">Review answer</button>
-                                            <div class="modal" id="myReview{{this.answerId}}" tabindex="-1" role="dialog"
-                                                aria-labelledby="mySmallModalLabel" aria-hidden="true">
+                                            <button class="btn" data-toggle="modal"
+                                                data-target="#myReview{{this.answerId}}" type="button">Review
+                                                answer</button>
+                                            <div class="modal" id="myReview{{this.answerId}}" tabindex="-1"
+                                                role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
                                                         <form>
@@ -80,8 +84,8 @@
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn btn-default"
                                                                     data-dismiss="modal">Close</button>
-                                                                <button type="button"
-                                                                    class="btn btn-primary">Save</button>
+                                                                <button type="button" class="btn btn-primary"
+                                                                    id="submitReview{{this.answerId}}">Save</button>
                                                             </div>
                                                         </form>
                                                     </div>
@@ -93,14 +97,14 @@
                                         </td>
                                         <td class="questionInnerTableTr-2">
                                             {{#if voteUpJudge}}
-                                            <button class="buttonVoted">Vote Up / {{this.voteUpNumber}}</button>
+                                            <button class="answerButtonVoted">Vote Up / {{this.voteUpNumber}}</button>
                                             {{else}}
                                             <button>Vote Up / {{this.voteUpNumber}}</button>
                                             {{/if}}
                                             {{#if voteDownJudge}}
-                                            <button class="buttonVoted">Vote Down / {{this.voteDownNumber}}</button>
+                                            <button class="answerButtonUnVoted">Vote Down / {{this.voteDownNumber}}</button>
                                             {{else}}
-                                            <button>Vote Up / {{this.voteUpNumber}}</button>
+                                            <button>Vote Down / {{this.voteUpNumber}}</button>
                                             {{/if}}
                                         </td>
                                     </tr>
@@ -123,14 +127,14 @@
                                             </td>
                                             <td>
                                                 {{#if voteUpJudge}}
-                                                <button class="buttonVoted">Vote Up / {{this.voteUpNumber}}</button>
+                                                <button class="reviewButtonVoted">Vote Up / {{this.voteUpNumber}}</button>
                                                 {{else}}
                                                 <button>Vote Up / {{this.voteUpNumber}}</button>
                                                 {{/if}}
                                                 {{#if voteDownJudge}}
-                                                <button class="buttonVoted">Vote Down / {{this.voteDownNumber}}</button>
+                                                <button class="reviewButtonUnVoted">Vote Down / {{this.voteDownNumber}}</button>
                                                 {{else}}
-                                                <button>Vote Up / {{this.voteUpNumber}}</button>
+                                                <button>Vote Down / {{this.voteUpNumber}}</button>
                                                 {{/if}}
                                             </td>
                                         </tr>

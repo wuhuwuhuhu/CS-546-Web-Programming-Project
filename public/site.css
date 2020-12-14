@@ -23,6 +23,18 @@
     width: 200px;
 }
 
-.buttonVoted{
+.answerButtonVoted{
     color: blue;
+}
+
+.reviewButtonVoted{
+    color: blue;
+}
+
+.reviewButtonUnVoted{
+    color: #000;
+}
+
+.answerButtonUnVoted{
+    color: #000;
 }

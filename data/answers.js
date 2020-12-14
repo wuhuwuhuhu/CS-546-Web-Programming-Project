@@ -63,7 +63,6 @@ let exportedMethods = {
                 throw 'Insert failed!';
             }
             const newId = insertInfor.insertedId.toString();
-            // console.log(newId);
             // add answer to question
             const answerAddedInQus = await questionsMethods.addAnswer(questionId, newId)
             if (answerAddedInQus == null) {
@@ -132,7 +131,6 @@ let exportedMethods = {
             if (curRewDeletedInQus == null) {
                 throw `Failed to update question by deleting review by id ${rewId} in answer/removeAnswer`
             }
-            console.log("successful delete answer");
         } catch (error) {
             throw error
         }

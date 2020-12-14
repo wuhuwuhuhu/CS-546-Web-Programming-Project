@@ -41,6 +41,7 @@ router.get('/:id', async (req, res) => {
             for (let j = 0; j < curReviewIdArray.length; j++) {
                 let curReviewId = curReviewIdArray[j];
                 let curReview = await reviewDate.getReviewById(curReviewId)
+                curReview.reviewId=curReviewId
                 curReview.recentUpdatedTime = await answerDate.transferData(curReview.recentUpdatedTime)
                 curReview.voteUpNumber = curReview.voteUp.length
                 curReview.voteDownNumber = curReview.voteDown.length
@@ -150,6 +151,7 @@ async function transferData(questionId,req, res,userId) {
         for (let j = 0; j < curReviewIdArray.length; j++) {
             let curReviewId = curReviewIdArray[j];
             let curReview = await reviewDate.getReviewById(curReviewId)
+            curReview.reviewId=curReviewId
             curReview.recentUpdatedTime = await answerDate.transferData(curReview.recentUpdatedTime)
             curReview.voteUpNumber = curReview.voteUp.length
             curReview.voteDownNumber = curReview.voteDown.length

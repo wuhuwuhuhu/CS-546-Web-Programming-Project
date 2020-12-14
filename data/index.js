@@ -5,6 +5,7 @@ const reviewData = require('./reviews');
 const systemConfigData = require('./systemConfigs');
 const updateMethodsData = require('./updateMethods')
 const email = require('./email');
+const voteData = require('./vote')
 module.exports = {
   users: userData,
   questions: questionata,
@@ -12,5 +13,6 @@ module.exports = {
   reviews: reviewData,
   systemConfigs: systemConfigData,
   updateMethods:updateMethodsData,
-  email: email
+  email: email,
+  voteData: voteData
 };

@@ -11,11 +11,10 @@ const usersData = require('../data/users');
 const questionsData = require('../data/questions');
 const reviewsData = require("../data/reviews");
 const answersData = require("../data/answers");
+const e = require('express');
 
 router.get('/', async(req,res) => {
-    const userid = "5fd2bcbadc020240556f3a8e";
-    //const userid = req.session.user._id
-
+    const userid = xss(req.session.user)
     let user = await usersData.getUserById(userid);
     let userName = user["userName"];
     let userEmail = user["email"];
@@ -74,7 +73,9 @@ router.get('/', async(req,res) => {
     for(let i = 0; i < userVotedForAnswers.length; i++)
     {
         let answer = await answersData.getAnswerById(userVotedForAnswers[i]);
+        if (answer === null) continue;
         let question = await questionsData.getQuestionById(answer["questionId"]);
+        if (question === null) continue;
         let questionName = question["content"];
         let questionUrl = `questions/${question["_id"]}`;
         let answerContent = answer["content"];
@@ -88,8 +89,11 @@ router.get('/', async(req,res) => {
     let userVotedReviewsList = [];
     for(let i = 0; i < userVotedForReviews.length; i++)
     {   let review = await reviewsData.getReviewById(userVotedForReviews[i]);
+        if(review === null) continue;
         let answer = await answersData.getAnswerById(review["answerId"]);
+        if(answer === null) continue;
         let question = await questionsData.getQuestionById(answer["questionId"]);
+        if(question === null) continue;
         let questionName = question["content"];
         let questionUrl = `questions/${question["_id"]}`;
         let answerContent = answer["content"];
@@ -119,7 +123,7 @@ router.get('/', async(req,res) => {
 router.post('/changePassword', async(req,res) => {
     let newPassword = xss(req.body.newPassword);
     let oldPassword = xss(req.body.oldPassword);
-    const user = 
+    // const user = 
     res.json ({
         status: false,
         message: "没连user数据呢"
@@ -129,10 +133,14 @@ router.post('/changePassword', async(req,res) => {
 router.post('/getQuestions', async(req,res) => {
     let limit = parseInt(xss(req.body.limit));
     let sort = xss(req.body.sort);
-
-    const userid = "5fd2b0e9f293b535faad70ea";
-    //const userid = req.session.user._id
-    const user = await usersData.getUserById(userid);
+    let user;
+    const userid = xss(req.session.user)
+    try {
+        user = await usersData.getUserById(userid);
+    } catch (error) {
+        console.log(user);
+    }
+    
     let userQuestions = user["questions"];
     let userQuestionsObjectsList = [];
     let userQuestionsList = [];
@@ -171,7 +179,14 @@ router.post('/getQuestions', async(req,res) => {
 });
 router.post('/deleteQuestion', async(req,res) => {
     let id = xss(req.body.questionId);
-    console.log(`delete ${id}`);
+    let deletedStatus; 
+    try {
+        deletedStatus = await questionsData.removeQuestion(id);
+    } catch (error) {
+        console.log(error);
+    }
+   
+    console.log(`delete ${deletedStatus}`);
     res.json({
         status: true
     });
@@ -181,8 +196,7 @@ router.post('/getAnswers', async(req,res) => {
     let limit = parseInt(xss(req.body.limit));
     let sort = xss(req.body.sort);
 
-    const userid = "5fd2b0e9f293b535faad70ea";
-    //const userid = req.session.user._id
+    const userid = xss(req.session.user)
     const user = await usersData.getUserById(userid);
     let userAnswers = user["answers"];
     let userAnswersObjectsList = [];
@@ -231,26 +245,45 @@ router.post('/getAnswers', async(req,res) => {
 
 });
 router.post('/deleteAnswer', async(req,res) => {
-    let id = xss(req.body.answerId);
-    console.log(`delete ${id}`);
+    const id = xss(req.body.answerId);
+    let deletedStatus;
+    let answer;
+    try {
+        answer = await answersData.getAnswerById(id);
+    } catch (error) {
+        console.log(error);
+    }
+    
+    try {
+        deletedStatus = await answersData.removeAnswer(id, answer["answerer"], answer["questionId"]);
+    } catch (error) {
+        console.log(error);
+    }
+
     res.json({
         status: true
     });
 });
 
 router.post('/getReviews', async(req,res) => {
-    let limit = parseInt(xss(req.body.limit));
-    let sort = xss(req.body.sort);
-
-    const userid = "5fd2b0e9f293b535faad70ea";
-    //const userid = req.session.user._id
-    const user = await usersData.getUserById(userid);
+    const limit = parseInt(xss(req.body.limit));
+    const sort = xss(req.body.sort);
+    const userid = xss(req.session.user)
+    
+    let user;
+    try {
+        user = await usersData.getUserById(userid);
+    } catch (error) {
+        console.log(error);
+    }
+    
     let userReviews = user["reviews"];
     let userReviewsObjectsList = [];
     let userReviewsList = [];
     for(let i = 0; i < userReviews.length; i++)
     {
         let review = await reviewsData.getReviewById(userReviews[i]);
+        if(review === null) continue;
         userReviewsObjectsList.push(review);
     }
     if(sort === "Voted score from high to low"){
@@ -289,8 +322,27 @@ router.post('/getReviews', async(req,res) => {
 
 });
 router.post('/deleteReview', async(req,res) => {
-    let id = xss(req.body.reviewId);
-    console.log(`delete ${id}`);
+    const id = xss(req.body.reviewId);
+    let deletedStatus;
+    let review;
+    let answer;
+    try {
+        review = await reviewsData.getReviewById(id);
+    } catch (error) {
+        console.log(error);
+    }
+
+    try {
+        answer = await answersData.getAnswerById(review["answerId"]);
+    } catch (error) {
+        console.log(error);
+    }
+    
+    try {
+        deletedStatus = await reviewsData.removeReview(id, review["reviewer"], answer["_id"].toString(), answer["questionId"]);
+    } catch (error) {
+        console.log(error);
+    }
     res.json({
         status: true
     });
@@ -300,15 +352,21 @@ router.post('/deleteReview', async(req,res) => {
 router.post('/getVotedAnswers', async(req,res) => {
     let limit = parseInt(xss(req.body.limit));
     let sort = xss(req.body.sort);
-    const userid = "5fd2b0e9f293b535faad70ea";
-    //const userid = req.session.user._id
-    const user = await usersData.getUserById(userid);
+    const userid = xss(req.session.user)
+    let user;
+    try {
+        user = await usersData.getUserById(userid);
+    } catch (error) {
+        console.log(error);
+    }
+    
     let userVotedAnswers = user["votedForAnswers"];
     let userVotedAnswersObjectsList = [];
     let userVotedAnswersList = [];
     for(let i = 0; i < userVotedAnswers.length; i++)
     {
         let votedAnswer = await answersData.getAnswerById(userVotedAnswers[i]);
+        if(votedAnswer === null) continue;
         userVotedAnswersObjectsList.push(votedAnswer);
     }
     //Voted score of the answer from high to low
@@ -353,9 +411,26 @@ router.post('/getVotedAnswers', async(req,res) => {
 
 });
 router.post('/updateVoteAnswer', async(req,res) => {
-    let answerId = xss(req.body.answerId);
-    let userId = xss(req.body.userId);
-    console.log(`update userId: ${userId} answerId: ${answerId}`);
+    const answerId = xss(req.body.answerId);
+    const userId = xss(req.body.userId);
+    const goal = xss(req.body.goal);
+
+    let updatedStatus 
+    if(goal === "voteUp"){
+        try {
+            updatedStatus= await answersData.updateVoteUp(answerId, userId);
+        } catch (error) {
+            console.log(error);
+        }
+        
+    }else{
+        try {
+            updatedStatus= await answersData.updateVoteDown(answerId, userId);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     res.json({
         status: true
     });
@@ -365,8 +440,8 @@ router.post('/updateVoteAnswer', async(req,res) => {
 router.post('/getVotedReviews', async(req,res) => {
     let limit = parseInt(xss(req.body.limit));
     let sort = xss(req.body.sort);
-    const userid = "5fd2b0e9f293b535faad70ea";
-    //const userid = req.session.user._id
+
+    const userid = xss(req.session.user)
     const user = await usersData.getUserById(userid);
     let userVotedReviews = user["votedForReviews"];
     let userVotedReviewsObjectsList = [];
@@ -374,6 +449,7 @@ router.post('/getVotedReviews', async(req,res) => {
     for(let i = 0; i < userVotedReviews.length; i++)
     {
         let votedReview = await reviewsData.getReviewById(userVotedReviews[i]);
+        if(votedReview === null) continue;
         userVotedReviewsObjectsList.push(votedReview);
     }
     //Voted score of the review from high to low
@@ -420,11 +496,53 @@ router.post('/getVotedReviews', async(req,res) => {
 
 });
 router.post('/updateVoteReview', async(req,res) => {
-    let reviewId = xss(req.body.reviewId);
-    let userId = xss(req.body.userId);
-    console.log(`update userId: ${userId} reviewId: ${reviewId}`);
+    const reviewId = xss(req.body.reviewId);
+    const userId = xss(req.body.userId);
+    const goal = xss(req.body.goal);
+
+    let updatedStatus 
+    if(goal === "voteUp"){
+        try {
+            updatedStatus= await reviewsData.updateVoteUp(reviewId, userId);
+        } catch (error) {
+            console.log(error);
+        }
+        
+    }else{
+        try {
+            updatedStatus= await reviewsData.updateVoteDown(reviewId, userId);
+        } catch (error) {
+            console.log(error);
+        }
+    }
     res.json({
         status: true
+    });
+});
+
+router.get('/getUserStatus', async(req,res) => {
+    const userId = xss(req.session.user);
+    let user;
+    if(userId === undefined || userId == ''){
+        res.json({
+            status: false
+        });
+        return;
+    }
+    try {
+        user = await usersData.getUserById(userId);
+    } catch (error) {
+        res.json({
+            status: false
+        });
+        console.log(error);
+        return;
+    }
+   
+
+    res.json({
+        status: true,
+        userName: user["userName"]
     });
 });
 module.exports = router;

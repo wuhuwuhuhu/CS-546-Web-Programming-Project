@@ -64,7 +64,7 @@ let exportedMethods = {
             const newReview = {
                 content: content,
                 recentUpdatedTime: realDate,
-                Reviewer: reviewer,
+                reviewer: reviewer,
                 answerId: answerId,
                 voteUp: voteUpArr,
                 voteDown: voteDownArr

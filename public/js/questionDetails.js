@@ -12,10 +12,10 @@
     addAnswerFailed.hide()
 
     $('.ReviewNumberShowButton').click(function () {
-        var a=$(this).attr("id");
-        console.log(typeof(a));
-        a="ReviewNumberIdShow"+a.replace("ReviewNumberId","")
-        $("#"+a).toggle()
+        var a = $(this).attr("id");
+        console.log(typeof (a));
+        a = "ReviewNumberIdShow" + a.replace("ReviewNumberId", "")
+        $("#" + a).toggle()
     });
 
     answerSubmit.click(function (event) {
@@ -39,7 +39,8 @@
                 addAnswerSuccessful.show()
                 addAnswerSuccessful.delay(3000).hide(0);
                 mainTable.empty()
-                // const newDataList=responseMessage
+                const newAnswerList = responseMessage.newAnswerList
+                AnalysAnswerListToHTML(newAnswerList)
             }
             else {
                 addAnswerFailed.show()
@@ -47,6 +48,38 @@
             }
         });
     });
+
+
+    function AnalysAnswerListToHTML(newAnswerList) {
+        const tableCaption = " <caption>Show your ideas</caption>"
+        mainTable.append(tableCaption)
+        let listLen = newAnswerList.length
+        var tableThead = "<thead> <tr><th>" + listLen + " answers<button style=\"margin:5px\" class=\"btn btn-primary pull-right\">sorted by most recent</button><button style=\"margin:5px\" class=\"btn btn-primary pull-right\">sorted by most popular</button></th> </tr> </thead>"
+        mainTable.append(tableThead)
+        var tableBody;
+
+        mainTable.append("<tbody>")
+        for (let index = 0; index < newAnswerList.length; index++) {
+            const curAnswer = newAnswerList[index];
+            //sub tables
+            var subTable="<tr><td><table class=\"questionInnerTable\">"
+            // subTable+="<tr>"
+            const curAnswerContent = curAnswer.content
+            // subTable=" <td class=\"questionInnerTableTr-1\"><p class=\"text-primary\">"+curAnswerContent+"</p></td>"
+        //     const reviewList = curAnswer.reviews
+        //     // for (let j = 0; j < curAnswer.length; j++) {
+        //     //     const curReview = curAnswer[j];
+
+        //     // }
+        //     subTable+"</tr>"
+        //     mainTable.append(subTable)
+            subTable=subTable+"</tr></td></tr>"
+            mainTable.append(subTable)
+        }
+
+        mainTable.append("</tbody>")
+
+    }
 
     hidTest.click(function (event) {
         let va = hidTest.find(":selected").text();

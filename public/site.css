@@ -1,0 +1,28 @@
+.questionInnerTable{
+    width: 1000px;
+}
+
+.questionInnerTableTr-1{
+    width: 500px;
+}
+.questionInnerTableTr-2{
+    width: 220;
+}
+
+.questionTr-1 {
+    left: 10%;
+}
+
+.questionReviews{
+    left: 50px;
+    color: blue;
+}
+
+.buttonRight{
+    right: 50px;
+    width: 200px;
+}
+
+.buttonVoted{
+    color: blue;
+}

@@ -68,8 +68,8 @@
            
             console.log("-------addd")
             if (!email) throw new Error('You must provide an email');
-            if (!hashedPassword) throw new Error('You must provide a hashed password');
-            if (!userName) throw new Error('You must provide a userNme');
+            if (!hashedPassword) throw new Error('You must provide a password');
+            if (!userName) throw new Error('You must provide a userName');
             if (typeof email !== 'string') throw new TypeError('email must be a string');
             if (typeof hashedPassword !== 'string') throw new TypeError('hashedPassword must be a string');
             if (typeof userName !== 'string') throw new TypeError('userName must be a string');

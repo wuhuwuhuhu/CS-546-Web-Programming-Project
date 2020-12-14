@@ -1,8 +1,13 @@
 (function ($) {
+    //password elements
     const changePasswordDiv = $('#changePassword');
     const changePasswordFormSubmitButton = $('#changePasswordFormSubmitButton');
     const changePasswordFormStatus = $('#changePasswordFormStatus');
     const personalInfoChangePasswordButton = $('#personalInfoChangePasswordButton')
+    const changePasswordFormOldPassword = $('#changePasswordFormOldPassword');
+    const changePasswordFormNewPassword = $('#changePasswordFormNewPassword');
+    const changePasswordFormNewPasswordCheck = $('#changePasswordFormNewPasswordCheck');
+
     //init
     
 
@@ -50,28 +55,64 @@
     init_votedAnswers();
     init_votedReviews();
 
+    //bind buttons
+
     personalInfoChangePasswordButton.click(function(event){
         event.preventDefault();
         changePasswordDiv.show();
         personalInfoChangePasswordButton.hide();
     })
 
+
     changePasswordFormSubmitButton.click(function(event){
         event.preventDefault();
         try {
-            checkPassword($('#changePasswordFormOldPassword').val(), $('#changePasswordFormNewPassword').val(), $('#changePasswordFormNewPasswordCheck').val());
+            checkPassword(changePasswordFormOldPassword.val(), changePasswordFormNewPassword.val(), changePasswordFormNewPasswordCheck.val());
         } catch (error) {
             changePasswordFormStatus.html(`${error}`);
         }
-        changePasswordFormStatus.addClass("warning");
         changePasswordFormStatus.show();
     })
 
+    changePasswordFormOldPassword.focusout(function() {
+        try {
+            checkPasswordLegal("oldPassword", changePasswordFormOldPassword.val());
+        } catch (error) {
+            changePasswordFormStatus.html(`${error}`);
+            changePasswordFormStatus.show();
+            return;
+        }
+        changePasswordFormStatus.hide();
+            
+            
+    });
+    changePasswordFormNewPassword.focusout(function() {
+        try {
+            checkPasswordLegal("newPassword", changePasswordFormNewPassword.val());
+        } catch (error) {
+            changePasswordFormStatus.html(`${error}`);
+            changePasswordFormStatus.show();
+            return;
+        }
+        changePasswordFormStatus.hide();
+
+    });
+    changePasswordFormNewPasswordCheck.focusout(function() {
+        try {
+            checkPasswordLegal("the second new password", changePasswordFormNewPasswordCheck.val());
+        } catch (error) {
+            changePasswordFormStatus.html(`${error}`);
+            changePasswordFormStatus.show();
+            return;
+        }
+        changePasswordFormStatus.hide();
+
+    });
 
 
 
  
-
+    //functions
     function init_page(){
         changePasswordDiv.hide();
         changePasswordFormStatus.hide();
@@ -111,11 +152,12 @@
         });
 
 
-        function checkPasswordLegal(variabName, password){
-            if (typeof password !== 'string') throw (`${variabName} must be a string`);
-            if (password.trim().length < 6 ) throw (`the length of ${variabName} must be at least 6`);
+    }
 
-        }
+    function checkPasswordLegal(variabName, password){
+        if (typeof password !== 'string') throw (`${variabName} must be a string`);
+        if (password.trim().length < 6 ) throw (`the length of ${variabName} must be at least 6`);
+
     }
 
     function init_questions(limit = "10", sort = "date"){
@@ -163,7 +205,7 @@
             // questionsDivList.append(limitSelect);
             // questionsDivList.append($('<br>'));
             let questionTable = $(`
-                <table>
+                <table class="table table-bordered table-hover">
                     <caption>Questions you asked</caption>         
                 <tr>
                     <th>Question</th>
@@ -249,7 +291,7 @@
             const userAnswersList = responseMessage.userAnswersList;
 
             let answerTable = $(`
-                <table>
+                <table class="table table-bordered table-hover">
                     <caption>Questions you answered</caption>         
                 <tr>
                     <th>Question</th>
@@ -349,7 +391,7 @@
             const userReviewsList = responseMessage.userReviewsList;
 
             let reviewTable = $(`
-                <table>
+                <table class="table table-bordered table-hover">
                     <caption>Answers you reviewed</caption>         
                 <tr>
                     <th>Question</th>
@@ -437,7 +479,7 @@ function init_votedAnswers(limit = "10", sort = "date"){
         const userVotedAnswersList = responseMessage.userVotedAnswersList;
 
         let votedAnswerTable = $(`
-            <table>
+            <table class="table table-bordered table-hover">
                 <caption>Answers you voted</caption>         
             <tr>
                 <th>Question</th>
@@ -480,6 +522,7 @@ function init_votedAnswers(limit = "10", sort = "date"){
             votedAnswerQuestionATD.append(votedAnswerQuestionA);
             let votedAnswerUpdateTD = $(`<td></td>`);
             votedAnswerUpdateTD.append(votedAnswerVoteUp);
+            votedAnswerUpdateTD.append($('<br>'));
             votedAnswerUpdateTD.append(votedAnswerVoteDown);
 
             //add table data to new row
@@ -491,6 +534,12 @@ function init_votedAnswers(limit = "10", sort = "date"){
             newTableRow.append($(`<td><P>${votedAnswer["numberOfVoteDown"]}</P></td>`));
             newTableRow.append($(`<td><P>${votedAnswer["recentUpdatedTime"]}</P></td>`));
             newTableRow.append(votedAnswerUpdateTD);
+            if(votedAnswer["IsVoteUp"]){
+                newTableRow.attr("class","success");
+            }
+            else{
+                newTableRow.attr("class","danger");
+            }
             votedAnswerTable.append(newTableRow);
         }
         votedAnswersDivList.append(votedAnswerTable);
@@ -537,6 +586,7 @@ function updateVotedAnswer(event){
                 originVoteA.attr("href", "");
                 originVoteA.removeClass("deactive");
                 originVoteA.text(" Vote Down");
+                desVoteA.parent().parent().attr("class","success");
             }else{
                 desVoteA.removeAttr("href");
                 desVoteA.addClass("deactive")
@@ -544,6 +594,7 @@ function updateVotedAnswer(event){
                 originVoteA.attr("href", "");
                 originVoteA.removeClass("deactive");
                 originVoteA.text(" Vote Up");
+                desVoteA.parent().parent().attr("class","danger");
             }
 
         }
@@ -573,7 +624,7 @@ function init_votedReviews(limit = "10", sort = "date"){
         const userVotedReviewsList = responseMessage.userVotedReviewsList;
 
         let votedReviewTable = $(`
-            <table>
+            <table class="table table-bordered table-hover">
                 <caption>Reviews you voted</caption>         
             <tr>
                 <th>Question</th>
@@ -598,7 +649,8 @@ function init_votedReviews(limit = "10", sort = "date"){
 
             let votedReviewVoteDown = $(`<a href="" id="votedReview_voteDown_votedReviewId_${votedReview.votedReviewId}_VotedReviewUserId_${votedReview.VotedReviewUserId}"></a>`);
             votedReviewVoteDown.text(" Vote Down ");
-
+            votedReviewVoteUp.addClass("vote");
+            votedReviewVoteDown.addClass("vote");
             if(votedReview["IsVoteUp"]){
                 votedReviewVoteUp.text(" Voted Up ");
                 votedReviewVoteUp.removeAttr("href");
@@ -617,6 +669,7 @@ function init_votedReviews(limit = "10", sort = "date"){
             votedReviewQuestionATD.append(votedReviewQuestionA);
             let votedReviewUpdateTD = $(`<td></td>`);
             votedReviewUpdateTD.append(votedReviewVoteUp);
+            votedReviewUpdateTD.append($('<br>'));
             votedReviewUpdateTD.append(votedReviewVoteDown);
 
             //add table data to new row
@@ -628,6 +681,12 @@ function init_votedReviews(limit = "10", sort = "date"){
             newTableRow.append($(`<td><P>${votedReview["numberOfVoteDown"]}</P></td>`));
             newTableRow.append($(`<td><P>${votedReview["recentUpdatedTime"]}</P></td>`));
             newTableRow.append(votedReviewUpdateTD);
+            if(votedReview["IsVoteUp"]){
+                newTableRow.attr("class","success");
+            }
+            else{
+                newTableRow.attr("class","danger");
+            }
             votedReviewTable.append(newTableRow);
         }
         votedReviewsDivList.append(votedReviewTable);
@@ -674,6 +733,7 @@ function updateVotedReview(event){
                 originVoteA.attr("href", "");
                 originVoteA.removeClass("deactive");
                 originVoteA.text(" Vote Down");
+                desVoteA.parent().parent().attr("class","success");
             }else{
                 desVoteA.removeAttr("href");
                 desVoteA.addClass("deactive");
@@ -681,6 +741,7 @@ function updateVotedReview(event){
                 originVoteA.attr("href", "");
                 originVoteA.removeClass("deactive");
                 originVoteA.text(" Vote Up");
+                desVoteA.parent().parent().attr("class","danger");
             }
 
         }

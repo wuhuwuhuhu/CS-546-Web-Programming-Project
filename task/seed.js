@@ -12,13 +12,15 @@ const saltRounds = 16;
 const questions = data.questions;
 const answers = data.answers;
 const reviews = data.reviews;
+const updateMethods = data.updateMethods;
 const systemConfigs = data.systemConfigs;
 const usersData = mongoCollections.users;
 const questionsData = mongoCollections.questions;
 const answersData = mongoCollections.answers;
 const reviewsData = mongoCollections.reviews;
 const systemConfigsData = mongoCollections.systemConfigs;
-const updateMethods = data.updateMethods;
+
+
 
 const main = async () => {
 	const usersCollection = await usersData();
@@ -31,10 +33,16 @@ const main = async () => {
 	await db.dropDatabase();
 
 	//initial topics
-	const topics = ["Books", "Music", "Movies", "Wine", "Cooking", "Travel", "Other"]
-	const insertInfo = await systemConfigsCollection.insertOne({ topics: topics });
-	if (insertInfo.insertedCount === 0) throw `Error: could not insert topics.`;
+	
+	try {
+		const initTopics = await systemConfigs.initialTopics()
+		let topics = await systemConfigs.getTopics();
+	
+	} catch (error) {
+		console.log(error)
+	}
 
+	const topics = ["Books", "Music", "Movies", "Wine", "Cooking", "Travel", "Other"]
 	//length 20
 	const userNameList = ["test", "angel", "bubbles", "shimmer", "glimmer", "doll", "JayChou", "VenomFate", "Frozen", "DarkSide",
 		"hateJava", "hateCPP", "UltimateBeast", "RockieMountain", "MusicViking", "SloppyJoe", "Marry2020", "Avatar2022", "McDon2020", "SupperBug2020"]
@@ -47,11 +55,7 @@ const main = async () => {
 	//const passwordList = ["Test1234", "jPpG>oe2BFH74(%", "eo7x701)aFJz1H;1", "iwE[p+i}1.3Wq,9)", "cX8zOu:A:ZqFK:Hk", "NV>]D>O)24ay_MM{", "d3=PX#X$8y'DORS", "v6{k{&~IA5$Rkl8-", "gu>HT]53rk{E}V7t",
 	//	"J|JCtR;uw9??pnd3", "TYj!i%ode&hKg@49", "u9bwsJ8X0JpU|I;E", "dw*PAX7Yl)Owl>bW", "Rx]%4KF>=j~)x/X_", "x04*xMsK@a!&m(L", "-TDWH4C!%ayhXft%",
 	//	"#8yaB!Pw4B8H6nPL", "=qj8f&k@rLb#fKEH", "5w_EY__*2kkq#ub*", "B%p88Ps_6A+qLU#s"]
-	////
-	//
-	//	console.log(userNameList.length)
-	//	console.log(emailList.length)
-	//	console.log(passwordList.length)
+
 	//helper function to generate random time between given range
 	function randomTime(startTime, endTime) {
 		let start = new Date(startTime);
@@ -104,11 +108,20 @@ const main = async () => {
 				votedForReviews: [],
 				votedForAnswers: []
 			};
-
+		//	const addUser = await users.addUser(emailList[i],hashList[i],userNameList[i])
+			//shuffle user created time
 			const insertInfo = await usersCollection.insertOne(newUser)
 			if (insertInfo.insertedCount === 0) throw `Error: could not add new user.`;
 			const newUserId = insertInfo.insertedId.toString();
 			userIdList.push(newUserId)
+			//const updatedInfo = await usersCollection.updateOne({ _id: newUserId }, { $set: { recentUpdatedTime: newTime } });
+			//if (updatedInfo.matchedCount === 0 || updatedInfo.modifiedCount === 0) {
+			//	throw 'seed.js: no time of reviews being updated.'
+			//}
+			
+			
+			
+		//	userIdList.push(addUser._id.toString())
 		}
 		
 		//	console.log(userIdList)
@@ -116,55 +129,49 @@ const main = async () => {
 		console.log(error)
 	}
 
-	//create questions for users
-	//    //create a new question
-	//    const newQuestion = {
-	//        content:"Why this is a question?",
-	//        topic: ["Programming languages", "FootBall"],
-	//        questioner: newUserId.toString(),
-	//        questionCreatedTime:  new Date(),
-	//        answers: []
-	//        }
+
 	let bookQuestionList = ["What is the best non-fiction book of 2020?", "Any Horror novelist better than Steven King?", "Is Pulizer the highest honor for novels?", "What is the best book you've read in 2020?", "How to read books fast?", "Where to buy second-hand Computer Science books?",
-		"Is there a book that change your life？", "When is your favourite time to read?", "Everything on web now, do we still need paper-version book any more?"]
-	let musicQuestionList = ["Why jazz music makes me feel relaxed?", "What do you listen when driving?",
+		"Is there a book that change your life？", "When is your favourite time to read?", "Everything on web now, do we still need paper-version book any more?","When will Micheal Cunningham publish his new novel? Can't wait...",
+		"Is there more Harry Porter series?","Is Game of Thrones book series finished?","Which book in the world has the most popular reader?"]
+	let musicQuestionList = ["Why jazz music makes me feel relaxed?", "What do you listen when driving?", "Who is Game of Thrones TV music composer?",
 		"Which prime musci station do you recommand for listening during coding?", "Why classical music not popular anymore?",
-		"Which singer is your favourite?", "Why people say 'The Beatles' creates a history?", "What music is most popular restaurant music?"]
+		"Which singer is your favourite?", "Why people say 'The Beatles' creates a history?", "What music is most popular restaurant music?"
+		,"What does the BillBoard mean to a singer?","Why country music not popular anymore?",
+		"What do you listen when you are cooking?","Who's songs are popular in 2020?","What is your favourite classical music composer?","Why Billie Ellish so popular? Do you think her songs are good?"]
 	let movieQuestionList = ["Best Si-Fi movie you think?", "Best romantic movie in your opinion?",
-		"What is the highest rated movie you think?", "When will 'Avatar2' be revealed?", "Why it takes more than 10 years to produce Avatar2?",
-		"Movies that you didn't figured out after watching it?", "What movie to watch in the first date?"]
+		"What is the highest rated movie you think?", "When will 'Avatar2' be revealed?", "Why it takes more than 10 years to produce Avatar2?","Do you like Disney Animation or Pixar? why",
+		"Movies that you didn't figured out after watching it?", "What movie to watch in the first date?","What does drama genre mean for movie?","What does PG movie mean?","Is kids movies really good for kids to watch?",
+		"Any movies recommand for Christmas Eve?","What is the most popular Horror movies?","Why there is not much new movies this year?","Any forein language movies recommand?"]
 	let wineQuestionList = ["Is California the biggest wine producing location?", "Why people in cold area drink more than other area?",
-		"Why young people choose beer over wine?", "Is white wine really anti-aging?"]
-	let cookQuestionList = ["Cooking 2 hours, eating 10 minutes, worth it?", "How to master French cooking?",
-		"What is best cooking recipies website?",
-		"Why cooking videos are popular in YouTube?", "Why Chinese takout so popular in NY?", "Is boroccoli the healthest vegi?"]
-	let travelQuestionList = ["Why people like travel?", "What is the meaning of traveling?", "5 star hotel or knapsack travel, what do you get from different ways of travel?"]
-	let otherQuestionList = ["What do you do when you're bored?", "Is there any people really viewing this website?", "Where are you going? Where Have You Been?"]
-	//console.log(bookQuestionList.length)
-	//console.log(musicQuestionList.length)
-	//console.log(movieQuestionList.length)
-	//console.log(wineQuestionList.length)
-	//console.log(wineQuestionList.length)
-	//console.log(cookQuestionList.length)
-	//console.log(travelQuestionList.length)
-	//console.log(otherQuestionList.length)
+		"Why young people choose beer over wine?", "Is white wine really anti-aging?","Red or white wine, which do you prefer?","Which French brand wine do you recommand?","Why grape wine is popular?"]
+	let cookQuestionList = ["Cooking 2 hours, eating 10 minutes, worth it?", "How to master French cooking?","How to cook pasta?",
+		"What is best cooking recipies website?","How to cook beef broth?","How to make pizza?","How to cook fried rice?","How to cook Italian style meatball?",
+		"Why cooking videos are popular in YouTube?", "Why Chinese takout so popular in NY?", "Is boroccoli the healthest vegi?","Why cast iron cook are good choice for making broth?","Air dry machine better than oven?"]
+	let travelQuestionList = ["Why people like travel?", "What is the meaning of traveling?", "5 star hotel or knapsack travel, what do you get from different ways of travel?","What is the most popular place to go during Christmas?",
+"Please recommand some place to go during summer?","France vs. Japan? where for a 2 week vocation?","Which rent company do you recommand during travel?","Is it safe travel alone?"]
+	let otherQuestionList = ["What do you do when you're bored?", "Is there any people really viewing this website?", "Where are you going? Where Have You Been?","Is stock market better than last year?","Do you guys ask about life meaning related questions here?"]
+//
+
 	let questionIdList = []
 	//create questions
 	let questionList = [bookQuestionList, musicQuestionList, movieQuestionList, wineQuestionList, cookQuestionList, travelQuestionList, otherQuestionList]
+	let remain = bookQuestionList.length + musicQuestionList.length + movieQuestionList.length + wineQuestionList.length + cookQuestionList.length + travelQuestionList.length + otherQuestionList.length
 	try {
 		let seeds = true;
 		let j = 0;
 		while (seeds) {
 			for (let i = 0; i < questionList.length; i++) {
-				if (questionList[i].length !== 0) {
+				if (questionList[i].length > 0) {
 					const newQuestion = await questions.addQuestion(questionList[i][0], topics[i], userIdList[j]);
 					questionIdList.push(newQuestion._id.toString())
 					questionList[i].splice(0, 1);
+					j = (j + 2) % 10;
+					remain--;
 				}
 
 			}
-			j = (j + 1) % 20;
-			if (bookQuestionList.length + musicQuestionList.length + movieQuestionList.length + wineQuestionList.length + cookQuestionList.length + travelQuestionList.length + otherQuestionList.length === 0) {
+		
+			if (remain === 0) {
 				seeds = false;
 			}
 		}
@@ -186,7 +193,7 @@ const main = async () => {
 		await answers.addAnswer("I feel the same.", userIdList[10], questionIdList[1]);
 		await answers.addAnswer("Tenet", userIdList[1], questionIdList[2]);
 		await answers.addAnswer("Avatar, if it is a sifi.", userIdList[5], questionIdList[2]);
-		await answers.addAnswer("Matrix", userIdList[8], questionIdList[2]);
+		await answers.addAnswer("Matrix", userIdList[2], questionIdList[2]);
 		await answers.addAnswer("Man in Black.", userIdList[9], questionIdList[2]);
 		await answers.addAnswer("UPGRADE, my best.", userIdList[13], questionIdList[2]);
 		await answers.addAnswer("E.T.", userIdList[15], questionIdList[2]);
@@ -202,6 +209,12 @@ const main = async () => {
 		await answers.addAnswer("It makes me forget the real life troubles, feels like live in a unreal world.", userIdList[16], questionIdList[5]);
 		await answers.addAnswer("I have no idea and it wastes lots of money.", userIdList[15], questionIdList[5]);
 		await answers.addAnswer("Sleeping", userIdList[1], questionIdList[6]);
+		await answers.addAnswer("I think workout will kill the time meaningfully", userIdList[0], questionIdList[6]);
+		await answers.addAnswer("Sliding my cell.", userIdList[3], questionIdList[6]);
+		await answers.addAnswer("Since smartphone came to the world, I never get bored", userIdList[0], questionIdList[6]);
+		await answers.addAnswer("Call friends and chat with them", userIdList[3], questionIdList[6]);
+		await answers.addAnswer("Yoga", userIdList[1], questionIdList[6]);
+		await answers.addAnswer("I will go to the supermarket and buy groceries", userIdList[2], questionIdList[6]);
 		await answers.addAnswer("Jogging", userIdList[5], questionIdList[6]);
 		await answers.addAnswer("Watching TV", userIdList[8], questionIdList[6]);
 		await answers.addAnswer("Coding, ok, not true all the time.", userIdList[11], questionIdList[6]);
@@ -213,13 +226,13 @@ const main = async () => {
 		await answers.addAnswer("All I want for Christmas is you.", userIdList[18], questionIdList[8]);
 		await answers.addAnswer("Classical.", userIdList[17], questionIdList[8]);
 		await answers.addAnswer("Beatles.", userIdList[16], questionIdList[8]);
-		await answers.addAnswer("Beatles.", userIdList[5], questionIdList[8]);
-		await answers.addAnswer("Beatles.", userIdList[4], questionIdList[8]);
+		await answers.addAnswer("Always Beatles.", userIdList[5], questionIdList[8]);
+		await answers.addAnswer("The Beatles.", userIdList[4], questionIdList[8]);
 		await answers.addAnswer("Don Mclane.", userIdList[3], questionIdList[8]);
 		await answers.addAnswer("Ed Shareen.", userIdList[2], questionIdList[8]);
 		await answers.addAnswer("Charlie Puth.", userIdList[1], questionIdList[8]);
 		await answers.addAnswer("Justin Beaber-Baby.", userIdList[0], questionIdList[8]);
-		await answers.addAnswer("Tatanic.", userIdList[0], questionIdList[9]);
+		await answers.addAnswer("Tatanic.", userIdList[1], questionIdList[9]);
 		await answers.addAnswer("Notebook", userIdList[5], questionIdList[9]);
 		await answers.addAnswer("Gone with the wind", userIdList[10], questionIdList[9]);
 		await answers.addAnswer("The Holiday", userIdList[15], questionIdList[9]);
@@ -228,7 +241,7 @@ const main = async () => {
 		await answers.addAnswer("When it is cold outside,nothing to do indoors, just drink and sleep.", userIdList[1], questionIdList[11]);
 		await answers.addAnswer("You'd better go to a professional training school", userIdList[0], questionIdList[11]);
 		await answers.addAnswer("When you came back at home, then you realize that your everyday life is so simple and easy.", userIdList[5], questionIdList[12]);
-		await answers.addAnswer("I am here.", userIdList[8], questionIdList[13]);
+		await answers.addAnswer("I am here.", userIdList[0], questionIdList[13]);
 		await answers.addAnswer("I think Booker Prize is the highest", userIdList[2], questionIdList[14]);
 		await answers.addAnswer("Pulizer is only limited in US and mainly for English language, there are tons of master pieces over the world.", userIdList[18], questionIdList[14]);
 		await answers.addAnswer("Holiday Pop", userIdList[11], questionIdList[15]);
@@ -335,7 +348,8 @@ const main = async () => {
 				let voteUp = Math.floor(Math.random() * Math.floor(2))
 				//	console.log(voteUp)
 				if (voteUp) {
-					await updateMethods.addVoteUpForAnswer(answerIdList2[i], userIdList2[j]);
+					await answers.updateVoteUp(answerIdList2[i], userIdList2[j])
+					//await updateMethods.addVoteUpForAnswer(answerIdList2[i], userIdList2[j]);
 					userIdList2.splice(j, 1)
 
 				}
@@ -345,7 +359,8 @@ const main = async () => {
 				let voteDown = Math.floor(Math.random() * Math.floor(2))
 				//	console.log(voteDown)
 				if (voteDown) {
-					await updateMethods.addVoteDownForAnswer(answerIdList2[i], userIdList2[j]);
+					await answers.updateVoteDown(answerIdList2[i], userIdList2[j]);
+				//	await updateMethods.addVoteDownForAnswer(answerIdList2[i], userIdList2[j]);
 					userIdList2.splice(j, 1)
 
 				}
@@ -368,7 +383,8 @@ const main = async () => {
 			for (let j = 0; j < userIdList2.length; j++) {
 				let voteUp = Math.floor(Math.random() * Math.floor(2))
 				if (voteUp) {
-					await updateMethods.addVoteUpForReview(reviewIdList2[i], userIdList2[j]);
+					await reviews.updateVoteUp(reviewIdList2[i], userIdList2[j])
+					//await updateMethods.addVoteUpForReview(reviewIdList2[i], userIdList2[j]);
 					userIdList2.splice(j, 1)
 
 				}
@@ -377,7 +393,8 @@ const main = async () => {
 			for (let j = 0; j < userIdList2.length; j++) {
 				let voteDown = Math.floor(Math.random() * Math.floor(2))
 				if (voteDown) {
-					await updateMethods.addVoteDownForReview(reviewIdList2[i], userIdList2[j]);
+					await reviews.updateVoteDown(reviewIdList2[i], userIdList2[j]);
+				//	await updateMethods.addVoteDownForReview(reviewIdList2[i], userIdList2[j]);
 					userIdList2.splice(j, 1)
 
 				}

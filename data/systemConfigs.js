@@ -1,12 +1,17 @@
 const mongoCollections = require('../config/mongoCollections');
 const systemConfigs = mongoCollections.systemConfigs;
-const topics =["Programming languages","Database","Machine Learning","Algorithm","Others"]
+const topics = ["Books", "Music", "Movies", "Wine", "Cooking", "Travel", "Other"]
 
 let exportedMethods = {
-    async getTopics() {},
+    async getTopics() {
+		const configCollection = await systemConfigs();
+		const topicList = await configCollection.find({}).toArray()
+		if(topicList.length ===0) throw 'systemConfig is empty'
+		return topicList[0].topics
+	},
     async initialTopics(){
         const configCollection = await systemConfigs();
-        const removeInfo = await configCollection.remove({});
+        const removeInfo = await configCollection.deleteMany({});
         const insertInfo = await configCollection.insertOne({topics:topics});
         if (insertInfo.insertedCount === 0) throw 'Error: could not initial topics'
         let newId = insertInfo.insertedId.toString()

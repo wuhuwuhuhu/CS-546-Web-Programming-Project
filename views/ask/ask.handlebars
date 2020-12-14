@@ -11,7 +11,7 @@
 	<main id="ask-main">
 		<div id="ask-div">
 			<form id="ask-form" method='post'>
-				<label id="ask-topic-label" for="topic">Select Topic</label>
+				<label id="ask-topic-label" for="topic">Select a topic for your question</label>
 				<select id="topic" name="topic" required>
 					<option value="" disabled selected>Select question topic</option>
 					{{#each topic}}
@@ -19,26 +19,29 @@
 					{{/each}}
 				</select>
 				<br>
-				<input id="question-input" name="question" placeholder="Ask Something Here..." value="{{question}}">
-				<button id="ask-submit-btn" type ='submit'>Submit</button>
+				<textarea id="question-text" name="question" placeholder="Ask Something Here..." rows="4" cols="60"
+					maxlength="100">{{question}}</textarea>
+				<p id="remain-range">(5 - 100 characters)</p>
+				<p id="question-remain"></p>
+				<button id="ask-submit-btn" type='submit'>Submit</button>
 			</form>
 		</div>
 
-		<div class = "error" id = "ask-error-div1" hidden>
-			<p>Your input is empty</p>
+		<div class="error" id="ask-error-div1" hidden>
+			<p>Input should be between 5 ~ 100 characters.</p>
 		</div>
 
-		<div class = "error" id="ask-error-div2" >
+		<div class="error" id="ask-error-div2">
 			<ul id="ask-error-ul"> {{#each errors}} <li id="ask-error-li">{{this}}</li> {{/each}} </ul>
 		</div>
 		{{#if oldQuestionId}}
-		<div id ="question-exists">
-			<a href="/questions/{{oldQuestionId}}" >View the question</a>
+		<div id="question-exists">
+			<a href="/question/{{oldQuestionId}}">View the question</a>
 		</div>
 		{{/if}}
 
 		<div id="back-home">
-			<a href='/'>Homepage</a>
+			<a href='/'>Home Page</a>
 		</div>
 
 		<div id="logout-div">
@@ -46,11 +49,12 @@
 		</div>
 
 	</main>
-	   <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
-        crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
-        crossorigin="anonymous"></script>
-    <script src="../../public/js/askForm.js"></script>
+	<script src="https://code.jquery.com/jquery-2.2.4.min.js"
+		integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
+		integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
+		crossorigin="anonymous"></script>
+	<script src="../../public/js/askForm.js"></script>
 </body>
 
 </html>

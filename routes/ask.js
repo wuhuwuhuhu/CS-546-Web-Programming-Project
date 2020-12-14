@@ -25,41 +25,12 @@ router.get('/', async (req, res) => {
 })
 
 router.post('/', async (req, res) => {
-	const quesInfo = req.body;
-//	console.log(quesInfo)
-	let errors = []
-	if (!quesInfo) {
-		const errorMsg = "You need to write something for the question";
-		errors.push(errorMsg);
-
-	}
-	if (!req.body.question) {
-		const errorMsg = 'You need to ask something';
-		errors.push(errorMsg);
-	}
-	if (!req.body.topic) {
-		const errorMsg = 'You need to select a topic';
-		errors.push(errorMsg);
-	}
 	if (!req.session.user) {
 		//if user not exist, redirect to login page
 		res.status(403).redirect('/login')
 		return;
 	}
-	//------Test Code ------------
-	if (test) {
-		req.session.user = Object.assign({}, { _id: '5fd4fdf681b3bb139040e42f', userName: "TestUser" });
-	}
-	//-----------------------------
-
-	
-	let questioner = xss(req.session.user);
-
-	let content = xss(req.body.question);
-	let topic = xss(req.body.topic);
-
-	//const topicCollection = await systemConfigs();
-	//const findTopic = await topicCollection.findOne({ topics: { $exists: true } })
+	let errors = []
 	let topics = []
 	try {
 		topics = await systemConfigs.getTopics()
@@ -70,10 +41,40 @@ router.post('/', async (req, res) => {
 	} catch (error) {
 		const errorMsg = "Get topics wrong."
 		errors.push(errorMsg)
-		res.render('ask/ask', { errors: errors, topic: topics, question: content });
+		res.render('ask/ask', { errors: errors});
 		return;
 		
 	}
+	const quesInfo = req.body;
+	
+//	console.log(quesInfo)
+	
+	if (!quesInfo) {
+		const errorMsg = "You need to write something for the question";
+		errors.push(errorMsg);
+		res.render('ask/ask', { errors: errors});
+		return;
+
+	}
+	if (!req.body.question) {
+		const errorMsg = 'You need to ask something';
+		errors.push(errorMsg);
+	}
+	if (!req.body.topic) {
+		const errorMsg = 'You need to select a topic';
+		errors.push(errorMsg);
+	}
+
+	//------Test Code ------------
+	if (test) {
+		req.session.user = Object.assign({}, { _id: '5fd4fdf681b3bb139040e42f', userName: "TestUser" });
+	}
+	//-----------------------------
+
+	
+	let questioner = xss(req.session.user);
+	let content = xss(req.body.question);
+	let topic = xss(req.body.topic);
 
 	//check whether QuestionName duplicated
 	const questionCollection = await questions();

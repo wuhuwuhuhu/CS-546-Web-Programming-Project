@@ -1,198 +1,180 @@
-<!DOCTYPE html>
-<html lang="en">
+<div id="personalInfo">
+    <fieldset>
+        <form>
+            <legend>Personal Information</legend>
+            {{!-- <h2>Personal Information</h2> --}}
+            <label for="username">username</label>
+            <input type="text" value="{{userName}}" id="username" readonly> <br>
+            <label for="email">email</label>
+            <input type="text" value="{{userEmail}}" id="email" readonly><br>
+            <label for="registDate">Registration Date</label>
+            <input type="text" value="{{userRegistDate}}" id="registDate" readonly><br>
+            <button id="personalInfoChangePasswordButton">change password</button>
+        </form>
+    </fieldset>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{title}}</title>
-</head>
-
-<body>
-    <div id="personalInfo">
-        <fieldset>
-            <form>
-                <legend>Personal Information</legend>
-                {{!-- <h2>Personal Information</h2> --}}
-                <label for="username">username</label>
-                <input type="text" value="{{userName}}" id="username" readonly> <br>
-                <label for="email">email</label>
-                <input type="text" value="{{userEmail}}" id="email" readonly><br>
-                <label for="registDate">Registration Date</label>
-                <input type="text" value="{{userRegistDate}}" id="registDate" readonly><br>
-                <button id="personalInfoChangePasswordButton">change password</button>
-            </form>
-        </fieldset>
-
-    </div>
-    <div id='changePassword'>
-        <fieldset>
-            <legend>Change Password</legend>
-            <form id="changePasswordForm">
-                <label for="changePasswordFormOldPassword">Password</label>
-                <input type="password" id="changePasswordFormOldPassword"><br>
-                <label for="changePasswordFormNewPassword">New Password</label>
-                <input type="password" id="changePasswordFormNewPassword"><br>
-                <label for="changePasswordFormNewPasswordCheck">Please input new password again</label>
-                <input type="password" id="changePasswordFormNewPasswordCheck"><br>
-                <button id="changePasswordFormSubmitButton">submit change</button>
-                <p id="changePasswordFormStatus"></p>
-            </form>
-        </fieldset>
-    </div>
-    <div id="questionsDiv">
-        <fieldset>
-            <legend>Questions</legend>
-            <div id="questionsSelector">
-                <label for="questionsSortSelect">Sort: </label>
-                <select id="questionsSortSelect">
-                    <option value="Date from new to old" selected="selected">Date from new to old</option>
-                    <option value="Answers number from high to low">Answers number from high to low</option>
-                </select>
-                <br>
-                <label for="questionsLimitSelect">Limit: </label>
-                <select id="questionsLimitSelect">
-                    <option value="10" selected="selected">10</option>
-                    <option value="20">20</option>
-                    <option value="50">50</option>
-                </select>
-                <br>
-            </div>
-            <div id="userQuestionsList">
-                {{#each userQuestionsList}}
-                <article>
-                    <h2><a href="{{this.questionUrl}}">{{this.questionName}}</a></h2><br>
-                </article>
-                {{/each}}
-            </div>
-        </fieldset>
-    </div>
-    <div id="answersDiv">
-        <fieldset>
-            <legend>Answers</legend>
-            <div id="answersSelector">
-                <label for="answersSortSelect">Sort: </label>
-                <select id="answersSortSelect">
-                    <option value="Date from new to old" selected="selected">Date from new to old</option>
-                    <option value="Voted score from high to low">Voted score from high to low</option>
-                </select>
-                <br>
-                <label for="answersLimitSelect">Limit: </label>
-                <select id="answersLimitSelect">
-                    <option value="10" selected="selected">10</option>
-                    <option value="20">20</option>
-                    <option value="50">50</option>
-                </select>
-                <br>
-            </div>
-            <div id="userAnswersList">
-                {{#each userAnswersList}}
-                <article>
-                    <h2><a href="{{this.questionUrl}}">{{this.questionName}}</a></h2><br>
-                    <h3>{{this.answerContent}}</h3>
-                </article>
-                {{/each}}
-            </div>
-        </fieldset>
-    </div>
-    <div id="reviewsDiv">
-        <fieldset>
-            <legend>Reviews</legend>
-            <div id="reviewsSelector">
-                <label for="reviewsSortSelect">Sort: </label>
-                <select id="reviewsSortSelect">
-                    <option value="Date from new to old" selected="selected">Date from new to old</option>
-                    <option value="Voted score from high to low">Voted score from high to low</option>
-                </select>
-                <br>
-                <label for="reviewsLimitSelect">Limit: </label>
-                <select id="reviewsLimitSelect">
-                    <option value="10" selected="selected">10</option>
-                    <option value="20">20</option>
-                    <option value="50">50</option>
-                </select>
-                <br>
-            </div>
-            <div id="userReviewsList">
-                {{#each userReviewsList}}
-                <article>
-                    <h2><a href="{{this.questionUrl}}">{{this.questionName}}</a></h2><br>
-                    <h3>{{this.answerContent}}</h3><br>
-                    <h4>{{this.reviewContent}}</h4>
-                </article>
-                {{/each}}
-            </div>
-        </fieldset>
-    </div>
-    <div id="votedAnswersDiv">
-        <fieldset>
-            <legend>VotedAnswers</legend>
-            <div id="reviewsSelector">
-                <label for="votedAnswersSortSelect">Sort: </label>
-                <select id="votedAnswersSortSelect">
-                    <option value="Updated date of the answer from new to old" selected="selected">Updated date of the
-                        answer from new to old
-                    </option>
-                    <option value="Voted score of the answer from high to low">Voted score of the answer from high to
-                        low</option>
-                </select>
-                <br>
-                <label for="votedAnswersLimitSelect">Limit: </label>
-                <select id="votedAnswersLimitSelect">
-                    <option value="10" selected="selected">10</option>
-                    <option value="20">20</option>
-                    <option value="50">50</option>
-                </select>
-                <br>
-            </div>
-            <div id="userVotedAnswersList">
-                {{#each userVotedAnswersList}}
-                <article>
-                    <h2><a href="{{this.questionUrl}}">{{this.questionName}}</a></h2><br>
-                    <h3>{{this.answerContent}}</h3>
-                </article>
-                {{/each}}
-            </div>
-        </fieldset>
-    </div>
-    <div id="votedReviewsAnswersDiv">
-        <fieldset>
-            <legend>VotedReviews</legend>
-            <div id="votedReviewsSelector">
-                <label for="votedReviewsSortSelect">Sort: </label>
-                <select id="votedReviewsSortSelect">
-                    <option value="Updated date of the review from new to old" selected="selected">Updated date of the
-                        review from new to old
-                    </option>
-                    <option value="Voted score of the review from high to low">Voted score of the review from high to
-                        low</option>
-                </select>
-                <br>
-                <label for="votedReviewsLimitSelect">Limit: </label>
-                <select id="votedReviewsLimitSelect">
-                    <option value="10" selected="selected">10</option>
-                    <option value="20">20</option>
-                    <option value="50">50</option>
-                </select>
-                <br>
-            </div>
-            <div id="userVotedReviewsList">
-                {{#each userVotedReviewsList}}
-                <article>
-                    <h2><a href="{{this.questionUrl}}">{{this.questionName}}</a></h2><br>
-                    <h3>{{this.answerContent}}</h3><br>
-                    <h4>{{this.reviewContent}}</h4>
-                </article>
-                {{/each}}
-            </div>
-        </fieldset>
-    </div>
-    <script src="https://code.jquery.com/jquery-2.2.4.min.js"
-        integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
-        integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
-        crossorigin="anonymous"></script>
-    <script src="/public/js/basic_ajax_with_jquery.js"></script>
-    <script src="public/js/user.js"></script>
-</body>
-
-</html>
+</div>
+<div id='changePassword'>
+    <fieldset>
+        <legend>Change Password</legend>
+        <form id="changePasswordForm">
+            <label for="changePasswordFormOldPassword">Password</label>
+            <input type="password" id="changePasswordFormOldPassword"><br>
+            <label for="changePasswordFormNewPassword">New Password</label>
+            <input type="password" id="changePasswordFormNewPassword"><br>
+            <label for="changePasswordFormNewPasswordCheck">Please input new password again</label>
+            <input type="password" id="changePasswordFormNewPasswordCheck"><br>
+            <button id="changePasswordFormSubmitButton">submit change</button>
+            <p id="changePasswordFormStatus"></p>
+        </form>
+    </fieldset>
+</div>
+<div id="questionsDiv">
+    <fieldset>
+        <legend>Questions</legend>
+        <div id="questionsSelector">
+            <label for="questionsSortSelect">Sort: </label>
+            <select id="questionsSortSelect">
+                <option value="Date from new to old" selected="selected">Date from new to old</option>
+                <option value="Answers number from high to low">Answers number from high to low</option>
+            </select>
+            <br>
+            <label for="questionsLimitSelect">Limit: </label>
+            <select id="questionsLimitSelect">
+                <option value="10" selected="selected">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+            </select>
+            <br>
+        </div>
+        <div id="userQuestionsList">
+            {{#each userQuestionsList}}
+            <article>
+                <h2><a href="{{this.questionUrl}}">{{this.questionName}}</a></h2><br>
+            </article>
+            {{/each}}
+        </div>
+    </fieldset>
+</div>
+<div id="answersDiv">
+    <fieldset>
+        <legend>Answers</legend>
+        <div id="answersSelector">
+            <label for="answersSortSelect">Sort: </label>
+            <select id="answersSortSelect">
+                <option value="Date from new to old" selected="selected">Date from new to old</option>
+                <option value="Voted score from high to low">Voted score from high to low</option>
+            </select>
+            <br>
+            <label for="answersLimitSelect">Limit: </label>
+            <select id="answersLimitSelect">
+                <option value="10" selected="selected">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+            </select>
+            <br>
+        </div>
+        <div id="userAnswersList">
+            {{#each userAnswersList}}
+            <article>
+                <h2><a href="{{this.questionUrl}}">{{this.questionName}}</a></h2><br>
+                <h3>{{this.answerContent}}</h3>
+            </article>
+            {{/each}}
+        </div>
+    </fieldset>
+</div>
+<div id="reviewsDiv">
+    <fieldset>
+        <legend>Reviews</legend>
+        <div id="reviewsSelector">
+            <label for="reviewsSortSelect">Sort: </label>
+            <select id="reviewsSortSelect">
+                <option value="Date from new to old" selected="selected">Date from new to old</option>
+                <option value="Voted score from high to low">Voted score from high to low</option>
+            </select>
+            <br>
+            <label for="reviewsLimitSelect">Limit: </label>
+            <select id="reviewsLimitSelect">
+                <option value="10" selected="selected">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+            </select>
+            <br>
+        </div>
+        <div id="userReviewsList">
+            {{#each userReviewsList}}
+            <article>
+                <h2><a href="{{this.questionUrl}}">{{this.questionName}}</a></h2><br>
+                <h3>{{this.answerContent}}</h3><br>
+                <h4>{{this.reviewContent}}</h4>
+            </article>
+            {{/each}}
+        </div>
+    </fieldset>
+</div>
+<div id="votedAnswersDiv">
+    <fieldset>
+        <legend>VotedAnswers</legend>
+        <div id="reviewsSelector">
+            <label for="votedAnswersSortSelect">Sort: </label>
+            <select id="votedAnswersSortSelect">
+                <option value="Updated date of the answer from new to old" selected="selected">Updated date of the
+                    answer from new to old
+                </option>
+                <option value="Voted score of the answer from high to low">Voted score of the answer from high to
+                    low</option>
+            </select>
+            <br>
+            <label for="votedAnswersLimitSelect">Limit: </label>
+            <select id="votedAnswersLimitSelect">
+                <option value="10" selected="selected">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+            </select>
+            <br>
+        </div>
+        <div id="userVotedAnswersList">
+            {{#each userVotedAnswersList}}
+            <article>
+                <h2><a href="{{this.questionUrl}}">{{this.questionName}}</a></h2><br>
+                <h3>{{this.answerContent}}</h3>
+            </article>
+            {{/each}}
+        </div>
+    </fieldset>
+</div>
+<div id="votedReviewsAnswersDiv">
+    <fieldset>
+        <legend>VotedReviews</legend>
+        <div id="votedReviewsSelector">
+            <label for="votedReviewsSortSelect">Sort: </label>
+            <select id="votedReviewsSortSelect">
+                <option value="Updated date of the review from new to old" selected="selected">Updated date of the
+                    review from new to old
+                </option>
+                <option value="Voted score of the review from high to low">Voted score of the review from high to
+                    low</option>
+            </select>
+            <br>
+            <label for="votedReviewsLimitSelect">Limit: </label>
+            <select id="votedReviewsLimitSelect">
+                <option value="10" selected="selected">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+            </select>
+            <br>
+        </div>
+        <div id="userVotedReviewsList">
+            {{#each userVotedReviewsList}}
+            <article>
+                <h2><a href="{{this.questionUrl}}">{{this.questionName}}</a></h2><br>
+                <h3>{{this.answerContent}}</h3><br>
+                <h4>{{this.reviewContent}}</h4>
+            </article>
+            {{/each}}
+        </div>
+    </fieldset>
+</div>
+<script src="/public/js/user.js"></script>
+<link rel="stylesheet" href="/public/css/user.css">

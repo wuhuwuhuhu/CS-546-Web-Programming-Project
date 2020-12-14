@@ -104,7 +104,7 @@ router.post('/addReview/:questionId/:answerId', async (req, res) => {
     let answerId = xss(req.params.answerId);
     const newReview=await reviewDate.addReview(content,userId,answerId)
     res.json({
-        
+
     });
 })
 
@@ -137,7 +137,7 @@ router.post('/voteDownReview/:questionId/:answerId/:reviewId', async (req, res) 
 })
 
 
-function transferData(questionId) {
+async function transferData(questionId) {
     const question = await questionsData.getQuestionById(questionId)
     questionContent = question.content
     const answersId = question.answers

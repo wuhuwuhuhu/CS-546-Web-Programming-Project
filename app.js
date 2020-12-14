@@ -56,7 +56,14 @@ app.use('/registration', async (req, res, next) => {
    }else{
      next();
    }
- })
+ });
+ app.use('/user',async (req,res,next)=>{
+  if(!req.session.user){
+    res.redirect('/login');
+  }else{
+    next();
+  }
+});
 
 configRoutes(app);
 app.listen(3000, () => {

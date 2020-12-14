@@ -13,7 +13,7 @@ const reviewsData = require("../data/reviews");
 const answersData = require("../data/answers");
 
 router.get('/', async(req,res) => {
-    const userid = "5fd2b0e9f293b535faad70ea";
+    const userid = "5fd2bcbadc020240556f3a8e";
     //const userid = req.session.user._id
 
     let user = await usersData.getUserById(userid);

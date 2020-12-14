@@ -577,25 +577,26 @@ function updateVotedAnswer(event){
     };
     $.ajax(requestConfig).then(function (responseMessage) {
         if(responseMessage.status === true){
-            let desVoteA = $(`#${desVoteId}`);
-            let originVoteA = $(`#${originVoteStatusId}`);
-            if(desVoteStatus === "voteUp"){
-                desVoteA.removeAttr("href");
-                desVoteA.addClass("deactive")
-                desVoteA.text(" Voted Up ");
-                originVoteA.attr("href", "");
-                originVoteA.removeClass("deactive");
-                originVoteA.text(" Vote Down");
-                desVoteA.parent().parent().attr("class","success");
-            }else{
-                desVoteA.removeAttr("href");
-                desVoteA.addClass("deactive")
-                desVoteA.text(" Voted Down ");
-                originVoteA.attr("href", "");
-                originVoteA.removeClass("deactive");
-                originVoteA.text(" Vote Up");
-                desVoteA.parent().parent().attr("class","danger");
-            }
+            // let desVoteA = $(`#${desVoteId}`);
+            // let originVoteA = $(`#${originVoteStatusId}`);
+            // if(desVoteStatus === "voteUp"){
+            //     desVoteA.removeAttr("href");
+            //     desVoteA.addClass("deactive")
+            //     desVoteA.text(" Voted Up ");
+            //     originVoteA.attr("href", "");
+            //     originVoteA.removeClass("deactive");
+            //     originVoteA.text(" Vote Down");
+            //     desVoteA.parent().parent().attr("class","success");
+            // }else{
+            //     desVoteA.removeAttr("href");
+            //     desVoteA.addClass("deactive")
+            //     desVoteA.text(" Voted Down ");
+            //     originVoteA.attr("href", "");
+            //     originVoteA.removeClass("deactive");
+            //     originVoteA.text(" Vote Up");
+            //     desVoteA.parent().parent().attr("class","danger");
+            // }
+            init_votedAnswers();
 
         }
         else{
@@ -724,25 +725,26 @@ function updateVotedReview(event){
     };
     $.ajax(requestConfig).then(function (responseMessage) {
         if(responseMessage.status === true){
-            let desVoteA = $(`#${desVoteId}`);
-            let originVoteA = $(`#${originVoteStatusId}`);
-            if(desVoteStatus === "voteUp"){
-                desVoteA.removeAttr("href");
-                desVoteA.addClass("deactive");
-                desVoteA.text(" Voted Up ");
-                originVoteA.attr("href", "");
-                originVoteA.removeClass("deactive");
-                originVoteA.text(" Vote Down");
-                desVoteA.parent().parent().attr("class","success");
-            }else{
-                desVoteA.removeAttr("href");
-                desVoteA.addClass("deactive");
-                desVoteA.text(" Voted Down ");
-                originVoteA.attr("href", "");
-                originVoteA.removeClass("deactive");
-                originVoteA.text(" Vote Up");
-                desVoteA.parent().parent().attr("class","danger");
-            }
+            init_votedReviews();
+            // let desVoteA = $(`#${desVoteId}`);
+            // let originVoteA = $(`#${originVoteStatusId}`);
+            // if(desVoteStatus === "voteUp"){
+            //     desVoteA.removeAttr("href");
+            //     desVoteA.addClass("deactive");
+            //     desVoteA.text(" Voted Up ");
+            //     originVoteA.attr("href", "");
+            //     originVoteA.removeClass("deactive");
+            //     originVoteA.text(" Vote Down");
+            //     desVoteA.parent().parent().attr("class","success");
+            // }else{
+            //     desVoteA.removeAttr("href");
+            //     desVoteA.addClass("deactive");
+            //     desVoteA.text(" Voted Down ");
+            //     originVoteA.attr("href", "");
+            //     originVoteA.removeClass("deactive");
+            //     originVoteA.text(" Vote Up");
+            //     desVoteA.parent().parent().attr("class","danger");
+            // }
 
         }
         else{

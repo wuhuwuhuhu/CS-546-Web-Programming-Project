@@ -11,7 +11,7 @@ const usersData = require('../data/users');
 const questionsData = require('../data/questions');
 const reviewsData = require("../data/reviews");
 const answersData = require("../data/answers");
-const e = require('express');
+const email = require("../data/email").send;
 
 router.get('/', async(req,res) => {
     const userid = xss(req.session.user)
@@ -144,6 +144,19 @@ router.post('/changePassword', async(req,res) => {
         status: false,
         message: "没连user数据呢"
     });
+    const userid = xss(req.session.user)
+    let user = await usersData.getUserById(userid);
+    let userName = user["userName"];
+    let userEmail = user["email"];
+    let subject = `Hi ${userName}, Your password has been changed.`;
+    let text = `Hi ${userName},\n Your password has been changed.`;
+    try {
+        await email(userEmail, subject, text);
+    } catch (error) {
+        console.log(error);
+    }
+    
+
 });
 
 router.post('/getQuestions', async(req,res) => {
@@ -516,7 +529,7 @@ router.post('/updateVoteReview', async(req,res) => {
     const userId = xss(req.body.userId);
     const goal = xss(req.body.goal);
 
-    let updatedStatus 
+    let updatedStatus;
     if(goal === "voteUp"){
         try {
             updatedStatus= await reviewsData.updateVoteUp(reviewId, userId);

@@ -1,9 +1,9 @@
 const express = require('express');
 const { sortQuestionsByTime, sortQuestionsByAnsNum, getQuestionsByKeywords, getQuestionsByKeywordsAndTopic } = require('../data/questions');
 const router = express.Router();
-const questions = require('../data/questions')
-const userData = require('../data/users');
-let logOutFlag = false;
+const questions = require('../data/questions');
+const { getAllUserVoteList } = require('../data/vote');
+const voteData = require('../data/vote')
 
 router.get('/', function(req,res)  {
     console.log("12312")
@@ -54,6 +54,14 @@ router.post('/popular',async(req,res)=>{
     
         let A = {returnPopular:allQuestionSort};
         res.json(A);
+    }
+})
+
+router.post('/honorList',async(req,res)=>{
+    if(req.body.honor==true){
+        let honorList = await getAllUserVoteList();
+        let repsons = {honorList:honorList}
+        res.json(repsons)
     }
 })
 

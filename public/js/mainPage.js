@@ -3,7 +3,7 @@ const questionsSortSelect = $('#questionsSortSelect');
 const questionTopicSelect = $('#questionsTopicSelect');
 const questionSearch = $("#text_input");
 showMostPopularItem()
-
+getHonorList()
 
 questionsLimitSelect.change((event)=>{
     $('#error-container').hide();
@@ -131,11 +131,27 @@ function showMostPopularItem(){
         })
     }
     $.ajax(mostPopular).then(function(responseMessage){
-        console.log(responseMessage);
         for(let i=0;i<20;i++){
             let li = '<li><a href=question/'+responseMessage.returnPopular[i]._id+' >'+responseMessage.returnPopular[i].content+'</a></li>';
             $('#questionList').append(li);
         }
         
+    })
+}
+
+function getHonorList(){
+    let getHonorList = {
+        method:'POST',
+        url:'/honorList',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            honor:true
+        })
+    }
+    $.ajax(getHonorList).then(function(responseMessage){
+        for(let i=9;i>0;i=i-1){
+            let li ="<li>"+responseMessage.honorList[i].userName+":"+responseMessage.honorList[i].userGetVote+"</li>";
+            $("#honorList").append(li)
+        }
     })
 }

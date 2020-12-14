@@ -3,7 +3,7 @@
 	<div id="ask-div">
 		<form id="ask-form" method='post'>
 			<label id="ask-topic-label" for="topic" hidden>Select a topic</label>
-			<select id="topic" name="topic" class='top right' required>
+			<select id="select-topic" name="topic" class='top right'>
 				<option id="default-option" value="" disabled selected>Select question topic</option>
 				{{#each topic}}
 				<option value="{{this}}"> {{this}}</option>
@@ -17,19 +17,22 @@
 			<button id="ask-submit-btn" type='submit'>Submit</button>
 
 		</form>
-
+		<div class="ask-error" id="ask-error-div3" hidden>
+			<p>You need to select a topic for your question.</p>
+		</div>
 		<div class="ask-error" id="ask-error-div1" hidden>
 			<p>Input should be between 5 ~ 100 characters.</p>
 		</div>
 
-		<div class="ask-error" id="ask-error-div2">
+		<div class="ask-error" id="ask-error-div2" hidden>
 			<ul id="ask-error-ul"> {{#each errors}} <li id="ask-error-li">{{this}}</li> {{/each}} </ul>
 			{{#if oldQuestionId}}
-			
-				<a href="/question/{{oldQuestionId}}"><button class="ask-view-ques">View the question</button></a>
-			
+
+			<a href="/question/{{oldQuestionId}}"><button class="ask-view-ques">View the question</button></a>
+
 			{{/if}}
 		</div>
+
 
 
 

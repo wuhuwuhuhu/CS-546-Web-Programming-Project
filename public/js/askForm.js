@@ -3,6 +3,7 @@
 	var askInput = $('#question-text');
 	var askBtn = $('#ask-submit-btn');
 	var inputErrorDiv1 = $('#ask-error-div1');
+	var inputErrorDiv2 = $('#ask-error-div2');
 	var remainp = $('#question-remain')
 	askForm.on('submit',function(event){
 		
@@ -18,12 +19,14 @@
 
 
 	askInput.on('keyup blur', function() {
-		// Store the maxlength and value of the field.
+		//get the maxlength attr
+		inputErrorDiv1.hide()
+		inputErrorDiv2.hide()
 		var maxlength = $(this).attr('maxlength');
 		var val = $(this).val().length;
 		remain = parseInt(maxlength - val);
-		remainp.text(remain +" characters remaining. ");
-		// Trim the field if it has content over the maxlength.
+		remainp.text(remain +" characters remaining");
+		//Stop input when length over max
 		if (val.length > maxlength) {
 			$(this).val(val.slice(0, maxlength));
 		}

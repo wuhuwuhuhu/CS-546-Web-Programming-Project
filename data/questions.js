@@ -49,9 +49,13 @@ let exportedMethods = {
 	//create a new question
 	//update users db, add question id to user.questions
 	async addQuestion(content, topic, questioner) {
-		if (!content || !topic || !questioner) {
-			throw 'questions.js|addQuestion():You need to provide all the question fields'
+		if (!content ) {
+			console.log(topic)
+			console.log(questioner)
+			throw 'questions.js|addQuestion():You need to provide content'
 		}
+		if(!topic) throw 'questions.js|addQuestion():You need to provide topic'
+		if(!questioner) throw 'questions.js|addQuestion():You need to provide questioner id'
 		if (typeof content !== 'string' || content.trim() === '') {
 			throw 'questions.js|addQuestion():Question content must be non-empty string'
 		}
@@ -120,6 +124,7 @@ let exportedMethods = {
 				if (findAnswer.reviews.length !== 0) {
 					let reviewsList = findAnswer.reviews;
 					for (let reviewId of reviewsList) {
+						//console.log(reviewId)
 						const reviewCollection = await reviews();
 						let reviewObjectId = await myDBfunction(reviewId);
 						const deleteReviewInfo = await reviewCollection.deleteOne({ _id: reviewObjectId });
@@ -130,6 +135,21 @@ let exportedMethods = {
 				if (deleteAnswerInfo.deletedCount === 0) throw 'questions.js|removeQuestion(): no answers been deleted.'
 
 			}
+			//remove question
+			const questionObjectId = await myDBfunction(id.trim())
+			const questionCollection = await questions()
+			const deleteQuestionInfo = await questionCollection.deleteOne({_id:questionObjectId})
+			if (deleteQuestionInfo.deletedCount === 0) throw 'questions.js|removeQuestion(): no question been deleted.'
+			//remove from user db
+			const userId = question.questioner
+			const objetUserId = await myDBfunction(userId)
+			const userCollection = await users()
+			const updatedInfo = await userCollection.updateOne({_id:objetUserId},{ $pull: { questions: id.trim() } })
+			if (updatedInfo.matchedCount === 0 || updatedInfo.modifiedCount === 0) {
+				throw 'questions.js|removeQuestion():No user being updated.'
+			}
+
+			
 		}
 		return question
 	},
@@ -142,8 +162,8 @@ let exportedMethods = {
 		if (typeof topic !== 'string' || topic.trim() === '') throw 'questions.js|updateQeustion: topic should be non-empty string'
 
 		const questionCollection = await questions()
-		const findQuestion = await questionCollection.getQuestionById(id.trim())
-		//if(findQuestion == null) throw 'question.js|updateQuestion(): question not found.'
+		const findQuestion = await this.getQuestionById(id.trim())
+		if(findQuestion == null) throw 'question.js|updateQuestion(): question not found.'
 		const objectId = await myDBfunction(id.trim())
 		const updateInfo = await questionCollection.updateOne({ _id: objectId }, { $set: { content: content.trim(), topic: topic.trim() } })
 		if (updateInfo.matchedCount === 0) throw `questions.js|updateQeustion(): question ${id} not found`
@@ -185,63 +205,7 @@ let exportedMethods = {
 		return updatedQuestion;
 	},
 
-	//copyied from answers.js
-	// modified for test purpose 12-07-2020
-	async addAnswer2(content, answerer, questionId) {
-		//check whether AnswerName duplicated
-		//generate recentUpdatedTime
-		//generate empty arryays for reviews voteUp voteDown
-		var ObjectIdExp = /^[0-9a-fA-F]{24}$/
-		if (!content || content == null || typeof content != 'string' || content.match(/^[ ]*$/)) {
-			throw `content in /data/answers.js/addAnswer is blank`
-		}
-		if (!answerer || answerer == null || typeof answerer != 'string' || answerer.match(/^[ ]*$/) || !ObjectIdExp.test(answerer)) {
-			throw `answerer in /data/answers.js/addAnswer is blank or not match Object`
-		}
-		if (!questionId || questionId == null || typeof questionId != 'string' || questionId.match(/^[ ]*$/) || !ObjectIdExp.test(questionId)) {
-			throw `questionId in /data/answers.js/addAnswer has error`
-		}
-		try {
-			if (this.getQuestionById(questionId) == null) {
-				throw `did not find question by id ${questionId} in answers/addAnswer`
-			}
-			const realDate = new Date()
-			let voteUpArr = []
-			let voteDownArr = []
-			let reviewsArr = []
-			const newAnswer = {
-				content: content,
-				recentUpdatedTime: realDate,
-				answerer: answerer,
-				questionId: questionId,
-				reviews: reviewsArr,
-				voteUp: voteUpArr,
-				voteDown: voteDownArr
-			}
-			const answersCollection = await answers();
-			const insertInfor = await answersCollection.insertOne(newAnswer);
-			if (insertInfor.insertedCount === 0) {
-				throw 'Insert failed!';
-			}
-			const newId = insertInfor.insertedId.toString();
-			// add answer to question
-			const answerAddedInQus = await this.addAnswer(questionId, newId)
-			if (answerAddedInQus == null) {
-				throw 'Insert failed!';
-			}
-			//update user
-			const userCollection = await users();
-			const objectAnswererId = await myDBfunction(answerer)
-			const updateInfo = await userCollection.updateOne({ _id: objectAnswererId }, { $addToSet: { answers: newId } })
-			if (updateInfo.matchedCount === 0) throw `questions.js|addAnswer(): question ${answerer} not found`
-			if (updateInfo.modifiedCount === 0) throw `questions.js|addAnswer(): Nothing been updated.`
-			//const ans = await this.getAnswerById(newId.toString());
-			//return ans
-
-		} catch (error) {
-			throw error
-		}
-	},
+	
 
 	async getQuestionsByTopic(topic) {
 		if (!topic) throw 'questions.js|getQuestionsByTopic: you need to input topic'

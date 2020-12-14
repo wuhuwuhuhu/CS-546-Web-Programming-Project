@@ -1,35 +1,57 @@
-<div id="personalInfo">
+<div id="personalInfo" class="row container">
     <fieldset>
-        <form>
+        {{!-- <form> --}}
             <legend>Personal Information</legend>
             {{!-- <h2>Personal Information</h2> --}}
-            <label for="username">username</label>
-            <input type="text" value="{{userName}}" id="username" readonly> <br>
-            <label for="email">email</label>
-            <input type="text" value="{{userEmail}}" id="email" readonly><br>
-            <label for="registDate">Registration Date</label>
-            <input type="text" value="{{userRegistDate}}" id="registDate" readonly><br>
-            <button id="personalInfoChangePasswordButton">change password</button>
-        </form>
+            <table class="table col">
+                <tbody>
+                    <tr>
+                        <td>username</td>
+                        <td>{{userName}}</td>
+                    </tr>
+                    <tr>
+                        <td>email</td>
+                        <td>{{userEmail}}</td>
+                    </tr>
+                    <tr>
+                        <td>Registration Date</td>
+                        <td>{{userRegistDate}}</td>
+                    </tr>
+                    <tr>
+                        <td>Your Score</td>
+                        <td>{{userScore}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <button id="personalInfoChangePasswordButton" class="btn btn-primary">change password</button>
     </fieldset>
 
 </div>
-<div id='changePassword'>
+<div id='changePassword' class="row container">
     <fieldset>
         <legend>Change Password</legend>
         <form id="changePasswordForm">
-            <label for="changePasswordFormOldPassword">Password</label>
-            <input type="password" id="changePasswordFormOldPassword"><br>
-            <label for="changePasswordFormNewPassword">New Password</label>
-            <input type="password" id="changePasswordFormNewPassword"><br>
-            <label for="changePasswordFormNewPasswordCheck">Please input new password again</label>
-            <input type="password" id="changePasswordFormNewPasswordCheck"><br>
-            <button id="changePasswordFormSubmitButton">submit change</button>
-            <p id="changePasswordFormStatus"></p>
+            <table class="table col">
+                <tr>
+                    <td><label for="changePasswordFormOldPassword">Password</label></td>
+                    <td><input type="password" id="changePasswordFormOldPassword"></td>
+                </tr>
+                <tr>
+                    <td><label for="changePasswordFormNewPassword">New Password</label></td>
+                    <td><input type="password" id="changePasswordFormNewPassword"></td>
+                </tr>
+                <tr>
+                    <td><label for="changePasswordFormNewPasswordCheck">Please input new password again</label></td>
+                    <td><input type="password" id="changePasswordFormNewPasswordCheck"></td>
+                </tr>
+            </table>
+            <button id="changePasswordFormSubmitButton" class="btn btn-primary">submit change</button>
+            <p id="changePasswordFormStatus" class="text-danger"></p>
         </form>
     </fieldset>
 </div>
-<div id="questionsDiv">
+
+<div id="questionsDiv" class="row container">
     <fieldset>
         <legend>Questions</legend>
         <div id="questionsSelector">
@@ -56,7 +78,7 @@
         </div>
     </fieldset>
 </div>
-<div id="answersDiv">
+<div id="answersDiv" class="row container">
     <fieldset>
         <legend>Answers</legend>
         <div id="answersSelector">
@@ -84,7 +106,7 @@
         </div>
     </fieldset>
 </div>
-<div id="reviewsDiv">
+<div id="reviewsDiv" class="row container">
     <fieldset>
         <legend>Reviews</legend>
         <div id="reviewsSelector">
@@ -113,7 +135,7 @@
         </div>
     </fieldset>
 </div>
-<div id="votedAnswersDiv">
+<div id="votedAnswersDiv" class="row container">
     <fieldset>
         <legend>VotedAnswers</legend>
         <div id="reviewsSelector">
@@ -144,7 +166,7 @@
         </div>
     </fieldset>
 </div>
-<div id="votedReviewsAnswersDiv">
+<div id="votedReviewsAnswersDiv" class="row container ">
     <fieldset>
         <legend>VotedReviews</legend>
         <div id="votedReviewsSelector">

@@ -63,6 +63,7 @@
         } catch (error) {
             changePasswordFormStatus.html(`${error}`);
         }
+        changePasswordFormStatus.addClass("warning");
         changePasswordFormStatus.show();
     })
 
@@ -201,6 +202,9 @@
     function deleteQuestion(event){
         event.preventDefault();
         let id = event.target.id.split("_")[2];
+        if(event.target.text === "deleted"){
+            return;
+        }
         let targetUrl = "/user/deleteQuestion";
         let requestConfig = {
             method: 'POST',
@@ -215,7 +219,9 @@
                 let questionA = $(`#question_${id}`);
                 let questionDelete = $(`#question_delete_${id}`);
                 questionA.removeAttr("href");
+                questionA.addClass("deactive");
                 questionDelete.removeAttr("href");
+                questionDelete.addClass("deactive");
                 questionDelete.text("deleted");
             }
             else{
@@ -297,6 +303,9 @@
 
     function deleteAnswer(event){
         event.preventDefault();
+        if(event.target.text === "deleted"){
+            return;
+        }
         let id = event.target.id.split("_")[2];
         let targetUrl = "/user/deleteAnswer";
         let requestConfig = {
@@ -311,6 +320,7 @@
             if(responseMessage.status === true){
                 let answerDelete = $(`#answer_delete_${id}`);
                 answerDelete.removeAttr("href");
+                answerDelete.addClass("deactive");
                 answerDelete.text("deleted");
             }
             else{
@@ -398,6 +408,7 @@
             if(responseMessage.status === true){
                 let reviewDelete = $(`#review_delete_${id}`);
                 reviewDelete.removeAttr("href");
+                reviewDelete.addClass("deactive");
                 reviewDelete.text("deleted");
             }
             else{
@@ -454,10 +465,12 @@ function init_votedAnswers(limit = "10", sort = "date"){
             if(votedAnswer["IsVoteUp"]){
                 votedAnswerVoteUp.text(" Voted Up ");
                 votedAnswerVoteUp.removeAttr("href");
+                votedAnswerVoteUp.addClass("deactive");
             }
             else{
                 votedAnswerVoteDown.text(" Voted Down ");
                 votedAnswerVoteDown.removeAttr("href");
+                votedAnswerVoteDown.addClass("deactive");
             }
 
             votedAnswerVoteUp.click(updateVotedAnswer);
@@ -509,7 +522,8 @@ function updateVotedAnswer(event){
         contentType: 'application/json',
         data: JSON.stringify({
             answerId: answerId,
-            userId: userId
+            userId: userId,
+            goal: desVoteStatus
     })
     };
     $.ajax(requestConfig).then(function (responseMessage) {
@@ -518,13 +532,17 @@ function updateVotedAnswer(event){
             let originVoteA = $(`#${originVoteStatusId}`);
             if(desVoteStatus === "voteUp"){
                 desVoteA.removeAttr("href");
+                desVoteA.addClass("deactive")
                 desVoteA.text(" Voted Up ");
                 originVoteA.attr("href", "");
+                originVoteA.removeClass("deactive");
                 originVoteA.text(" Vote Down");
             }else{
                 desVoteA.removeAttr("href");
+                desVoteA.addClass("deactive")
                 desVoteA.text(" Voted Down ");
                 originVoteA.attr("href", "");
+                originVoteA.removeClass("deactive");
                 originVoteA.text(" Vote Up");
             }
 
@@ -584,10 +602,12 @@ function init_votedReviews(limit = "10", sort = "date"){
             if(votedReview["IsVoteUp"]){
                 votedReviewVoteUp.text(" Voted Up ");
                 votedReviewVoteUp.removeAttr("href");
+                votedReviewVoteUp.addClass("deactive");
             }
             else{
                 votedReviewVoteDown.text(" Voted Down ");
                 votedReviewVoteDown.removeAttr("href");
+                votedReviewVoteDown.addClass("deactive");
             }
 
             votedReviewVoteUp.click(updateVotedReview);
@@ -639,7 +659,8 @@ function updateVotedReview(event){
         contentType: 'application/json',
         data: JSON.stringify({
             reviewId: reviewId,
-            userId: userId
+            userId: userId,
+            goal: desVoteStatus
     })
     };
     $.ajax(requestConfig).then(function (responseMessage) {
@@ -648,13 +669,17 @@ function updateVotedReview(event){
             let originVoteA = $(`#${originVoteStatusId}`);
             if(desVoteStatus === "voteUp"){
                 desVoteA.removeAttr("href");
+                desVoteA.addClass("deactive");
                 desVoteA.text(" Voted Up ");
                 originVoteA.attr("href", "");
+                originVoteA.removeClass("deactive");
                 originVoteA.text(" Vote Down");
             }else{
                 desVoteA.removeAttr("href");
+                desVoteA.addClass("deactive");
                 desVoteA.text(" Voted Down ");
                 originVoteA.attr("href", "");
+                originVoteA.removeClass("deactive");
                 originVoteA.text(" Vote Up");
             }
 

@@ -23,6 +23,8 @@
                     <textarea class="form-control" id="answerContent" rows="16" style="min-width: 90%"
                         placeholder="Welcome to share your idea"></textarea>
                     <button type="button" id="answerSubmit" class="btn btn-default">submit</button>
+                    <div id="addAnswerSuccessful">Successful </div>
+                    <div id="addAnswerFailed">Failed </div>
                 </form>
             </div>
             <div id='questionInfo' class="col-md-9">
@@ -31,7 +33,12 @@
                     <caption>Show your ideas</caption>
                     <thead>
                         <tr>
-                            <th>{{answersInQuestion.length}} answers</th>
+                            <th>{{answersInQuestion.length}} answers
+                                <button style="margin:5px" class="btn btn-primary pull-right">sorted by most
+                                    recent</button>
+                                <button style="margin:5px" class="btn btn-primary pull-right">sorted by most
+                                    popular</button>
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -44,26 +51,61 @@
                                         <td class="questionInnerTableTr-1">
                                             <p class="text-primary">{{this.content}}</p>
                                         </td>
-                                        <td class="questionInnerTableTr-1">
-                                            <button>Vote Up</button>
-                                            <button>Vote Down</button>
+                                        <td class="questionInnerTableTr-2">
+                                            <button class="ReviewNumberShowButton"
+                                                id="{{this.answerId}}ReviewNumberId">{{this.reviews.length}}
+                                                reviews</button>
                                         </td>
+                                        <td class="questionInnerTableTr-2">
+                                            <p>{{this.recentUpdatedTime}}</p>
+                                        </td>
+                                        <td class="questionInnerTableTr-2">
+                                            {{#if voteUpJudge}}
+                                            <button class="buttonVoted">Vote Up / {{this.voteUpNumber}}</button>
+                                            {{else}}
+                                            <button>Vote Up / {{this.voteUpNumber}}</button>
+                                            {{/if}}
+                                            {{#if voteDownJudge}}
+                                            <button class="buttonVoted">Vote Down / {{this.voteDownNumber}}</button>
+                                            {{else}}
+                                            <button>Vote Up / {{this.voteUpNumber}}</button>
+                                            {{/if}}
+                                        </td>
+                                    </tr>
+                                    <tr>
+
                                     </tr>
                                     {{#if this.reviews}}
-                                    {{#each this.reviews}}
-                                    <tr>
-                                        <td>
-                                            <p>{{this.content}}</p>
-                                        </td>
-                                        <td>
-                                            <button>Vote Up</button>
-                                            <button>Vote Down</button>
-                                        </td>
-                                    </tr>
-                                    {{/each}}
+                                    <tbody id="ReviewNumberIdShow{{this.answerId}}" class="ReviewNumberShow">
+                                        {{#each this.reviews}}
+                                        <tr>
+                                            <td>
+                                                <p>{{this.content}}</p>
+                                            </td>
+                                            <td>
+                                            </td>
+                                            <td>
+                                                <p>{{this.recentUpdatedTime}}</p>
+                                            </td>
+                                            <td>
+                                                {{#if voteUpJudge}}
+                                                <button class="buttonVoted">Vote Up / {{this.voteUpNumber}}</button>
+                                                {{else}}
+                                                <button>Vote Up / {{this.voteUpNumber}}</button>
+                                                {{/if}}
+                                                {{#if voteDownJudge}}
+                                                <button class="buttonVoted">Vote Down / {{this.voteDownNumber}}</button>
+                                                {{else}}
+                                                <button>Vote Up / {{this.voteUpNumber}}</button>
+                                                {{/if}}
+                                            </td>
+                                        </tr>
+                                        {{/each}}
+                                    </tbody>
                                     {{else}}
-                                    <p>there is no review</p>
+
                                     {{/if}}
+
                                 </table>
                             </td>
                         </tr>
@@ -76,7 +118,7 @@
                 {{/if}}
 
             </div>
-            <div id='rightSide'>
+            <div id='divRight'>
             </div>
         </div>
 

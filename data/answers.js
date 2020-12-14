@@ -401,6 +401,15 @@ let exportedMethods = {
         } else {
             return true
         }
+    },
+
+    async transferData(data){
+        var s;
+        var month=data.getMonth()+1
+        var day=data.getDate()
+        var year=data.getFullYear()
+        var s=month+"/"+day+"/"+year
+        return s
     }
 };
 

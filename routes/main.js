@@ -21,25 +21,50 @@ router.post('/search', async(req,res)=>{
     let sort = req.body.sort;
     let topic =req.body.topic;
     let limit =parseInt(req.body.limit);
-    console.log(sort=="Date from new to old");
-    if(topic=="allTopic"){
+    let A = [];
+    if(sort=="Date from new to old"){
         if(topic=="allTopic"){
-            let A = await sortQuestionsByTime(await getQuestionsByKeywords(keywords),limit);
+            let searchQuestion=await getQuestionsByKeywords(keywords);
+            if(searchQuestion.length==0){
+                A=[];
+            }
+            else{
+                A= await sortQuestionsByTime(searchQuestion,limit);
+            }
+            
             res.json({A});
         }
         else{
-            let A = await sortQuestionsByTime(await getQuestionsByKeywordsAndTopic(keywords,topic),limit);
+            let getQuestion =await getQuestionsByKeywordsAndTopic(keywords,topic);
+            if(getQuestion.length==0){
+                A=[];
+            }
+            else{
+                A = await sortQuestionsByTime(await getQuestionsByKeywordsAndTopic(keywords,topic),limit);
+            }
             res.json({A});
         }
     }
-
-    else{
+    
+    else
+    {  
         if(topic=="allTopic"){
-            let A = await sortQuestionsByAnsNum(await getQuestionsByKeywords(keywords),limit);
+            if(await getQuestionsByKeywords(keywords).length==0){
+                A=[]
+            }
+            else{
+                A = await sortQuestionsByAnsNum(await getQuestionsByKeywords(keywords),limit);
+            }
             res.json({A});
         }
         else{
-            let A = await sortQuestionsByAnsNum(await getQuestionsByKeywordsAndTopic(keywords,topic),limit);
+            let searchQuestion =await getQuestionsByKeywordsAndTopic(keywords,topic);
+            if(searchQuestion.length==0){
+                A =[];
+            }
+            else{
+                A = await sortQuestionsByAnsNum(await getQuestionsByKeywordsAndTopic(keywords,topic),limit);
+            }
             res.json({A});
         }
     }

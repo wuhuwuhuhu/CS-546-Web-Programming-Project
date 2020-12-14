@@ -1,38 +1,46 @@
-<form id ="Myform">
-    <label>
-        Search Questions
-        <input type="text" name="search"  placeholder="Search" id="text_input">
-        <button type="submit">Search for that</button>
-    </label>
-</form>
-<div id="questionsSelector" hidden>
-    <label for="questionsSortSelect">Sort: </label>
-    <select id="questionsSortSelect">
-        <option value="Date from new to old" selected="selected">Date from new to old</option>
-        <option value="Answers number from high to low">Answers number from high to low</option>
-    </select>
-    <br>
-        <label for="questionsLimitSelect">Limit: </label>
-        <select id="questionsLimitSelect">
-            <option value="10" selected="selected">10</option>
-            <option value="20">20</option>
-            <option value="50">50</option>
+<link rel="stylesheet" href="/public/css/mainPage.css">
+<div id="Welcome" ><p><h1>Welcome to our main page</h1></p></div>
+<h4><div id="error-container"></div></h4>
+<div style="width:800px; height:auto; float:left; display:inline">   
+    <form id ="Myform">
+        <label>
+            <h2><p id="searchTitle">Search Questions<p></h2>
+            <input type="text" name="search"  placeholder="Search" id="text_input">
+           <button type="submit">Search for that</button>
+        </label>
+    </form>
+    <div id="questionsSelector" hidden>
+        <label for="questionsSortSelect">Sort: </label>
+        <select id="questionsSortSelect">
+            <option value="Date from new to old" selected="selected">Date from new to old</option>
+            <option value="Answers number from high to low">Answers number from high to low</option>
         </select>
-    <br>
-        <label for="questionsTopicSelect">Topic: </label>
-        <select id="questionsTopicSelect">
-            <option value="allTopic" selected="selected">allTopic</option>
-            <option value="Books">Books</option>
-            <option value="Music">Music</option>
-            <option value="Moives">Moives</option>
-            <option value="Wine">Wine</option>
-            <option value="Cooking">Cooking</option>
-            <option value="Travel">Travel</option>
-            <option value="Other">Other</option>
-        </select>
-</div>
-<div>
+        <br>
+            <label for="questionsLimitSelect">Limit: </label>
+            <select id="questionsLimitSelect">
+                <option value="10" selected="selected">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+            </select>
+        <br>
+            <label for="questionsTopicSelect">Topic: </label>
+            <select id="questionsTopicSelect">
+                <option value="allTopic" selected="selected">allTopic</option>
+                <option value="Books">Books</option>
+                <option value="Music">Music</option>
+                <option value="Moives">Moives</option>
+                <option value="Wine">Wine</option>
+                <option value="Cooking">Cooking</option>
+                <option value="Travel">Travel</option>
+                <option value="Other">Other</option>
+            </select>
+    </div>
+
     <ol id="questionList"></ol>
 </div>
 
-<ol id="honorList">Honor List</ol>
+<div id="HonorList">
+    <table>
+    <ol id="honorList"><h2><p id="honorListtitle">Honor List</p><h2></h2></ol>
+    </table>
+</div>

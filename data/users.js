@@ -82,7 +82,16 @@
             } catch (err) {
                 emailExists = false;
             }
-
+		let userNameExists = false;
+            try {
+                const user = await this.getUserByEmail(userName);
+                if(user != null)
+                userNameExists = true;
+            } catch (err) {
+                userNameExists = false;
+            }
+            if (userNameExists)
+             throw new Error('Username already registered');
             if (emailExists) throw new Error('Email already registered');
             const salt = bcryptjs.genSaltSync(16);
             const hash = bcryptjs.hashSync(hashedPassword, salt);

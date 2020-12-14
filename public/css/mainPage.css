@@ -1,0 +1,23 @@
+#Welcome{
+    text-align:center;
+    color: blue;
+}
+#error-container{
+    color: #ff822b;
+    
+}
+#honorListtitle{
+    color: #6666e2;;
+}
+
+#HonorList{
+    width:300px; height:auto; float:right; display:inline
+}
+
+#searchTitle{
+    color:#8585e4;
+}
+
+#honorListItem{
+    color: #5858e6;
+}

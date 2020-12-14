@@ -19,7 +19,7 @@ questionsLimitSelect.change((event)=>{
         $('#questionList').hide();
         $('#error-container').children().remove();
         $('#error-container').show();
-        let tag ="<a>You must enter some words to search!!</a>"
+        let tag ="<p>You must enter some words to search!!</p>"
         $('#error-container').append(tag)
 
     }
@@ -39,7 +39,7 @@ questionsSortSelect.change((event)=>{
         $('#questionList').hide();
         $('#error-container').children().remove();
         $('#error-container').show();
-        let tag ="<a>You must enter some words to search!!</a>"
+        let tag ="<p>You must enter some words to search!!</p>"
         $('#error-container').append(tag)
 
     }
@@ -59,7 +59,7 @@ questionTopicSelect.change((event)=>{
         $('#questionList').hide();
         $('#error-container').children().remove();
         $('#error-container').show();
-        let tag ="<a>You must enter some words to search!!</a>"
+        let tag ="<p>You must enter some words to search!!</p>"
         $('#error-container').append(tag)
 
     }
@@ -81,7 +81,7 @@ $('#Myform').submit((event)=>{
         $('#questionList').hide();
         $('#error-container').children().remove();
         $('#error-container').show();
-        let tag ="<a>You must enter some words to search!!</a>"
+        let tag ="<p>You must enter some words to search!!</p>"
         $('#error-container').append(tag)
 
     }
@@ -110,6 +110,7 @@ function search(keywords,topic,sort,limit){
             $('#error-container').append("<p>No search answer!!</p>")
         }
         else{
+            $('#error-container').hide()
             $("#questionList").children().remove();
             $("#questionList").show();
             for(let i=0;i<responseMessage.A.length;i++){
@@ -150,7 +151,7 @@ function getHonorList(){
     }
     $.ajax(getHonorList).then(function(responseMessage){
         for(let i=9;i>0;i=i-1){
-            let li ="<li>"+responseMessage.honorList[i].userName+":"+responseMessage.honorList[i].userGetVote+"</li>";
+            let li ="<li id='honorListItem'>"+responseMessage.honorList[i].userName+":"+responseMessage.honorList[i].userGetVote+"</li>";
             $("#honorList").append(li)
         }
     })

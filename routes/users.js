@@ -106,6 +106,21 @@ router.get('/', async(req,res) => {
         });
     }
 
+    //get score
+
+    let userGetVote = 0;
+    for(let j=0;j<userAnswers.length;j++){
+        let userEachAnswer=await answersData.getAnswerById(userAnswers[j]);
+        if(userEachAnswer){
+            userGetVote += userEachAnswer.voteUp.length-userEachAnswer.voteDown.length;
+        }
+    }
+
+    for(let l=0;l<userReviews.length;l++){
+        let userEachReview = await reviewsData.getReviewById(userReviews[l]);
+        userGetVote += userEachReview.voteUp.length-userEachReview.voteDown.length;
+    }
+
     
     res.render("user",{
         title: "Personal Information",
@@ -116,7 +131,8 @@ router.get('/', async(req,res) => {
         userAnswersList: userAnswersList,
         userReviewsList: userReviewsList,
         userVotedAnswersList: userVotedAnswersList,
-        userVotedReviewsList: userVotedReviewsList
+        userVotedReviewsList: userVotedReviewsList,
+        userScore: userGetVote
     })
     return;
 });

@@ -44,9 +44,9 @@ router.post("/", async (req, res) => {
     if(error_msgs.length === 0){
         try {
             user = await userData.addUser(
-                userName,
                 email, 
-                password
+                password,
+                userName
             );
         } catch (error) {
             error_msgs.push(error.message);

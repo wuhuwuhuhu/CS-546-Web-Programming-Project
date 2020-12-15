@@ -12,7 +12,7 @@ router.get("/", async (req, res) => {
   router.post("/", async (req, res) => {
   
     let { email } = req.body;
-    email = xss(email).toLowerCase();
+    email = xss(email).trim().toLowerCase();
     let error_msgs = [];
     let status = false;
     const newPassword = "abcd1234";
@@ -30,10 +30,17 @@ router.get("/", async (req, res) => {
       }
       if(error_msgs.length === 0){
           try {
-            // user =  await user.setPassword(email, newPassword);
             user = await userData.getUserByEmail(email);
           } catch (error) {
-              error_msgs.push(error.message);
+            error_msgs.push(error.message);
+          }
+
+          if(user){
+              try {
+                user =  await userData.setPassword(user["_id"].toString(), newPassword);
+              } catch (error) {
+                error_msgs.push(error.message);
+              }
           }
       }
       if(error_msgs.length === 0){

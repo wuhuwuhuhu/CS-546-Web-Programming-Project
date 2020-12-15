@@ -163,7 +163,7 @@
             return;
         }
         else{
-            setStatusTextandClass(passwordStatus, "This password is legal.","text-success");
+            setStatusTextandClass(passwordStatus, "This password is valid.","text-success");
             return;
         }
     }

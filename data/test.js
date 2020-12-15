@@ -6,19 +6,19 @@ const answersMethods = require("./answers");
 const usersMethods = require("./users");
 async function test1() {
     try {
-        const op1 = await reviewsMethods.getReviewById("5fb5cd906768a33e948daf2d");
+        const op1 = await reviewsMethods.getReviewById("5fd2bcbadc020240556f3b05");
         console.log(op1);
     } catch (error) {
         throw error
     }
-    console.log("-----///----///---///");
-    try {
-        const op2 = await reviewsMethods.getReviewById("5fb5cd906768a33e948daf2d");
-        // const test=await reviewsMethods.getAllReviews()
-        console.log(op2);
-    } catch (error) {
-        throw error
-    }
+    // console.log("-----///----///---///");
+    // try {
+    //     const op2 = await reviewsMethods.getReviewById("5fb5cd906768a33e948daf2d");
+    //     // const test=await reviewsMethods.getAllReviews()
+    //     console.log(op2);
+    // } catch (error) {
+    //     throw error
+    // }
 }
 async function test2() {
     const getAll = await questionsdMethods.getAllQuestions()
@@ -137,6 +137,6 @@ async function test16(){
 }
 
 
-test13()
+test1()
 
 

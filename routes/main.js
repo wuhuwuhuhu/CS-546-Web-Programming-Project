@@ -6,14 +6,7 @@ const { getAllUserVoteList } = require('../data/vote');
 const voteData = require('../data/vote')
 
 router.get('/', function(req,res)  {
-    console.log("12312")
-    if(req.session.user){
-        res.render("main/mainpage");
-    }else{
-        res.redirect("/login")
-    }
-   
-    
+    res.render("main/mainpage");   
     return;
 });
 router.post('/search', async(req,res)=>{
@@ -74,7 +67,7 @@ router.post('/search', async(req,res)=>{
 
 router.post('/popular',async(req,res)=>{
     if(req.body.ask==true){
-        let allQuestionSort =await sortQuestionsByAnsNum(await questions.getAllQuestions(), 20)
+        let allQuestionSort =await sortQuestionsByAnsNum(await questions.getAllQuestions(), 10)
         // get the name for all question , using loop to return 
     
         let A = {returnPopular:allQuestionSort};

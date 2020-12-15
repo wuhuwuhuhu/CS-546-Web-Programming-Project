@@ -5,7 +5,7 @@ const { getAllUsers } = require('./users');
 const { getAnswerById } = require('./answers');
 const { getReviewById } = require('./reviews');
 let exportedMethods = {
-    async getAllUserVoteList(id){
+    async getAllUserVoteList(){
         let topList =[];
         let sortList=[];
         let alluser =await getAllUsers();

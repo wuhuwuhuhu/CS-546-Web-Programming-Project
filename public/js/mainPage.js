@@ -107,10 +107,15 @@
         }
 
         $.ajax(search).then(function(responseMessage){
+            if(responseMessage.error_msgs){
+                $('#error-container').children().remove();
+                $('#error-container').show();
+                $('#error-container').append("<h4><p>"+responseMessage.error_msgs+"</p></h4>")
+            }
             if(responseMessage.A.length==0){
                 $('#error-container').children().remove();
                 $('#error-container').show();
-                $('#error-container').append("<h4><p>No search answer!!</p></h4>")
+                $('#error-container').append("<h4><p>No search result!!</p></h4>")
             }
             else{
                 $('#error-container').hide()

@@ -1,3 +1,4 @@
+const { response } = require('express');
 const express = require('express');
 const { sortQuestionsByTime, sortQuestionsByAnsNum, getQuestionsByKeywords, getQuestionsByKeywordsAndTopic } = require('../data/questions');
 const router = express.Router();
@@ -5,60 +6,83 @@ const questions = require('../data/questions');
 const { getAllUserVoteList } = require('../data/vote');
 const voteData = require('../data/vote')
 
-router.get('/', function(req,res)  {
+router.get('/', async(req,res)=>  {
     res.render("main/mainpage");   
-    return;
 });
+
 router.post('/search', async(req,res)=>{
-    let keywords = req.body.keywords;
-    let sort = req.body.sort;
-    let topic =req.body.topic;
-    let limit =parseInt(req.body.limit);
-    let A = [];
-    if(sort=="Date from new to old"){
-        if(topic=="allTopic"){
-            let searchQuestion=await getQuestionsByKeywords(keywords);
-            if(searchQuestion.length==0){
-                A=[];
-            }
-            else{
-                A= await sortQuestionsByTime(searchQuestion,limit);
-            }
-            
-            res.json({A});
-        }
-        else{
-            let getQuestion =await getQuestionsByKeywordsAndTopic(keywords,topic);
-            if(getQuestion.length==0){
-                A=[];
-            }
-            else{
-                A = await sortQuestionsByTime(await getQuestionsByKeywordsAndTopic(keywords,topic),limit);
-            }
-            res.json({A});
-        }
+    let error_msgs = "";
+    if(!req.body.keywords){
+        error_msgs="Must provide valid keywords to search.";
+        let response = {error_msgs}
+        res.status(400).json(response)
     }
-    
-    else
-    {  
-        if(topic=="allTopic"){
-            if(await getQuestionsByKeywords(keywords).length==0){
-                A=[]
+    else if(!req.body.sort){
+        error_msgs="Must provide sort to search.";
+        let response = {error_msgs}
+        res.status(400).json(response)
+    }
+    else if(!req.body.topic){
+        error_msgs="Must provide topic to search.";
+        let response = {error_msgs}
+        res.status(400).json(response)
+    }
+    else if(!req.body.limit){
+        error_msgs="Must provide limit number to search."
+                let response = {error_msgs}
+        res.status(400).json(response)
+    }
+    else{
+        let keywords = req.body.keywords;
+        let sort = req.body.sort;
+        let topic =req.body.topic;
+        let limit =parseInt(req.body.limit);
+        let A = [];
+        if(sort=="Date from new to old"){
+            if(topic=="allTopic"){
+                let searchQuestion=await getQuestionsByKeywords(keywords);
+                if(searchQuestion.length==0){
+                    A=[];
+                }
+                else{
+                    A= await sortQuestionsByTime(searchQuestion,limit);
+                }
+                
+                res.json({A});
             }
             else{
-                A = await sortQuestionsByAnsNum(await getQuestionsByKeywords(keywords),limit);
+                let getQuestion =await getQuestionsByKeywordsAndTopic(keywords,topic);
+                if(getQuestion.length==0){
+                    A=[];
+                }
+                else{
+                    A = await sortQuestionsByTime(await getQuestionsByKeywordsAndTopic(keywords,topic),limit);
+                }
+                res.json({A});
             }
-            res.json({A});
         }
-        else{
-            let searchQuestion =await getQuestionsByKeywordsAndTopic(keywords,topic);
-            if(searchQuestion.length==0){
-                A =[];
+        
+        else
+        {  
+            if(topic=="allTopic"){
+                if(await getQuestionsByKeywords(keywords).length==0){
+                    A=[]
+                }
+                else{
+                    A = await sortQuestionsByAnsNum(await getQuestionsByKeywords(keywords),limit);
+                }
+                res.json({A});
             }
             else{
-                A = await sortQuestionsByAnsNum(await getQuestionsByKeywordsAndTopic(keywords,topic),limit);
+                let searchQuestion =await getQuestionsByKeywordsAndTopic(keywords,topic);
+                if(searchQuestion.length==0){
+                    A =[];
+                }
+                else{
+                    A = await sortQuestionsByAnsNum(await getQuestionsByKeywordsAndTopic(keywords,topic),limit);
+                }
+                res.json({A});
             }
-            res.json({A});
         }
     }
     

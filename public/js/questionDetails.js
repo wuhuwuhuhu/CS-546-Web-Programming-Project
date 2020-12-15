@@ -11,6 +11,9 @@
     addAnswerSuccessful.hide()
     addAnswerFailed.hide()
 
+ 
+
+
 
     $(document).on('click', '.ReviewNumberShowButton', function (event) {
         event.preventDefault();
@@ -18,12 +21,61 @@
         a = "ReviewNumberIdShow" + a.replace("ReviewNumberId", "")
         $("#" + a).toggle()
     })
-   
-    $(document).on('click', '.ReviewNumberShowButton', function (event) {
+
+    $(document).on('click', '#sortByRecent', function (event) {
         event.preventDefault();
         var a = $(this).attr("id");
-        a = "ReviewNumberIdShow" + a.replace("ReviewNumberId", "")
-        $("#" + a).toggle()
+        var questionId = quesId.text()
+        var url = "/question/sortByRecent"
+        var requestConfig = {
+            method: 'POST',
+            url: url,
+            contentType: 'application/json',
+            data: JSON.stringify({
+                questionId: questionId,
+            })
+        };
+        $.ajax(requestConfig).then(function (responseMessage) {
+            if (responseMessage.status === true) {
+                mainTable.empty()
+                const answerId = responseMessage.newReviewInAnswer
+                const newAnswerList = responseMessage.sortedAnswerList
+                AnalysAnswerListToHTML(newAnswerList)
+                $('[id^="ReviewNumber"]').hide();
+                $("#ReviewNumberIdShow" + answerId).show()
+            }
+            else {
+                console.log("something wrong");
+            }
+        });
+    })
+
+    $(document).on('click', '#sortByPopular', function (event) {
+        event.preventDefault();
+        var a = $(this).attr("id");
+        var questionId = quesId.text()
+        var url = "/question/sortByPopular"
+        var requestConfig = {
+            method: 'POST',
+            url: url,
+            contentType: 'application/json',
+            data: JSON.stringify({
+                questionId: questionId,
+            })
+        };
+        $.ajax(requestConfig).then(function (responseMessage) {
+            if (responseMessage.status === true) {
+                mainTable.empty()
+                const answerId = responseMessage.newReviewInAnswer
+                const newAnswerList = responseMessage.sortedAnswerList
+                AnalysAnswerListToHTML(newAnswerList)
+                $('[id^="ReviewNumber"]').hide();
+                $("#ReviewNumberIdShow" + answerId).show()
+            }
+            else {
+                console.log("something wrong");
+            }
+        });
     })
 
     $(document).on('click', '.answerButtonUnVoted', function (event) {
@@ -92,9 +144,8 @@
         $.ajax(requestConfig).then(function (responseMessage) {
             if (responseMessage.status === true) {
                 mainTable.empty()
-                const answerId=responseMessage.newReviewInAnswer
+                const answerId = responseMessage.newReviewInAnswer
                 const newAnswerList = responseMessage.newAnswerList
-                console.log(newAnswerList);
                 AnalysAnswerListToHTML(newAnswerList)
                 $('[id^="ReviewNumber"]').hide();
                 $("#ReviewNumberIdShow" + answerId).show()
@@ -105,9 +156,157 @@
         });
     })
 
+    $(document).on('click', '.submitReview', function (event) {
+        event.preventDefault();
+        var a = $(this).attr("id");
+        var questionId = quesId.text()
+        var answerId = a.replace("submitReview", "");
+        var url = "/question/addReview/" + answerId;
+        var content = $('#reviewContent' + answerId).val();
+        if(!content || typeof content != 'string' || content.match(/^[ ]*$/)){
+            alert("Can not submit blank data")
+            return
+        }
+        console.log(content);
+        var requestConfig = {
+            method: 'POST',
+            url: url,
+            contentType: 'application/json',
+            data: JSON.stringify({
+                questionId: questionId,
+                answerId: answerId,
+                content: content
+            })
+        };
+        $.ajax(requestConfig).then(function (responseMessage) {
+            $('#myReview'+answerId).trigger('click');
+            if (responseMessage.status === true) {
+                const answerId = responseMessage.answerId
+                const curReview = responseMessage.curReview
+                var btValue=$('#'+answerId+"ReviewNumberId").text()
+                btValue=btValue.replace(" reviews","")
+                btValue=parseInt(btValue)+1
+                btValue=btValue+" reviews"
+                var curReviewId = curReview.reviewId
+                var curReviewContent = curReview.content
+                var curReviewRecentUpdatedTime = curReview.recentUpdatedTime
+                var curReviewVoteUpNumber = curReview.voteUpNumber
+                var curReviewVoteDownNumber = curReview.voteDownNumber
+                var subTableTodyTr = "<tr>"
+                var subTableTodyTr_td1 = "<td><p>" + curReviewContent + "</p></td>";
+                var subTableTodyTr_ex = "<td></td>";
+                var subTableTodyTr_td2 = "<td></td>";
+                var subTableTodyTr_td3 = "<td></td>";
+                var subTableTodyTr_td4 = "<td><p>" + curReviewRecentUpdatedTime + "</p></td>";
+                var subTableTodyTr_td5 = "";
+                var subTableTodyTr_td5_bt1 = "";
+                var subTableTodyTr_td5_bt2 = "";
+                if (curReview.voteUpJudge) {
+                    subTableTodyTr_td5_bt1 = " <button class=\"reviewButtonVoted\" disabled=\"disabled\">Vote Up / " + curReviewVoteUpNumber + "</button>"
+                } else {
+                    subTableTodyTr_td5_bt1 = "<button class=\"reviewButtonUnVoted\" id=\"voteUp" + curReviewId + "\">Vote Up / " + curReviewVoteUpNumber + "</button>"
+                }
+                if (curReview.voteDownJudge) {
+                    subTableTodyTr_td5_bt2 = " <button class=\"reviewButtonVoted\" disabled=\"disabled\">Vote Down / " + curReviewVoteDownNumber + "</button>"
+                } else {
+                    subTableTodyTr_td5_bt2 = " <button class=\"reviewButtonUnVoted\" id=\"voteDn" + curReviewId + "\">Vote Down / " + curReviewVoteDownNumber + "</button>"
+                }
+                subTableTodyTr_td5 = "<td>" + subTableTodyTr_td5_bt1 + "&nbsp;" + subTableTodyTr_td5_bt2 + "</td>"
+                subTableTodyTr = subTableTodyTr_td1 + subTableTodyTr_ex + subTableTodyTr_td2 + subTableTodyTr_td3 + subTableTodyTr_td4 + subTableTodyTr_td5
+                // subTableTody = subTableTody + subTableTodyTr + "</tr>"
+                subTableTodyTr = "<tr>" + subTableTodyTr + "</tr>"
+                $('#'+answerId+"ReviewNumberId").text(btValue)
+                $('#ReviewNumberIdShow' + answerId).append(subTableTodyTr)
+                $('#ReviewNumberIdShow' + answerId).show()
+            }
+            else {
+                console.log("something wrong");
+            }
+        });
+    })
+
+    $(document).on('change', '.ReviewSorted', function (event) {
+        event.preventDefault();
+        var questionId = quesId.text()
+        var selected = $(this).children('option:selected').val();
+        var answerId
+        if (selected != '0') {
+            var a = $(this).attr("id");
+            answerId = a.replace("ReviewSorted", "")
+            //ReviewNumberIdShow5fd82a4799eb7c385db27e68
+            var tBodyReviews = "ReviewNumberIdShow" + a.replace("ReviewSorted", "")
+            $('#' + tBodyReviews).empty()
+            var url
+            if (selected == '1') {
+                url = "/question/sortReview/sortByRecent"
+            } else if (selected == '2') {
+                url = "/question/sortReview/sortByPopular"
+            }
+            var requestConfig = {
+                method: 'POST',
+                url: url,
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    questionId: questionId,
+                    answerId: answerId
+                })
+            };
+            $.ajax(requestConfig).then(function (responseMessage) {
+                if (responseMessage.status === true) {
+                    const newReviewList = responseMessage.sortedReviewrList
+                    // $('#' + tBodyReviews).append("<p>saddad</p>")
+                    // var subTableTody="<tr>";
+                    for (let index = 0; index < newReviewList.length; index++) {
+                        var curReview = newReviewList[index];
+                        var curReviewId = curReview.reviewId
+                        var curReviewContent = curReview.content
+                        var curReviewRecentUpdatedTime = curReview.recentUpdatedTime
+                        var curReviewVoteUpNumber = curReview.voteUpNumber
+                        var curReviewVoteDownNumber = curReview.voteDownNumber
+                        var subTableTodyTr = "<tr>"
+                        var subTableTodyTr_td1 = "<td><p>" + curReviewContent + "</p></td>";
+                        var subTableTodyTr_ex = "<td></td>";
+                        var subTableTodyTr_td2 = "<td></td>";
+                        var subTableTodyTr_td3 = "<td></td>";
+                        var subTableTodyTr_td4 = "<td><p>" + curReviewRecentUpdatedTime + "</p></td>";
+                        var subTableTodyTr_td5 = "";
+                        var subTableTodyTr_td5_bt1 = "";
+                        var subTableTodyTr_td5_bt2 = "";
+                        if (curReview.voteUpJudge) {
+                            subTableTodyTr_td5_bt1 = " <button class=\"reviewButtonVoted\" disabled=\"disabled\">Vote Up / " + curReviewVoteUpNumber + "</button>"
+                        } else {
+                            subTableTodyTr_td5_bt1 = "<button class=\"reviewButtonUnVoted\" id=\"voteUp" + curReviewId + "\">Vote Up / " + curReviewVoteUpNumber + "</button>"
+                        }
+                        if (curReview.voteDownJudge) {
+                            subTableTodyTr_td5_bt2 = " <button class=\"reviewButtonVoted\" disabled=\"disabled\">Vote Down / " + curReviewVoteDownNumber + "</button>"
+                        } else {
+                            subTableTodyTr_td5_bt2 = " <button class=\"reviewButtonUnVoted\" id=\"voteDn" + curReviewId + "\">Vote Down / " + curReviewVoteDownNumber + "</button>"
+                        }
+                        subTableTodyTr_td5 = "<td>" + subTableTodyTr_td5_bt1 + "&nbsp;" + subTableTodyTr_td5_bt2 + "</td>"
+                        subTableTodyTr = subTableTodyTr_td1 + subTableTodyTr_ex + subTableTodyTr_td2 + subTableTodyTr_td3 + subTableTodyTr_td4 + subTableTodyTr_td5
+                        // subTableTody = subTableTody + subTableTodyTr + "</tr>"
+                        subTableTodyTr = "<tr>" + subTableTodyTr + "</tr>"
+                        $('#' + tBodyReviews).append(subTableTodyTr)
+                    }
+                    // console.log(subTableTody);
+                }
+                else {
+                    console.log("something wrong");
+                }
+                $('#' + tBodyReviews).show()
+            });
+
+        }
+
+    })
+
     answerSubmit.click(function (event) {
         event.preventDefault();
         var content = answerContent.val();
+        if(!content || typeof content != 'string' || content.match(/^[ ]*$/)){
+            alert("Can not submit blank data")
+            return
+        }
         const questionId = quesId.text()
         let url = '/question/addAnswer/' + questionId
         var requestConfig = {
@@ -127,8 +326,9 @@
                 const newAnswerList = responseMessage.newAnswerList
                 AnalysAnswerListToHTML(newAnswerList)
                 $('[id^="ReviewNumber"]').hide();
-                addAnswerSuccessful.hide()
-                addAnswerFailed.hide()
+                addAnswerSuccessful.show()
+                addAnswerSuccessful.delay(3000).hide(0);
+                $("#answerContent").val("");
             }
             else {
                 addAnswerFailed.show()
@@ -138,11 +338,13 @@
     });
 
 
+
+
     function AnalysAnswerListToHTML(newAnswerList) {
         const tableCaption = " <caption>Show your ideas</caption>"
         mainTable.append(tableCaption)
         let listLen = newAnswerList.length
-        var tableThead = "<thead> <tr><th>" + listLen + " answers<button style=\"margin:5px\" class=\"btn btn-primary pull-right\" id=\"sortByrecent\">sorted by most recent</button><button style=\"margin:5px\" class=\"btn btn-primary pull-right\" id=\"sortByPopular\" >sorted by most popular</button></th> </tr> </thead>"
+        var tableThead = "<thead> <tr><th>" + listLen + " answers<button style=\"margin:5px\" class=\"btn btn-primary pull-right\" id=\"sortByRecent\">sorted by most recent</button><button style=\"margin:5px\" class=\"btn btn-primary pull-right\" id=\"sortByPopular\" >sorted by most popular</button></th> </tr> </thead>"
         mainTable.append(tableThead)
         var tableBody;
 
@@ -158,9 +360,10 @@
             //sub tables
             var subTable = "<tr><td><table class=\"questionInnerTable\">"
             const curAnswerContent = curAnswer.content
+            var subTableTr1_ex = " <td><select id=\"" + curAnswerId + "ReviewSorted\" class=\"ReviewSorted\">  <option value=\"0\" selected=\"selected\">Sort Reviews</option><option value=\"1\">Most recent</option><option value=\"2\">Most popular</option></select></td>"
             var subTableTr1_td1 = " <td class=\"questionInnerTableTr-1\"><p class=\"text-primary\">" + curAnswerContent + "</p></td>";
             var subTableTr1_td2 = " <td class=\"questionInnerTableTr-2\"><button class=\"ReviewNumberShowButton\" id=\"" + curAnswerId + "ReviewNumberId\">" + curReviewListLen + " reviews</button></td>";
-            var subTableTr1_td3 = " <td><button class=\"btn\" data-toggle=\"modal\"data-target=\"#myReview" + curAnswerId + "\" type=\"button\">Review answer</button><div class=\"modal\" id=\"myReview" + curAnswerId + "\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"mySmallModalLabel\" aria-hidden=\"true\"><div class=\"modal-dialog\"><div class=\"modal-content\"><form><div class=\"modal-header\"> <button type=\"button\" class=\"close\" data-dismiss=\"modal\"><span aria-hidden=\"true\">&times;</span><span class=\"sr-only\">Close</span></button><h4 class=\"modal-title\">Please write down your ideas </h4> </div> <div class=\"modal-body\"><textarea class=\"form-control\" id=\"answerContent\" rows=\"16\" style=\"min-width: 90%\" placeholder=\"Welcome to share your idea\"></textarea> </div><div class=\"modal-footer\"> <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button> <button type=\"button\" class=\"btn btn-primary\" id=\"submitReview" + curAnswerId + "\">Save</button> </div> </form> </div> </div> </div>  </td>"
+            var subTableTr1_td3 = " <td><button class=\"btn\" data-toggle=\"modal\"data-target=\"#myReview" + curAnswerId + "\" type=\"button\">Review answer</button><div class=\"modal\" id=\"myReview" + curAnswerId + "\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"mySmallModalLabel\" aria-hidden=\"true\"><div class=\"modal-dialog\"><div class=\"modal-content\"><form><div class=\"modal-header\"> <button type=\"button\" class=\"close\"  data-dismiss=\"modal\"><span aria-hidden=\"true\">&times;</span><span class=\"sr-only\">Close</span></button><h4 class=\"modal-title\">Please write down your ideas </h4> </div> <div class=\"modal-body\"><textarea class=\"form-control\" id=\"reviewContent" + curAnswerId + "\" rows=\"16\" style=\"min-width: 90%\" placeholder=\"Welcome to share your idea\"></textarea> </div><div class=\"modal-footer\"> <button type=\"button\"  id=\"closeButton" + curAnswerId + "\" data-dismiss=\"modal\">Close</button> <button type=\"button\" class=\"submitReview\" id=\"submitReview" + curAnswerId + "\">Save</button> </div> </form> </div> </div> </div>  </td>"
             var subTableTr1_td4 = "<td class=\"questionInnerTableTr-2\"> <p>" + curAnswerRecentUpdatedTime + "</p> </td>";
             var subTableTr1_td5_bt1 = ""
             if (curAnswer.voteUpJudge) {
@@ -175,7 +378,7 @@
                 subTableTr1_td5_bt2 = "<button class=\"answerButtonUnVoted\" id=\"voteDn" + curAnswerId + "\">Vote Down / " + curAnswerVoteDownNumber + "</button>"
             }
             var subTableTr1_td5 = " <td class=\"questionInnerTableTr-2\">" + subTableTr1_td5_bt1 + "&nbsp;" + subTableTr1_td5_bt2 + "</td>";
-            var subTableTr1 = "<tr>" + subTableTr1_td1 + subTableTr1_td2 + subTableTr1_td3 + subTableTr1_td4 + subTableTr1_td5 + "</tr>";
+            var subTableTr1 = "<tr>" + subTableTr1_td1 + subTableTr1_ex + subTableTr1_td2 + subTableTr1_td3 + subTableTr1_td4 + subTableTr1_td5 + "</tr>";
             var subTableTr2 = "<tr></tr>";
             var subTableTody = " <tbody id=\"ReviewNumberIdShow" + curAnswerId + "\" class=\"ReviewNumberShow\">";
             for (let index2 = 0; index2 < curReviewList.length; index2++) {
@@ -187,6 +390,7 @@
                 var curReviewVoteDownNumber = curReview.voteDownNumber
                 var subTableTodyTr = "<tr>"
                 var subTableTodyTr_td1 = "<td><p>" + curReviewContent + "</p></td>";
+                var subTableTodyTr_ex = "<td></td>";
                 var subTableTodyTr_td2 = "<td></td>";
                 var subTableTodyTr_td3 = "<td></td>";
                 var subTableTodyTr_td4 = "<td><p>" + curReviewRecentUpdatedTime + "</p></td>";
@@ -204,7 +408,7 @@
                     subTableTodyTr_td5_bt2 = " <button class=\"reviewButtonUnVoted\" id=\"voteDn" + curReviewId + "\">Vote Down / " + curReviewVoteDownNumber + "</button>"
                 }
                 subTableTodyTr_td5 = "<td>" + subTableTodyTr_td5_bt1 + "&nbsp;" + subTableTodyTr_td5_bt2 + "</td>"
-                subTableTodyTr = subTableTodyTr_td1 + subTableTodyTr_td2 + subTableTodyTr_td3 + subTableTodyTr_td4 + subTableTodyTr_td5
+                subTableTodyTr = subTableTodyTr_td1 + subTableTodyTr_ex + subTableTodyTr_td2 + subTableTodyTr_td3 + subTableTodyTr_td4 + subTableTodyTr_td5
                 subTableTody = subTableTody + subTableTodyTr + "</tr>"
             }
             subTableTody = subTableTody + "</tbody>"

@@ -1,78 +1,38 @@
+<h1>Register</h1>
 
-<div class="container-fluid">
-  <div class="row justify-content-center">
-    <div class="col-6 text-left">
-      <div id="error">
-        <h3 style="color: red;">Error</h3>
-        <h3 id="errorstr" style="color: red;"></h3>
-      </div>
-      
-      <h1 class="display-4">Register</h1>
-      <br>
-      <br>
-      <form id="regForm" >
-        <div class="form-row">
-          <div class="form-group col-md-6">
-            <label for="userName">userName</label>
-            <input type="text" maxlength="60" name="userName" class="form-control" id="userName"aria-describedby="userNameHelp"
-              placeholder="userName">
-                <small id="userNameHelp" class="form-text text-muted">Name should be in 3-16 characters long.</small>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group col-md-6">
-            <label for="email">Email</label>
-            <input type="email" maxlength="60" name="email" class="form-control" id="email" aria-describedby="userNameHelp"placeholder="Email">
-            <small id="userNameHelp" class="form-text text-muted">Email address shoud be vaild.</small>
-          </div>
-          <div class="form-group col-md-6">
-            <label for="hashedPassword">Password</label>
-            <input type="password" maxlength="60" name="hashedPassword" class="form-control" id="password"aria-describedby="passwordHelp"
-              placeholder="Password">
-               <small id="passwordHelp" class="form-text text-muted">Password should be in 3-16 characters long.</small>
-          </div>
-        </div>
-        </div>
-        <div class="text-center">
-          <button type="button" class="btn btn-primary" id="registId">Register</button>
-        </div>
-      </form>
-    </div>
+<form id="regForm">
+
+  <div class="form-group" class="row">
+    <label for="userName">userName</label>
+    <input type="text" maxlength="60" name="userName" class="form-control" id="userName" aria-describedby="userNameHelp"
+      placeholder="userName">
+    <small id="userNameHelp" class="form-text text-muted">Name should be in 3-16 characters long.</small>
+    <p id="userNameStatus"></p>
   </div>
-  
-</div>
-<script src="../../public/js/jquery.js">
-   
-</script>
-<script>
-  $("#error").hide()
-   $("#registId").click(function(){
 
-      let requestConfig = {
-            method: 'POST',
-            url: '/registration',
-            contentType: 'application/json',
-            data: JSON.stringify({
-                userName: $("#userName").val(),
-                email: $("#email").val(),
-                hashedPassword:$("#password").val()
-            })
-        }
-        $.ajax(requestConfig).then(function (responseMessage) {
-          console.log(responseMessage)
-            if (responseMessage.status===0) {
-              $("#error").show()
-              let errorString = responseMessage.found
-              let h4 =`<h4>${errorString}</h4>`
-             // $(h4 ).appendTo($("#error"))
-              $("#errorstr").html(h4)
-            } else {
-              $(".container-fluid").html(responseMessage)
-            }
-        });
+  <div class="form-group" class="row">
+    <label for="email">Email</label>
+    <input type="email" maxlength="60" name="email" class="form-control" id="email" aria-describedby="userNameHelp"
+      placeholder="Email">
+    <small id="userNameHelp" class="form-text text-muted">Email address shoud be vaild.</small>
+    <p id="emailStatus"></p>
+  </div>
 
-
-   })
-</script>
-<br>
-<br>
+  <div class="form-group" class="row">
+    <label for="password">Password</label>
+    <input type="password" maxlength="60" name="password" class="form-control" id="password"
+      aria-describedby="passwordHelp" placeholder="Password">
+    <small id="passwordHelp" class="form-text text-muted">Password should be in 3-16 characters long.</small>
+    <p id="passwordStatus"></p>
+  </div>
+  <ul class="text-danger row" id="error">error</ul>
+  <div class="progress row" id="progressBar">
+    <div class="progress-bar"> </div>
+  </div>
+  <br>
+  <h4 class="text-success text-center row" id="registerSuccess"></h4>
+  <div class="text-center row">
+    <button type="button" class="btn btn-primary" id="registerButton" disabled="true">Register</button>
+  </div>
+</form>
+<script src="/public/js/registerForm.js"></script>

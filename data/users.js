@@ -45,7 +45,6 @@
                 throw `there is an error in /data/users.js/getUser`
             }
         },
-        //name is not used
         async getUserByName(name) {
             if (!name) throw new Error('You must provide an name');
             if (typeof name !== 'string') throw new TypeError('name must be a string');
@@ -54,8 +53,8 @@
 
             const userCollection = await users();
             try{
-            const userByEmail = await userCollection.findOne({ name: name });
-            return userByEmail;
+            const getUserByName = await userCollection.findOne({ "userName": name });
+            return getUserByName;
             }catch(error){
                 throw `there is an error in /data/users.js/getUserByEmail `
             }

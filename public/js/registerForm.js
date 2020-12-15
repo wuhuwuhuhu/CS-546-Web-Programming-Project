@@ -18,16 +18,14 @@
     //bind 
     elementUserName.focusout(function() {
         validateUserName();
-        validateAll();
+        
     });
     elementEmail.focusout(function() {
         validateEmail();
-        validateAll();
 
     });
     elementPassword.focusout(function() {
         validatePassword();
-        validateAll();
     });
     elementRegisterButton.click(function(event){
         event.preventDefault();
@@ -125,9 +123,11 @@
         $.ajax(requestConfig).then(function (responseMessage) {
             if(responseMessage.status === "true"){
                 setStatusTextandClass(userNameStatus, "This user name is available.","text-success");
+                validateAll();
                 return;
             }else{
                 setStatusTextandClass(userNameStatus, responseMessage.error,"text-danger");
+                validateAll();
                 return;
             }
         });
@@ -149,9 +149,11 @@
         $.ajax(requestConfig).then(function (responseMessage) {
             if(responseMessage.status === "true"){
                 setStatusTextandClass(emailStatus, "This email is available.","text-success");
+                validateAll();
                 return;
             }else{
                 setStatusTextandClass(emailStatus, responseMessage.error,"text-danger");
+                validateAll();
                 return;
             }
         });
@@ -160,10 +162,12 @@
         const password = elementPassword.val();
         if(password.trim().length < 3 || password.trim().length > 16){
             setStatusTextandClass(passwordStatus, "Please use 3-16 characters long password.", "text-danger")
+            validateAll();
             return;
         }
         else{
             setStatusTextandClass(passwordStatus, "This password is valid.","text-success");
+            validateAll();
             return;
         }
     }

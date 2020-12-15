@@ -70,9 +70,11 @@
 
     changePasswordFormSubmitButton.click(function(event){
         event.preventDefault();
+        changePasswordFormStatus.empty();
         try {
             checkPassword(changePasswordFormOldPassword.val(), changePasswordFormNewPassword.val(), changePasswordFormNewPasswordCheck.val());
         } catch (error) {
+            changePasswordFormStatus.empty();
             changePasswordFormStatus.html(`${error}`);
         }
         changePasswordFormStatus.show();
@@ -82,6 +84,7 @@
         try {
             checkPasswordLegal("oldPassword", changePasswordFormOldPassword.val());
         } catch (error) {
+            changePasswordFormStatus.empty();
             changePasswordFormStatus.html(`${error}`);
             changePasswordFormStatus.show();
             return;
@@ -94,6 +97,7 @@
         try {
             checkPasswordLegal("newPassword", changePasswordFormNewPassword.val());
         } catch (error) {
+            changePasswordFormStatus.empty();
             changePasswordFormStatus.html(`${error}`);
             changePasswordFormStatus.show();
             return;
@@ -105,6 +109,7 @@
         try {
             checkPasswordLegal("the second new password", changePasswordFormNewPasswordCheck.val());
         } catch (error) {
+            changePasswordFormStatus.empty();
             changePasswordFormStatus.html(`${error}`);
             changePasswordFormStatus.show();
             return;
@@ -153,9 +158,12 @@
         };
         $.ajax(requestConfig).then(function (responseMessage) {
             if(responseMessage.status === true){
+                changePasswordFormStatus.empty();
+                changePasswordFormStatus.attr("class", "text-success")
                 changePasswordFormStatus.html("Password Changed successfully!");
             }
             else{
+                changePasswordFormStatus.empty();
                 changePasswordFormStatus.html(`${responseMessage.message}`);
             } 
         });

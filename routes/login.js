@@ -11,8 +11,8 @@ router.get("/", async (req, res) => {
   router.post("/", async (req, res) => {
   
     let { email, password } = req.body;
-    email = xss(email).toLowerCase();
-    password = xss(password);
+    email = xss(email).trim().toLowerCase();
+    password = xss(password).trim();
     let error_msgs = [];
     let status = false;
     let user;
@@ -36,31 +36,31 @@ router.get("/", async (req, res) => {
       }
       if(error_msgs.length === 0){
           try {
-            //   user = await userData.checkPassword(
-            //       email, 
-            //       password
-            //   );
+              user = await userData.checkPassword(
+                  email, 
+                  password
+              );
 
             //for test 
-            const bcrypt = require('bcryptjs');
-            user = await userData.getUserByEmail(email);
-            passwordMatch;
-            if(user){
-                try {
-                    passwordMatch = await bcrypt.compare(password, user.hashedPassword);
-                } catch (e) {
-                    console.log(e);
-                }
-            }
+            // const bcrypt = require('bcryptjs');
+            // user = await userData.getUserByEmail(email);
+            // passwordMatch;
+            // if(user){
+            //     try {
+            //         passwordMatch = await bcrypt.compare(password, user.hashedPassword);
+            //     } catch (e) {
+            //         console.log(e);
+            //     }
+            // }
             
           } catch (error) {
               error_msgs.push(error.message);
           }
       }
-      if(error_msgs.length === 0 && passwordMatch === true){
-          status = "true";
+      if(error_msgs.length === 0 && user){
           if(user){
-              req.session.user = user["_id"].toString();
+            status = "true";
+            req.session.user = user["_id"].toString();
           }
       }
   
@@ -72,7 +72,7 @@ router.get("/", async (req, res) => {
   
   
   router.get('/validateUserEmail/:userEmail', async (req, res) => {
-      let userEmail = xss(req.params.userEmail);
+      let userEmail = xss(req.params.userEmail).trim();
       let status = "true";
       let error;
       let user;

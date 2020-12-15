@@ -14,8 +14,20 @@ const answersData = require("../data/answers");
 const email = require("../data/email").send;
 
 router.get('/', async(req,res) => {
-    const userid = xss(req.session.user)
-    let user = await usersData.getUserById(userid);
+    const userid = xss(req.session.user).trim();
+    let user;
+    if(!userid){
+        res.redirect("/");
+    }
+    try {
+        user = await usersData.getUserById(userid);
+    } catch (error) {
+        console.log(user);
+    }
+    if(!user){
+        res.redirect("/");
+    }
+
     let userName = user["userName"];
     let userEmail = user["email"];
     let userRegistDate = user["dateSignedIn"];
@@ -137,24 +149,68 @@ router.get('/', async(req,res) => {
     return;
 });
 router.post('/changePassword', async(req,res) => {
-    let newPassword = xss(req.body.newPassword);
-    let oldPassword = xss(req.body.oldPassword);
-    // const user = 
-    res.json ({
-        status: false,
-        message: "没连user数据呢"
-    });
+    let newPassword = xss(req.body.newPassword).trim();
+    let oldPassword = xss(req.body.oldPassword).trim();
+    let user;
+    let status = true;
+    let message;
     const userid = xss(req.session.user)
-    let user = await usersData.getUserById(userid);
-    let userName = user["userName"];
-    let userEmail = user["email"];
-    let subject = `Hi ${userName}, Your password has been changed.`;
-    let text = `Hi ${userName},\n Your password has been changed.`;
-    try {
-        await email(userEmail, subject, text);
-    } catch (error) {
-        console.log(error);
+    if(!newPassword){
+        status = false;
+        message = "Please provide new password.";
     }
+    if(!oldPassword){
+        status = false;
+        message = "Please provide old password.";
+    }
+    if(newPassword.length < 3 || newPassword.length > 16){
+        status = false;
+        message = "new password's length should between 3 to 16.";
+    }
+    if(oldPassword.length < 3 || oldPassword.length > 16){
+        status = false;
+        message = "old password's length should between 3 to 16.";
+    }
+
+    if(status){
+        try {
+            user = await usersData.getUserById(userid);
+        } catch (error) {
+            status = false;
+            message = error.message;
+            
+        }
+    }
+    
+    if(user && status){
+        
+        try {
+            user = await usersData.changPassword(user["_id"].toString(), oldPassword, newPassword);
+        } catch (error) {
+            status = false;
+            message = error;
+        }
+        if(user && status){
+            let userEmail = user["email"];
+            let userName = user["userName"];
+            
+            let subject = `Hi ${userName}, Your password has been changed to {newPassword}.`;
+            let text = `Hi ${userName},\n Your password has been changed to ${newPassword}.`;
+            try {
+                await email(userEmail, subject, text);
+            } catch (error) {
+                status = false;
+                message = error.message;
+            }
+        }
+        
+    }
+    
+    
+    res.json ({
+        status: status,
+        message: message
+    });
     
 
 });

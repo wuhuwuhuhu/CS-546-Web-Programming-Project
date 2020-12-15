@@ -112,19 +112,19 @@
             return await this.getUserById((newInsertInformation.insertedId) );
         },
 
-        async removeUser(id) {
-            if (!id) throw new Error('You must provide an id');
-            if (typeof id !== 'string') throw new TypeError('id must be a string');
+        // async removeUser(id) {
+        //     if (!id) throw new Error('You must provide an id');
+        //     if (typeof id !== 'string') throw new TypeError('id must be a string');
 
-            const userCollection = await users();
-            const deletionInfo = await userCollection.removeOne({ _id: ObjectId(id) });
+        //     const userCollection = await users();
+        //     const deletionInfo = await userCollection.removeOne({ _id: ObjectId(id) });
         
-            if (deletionInfo.deletedCount === 0) {
-                throw new Error(`Could not delete user with id of ${id}`);
-            }
+        //     if (deletionInfo.deletedCount === 0) {
+        //         throw new Error(`Could not delete user with id of ${id}`);
+        //     }
 
-            return true;
-        },
+        //     return true;
+        // },
         async addQuestion(userId,QuestionId){
             if (!userId) throw new Error('You must provide a userId');
             if (!QuestionId) throw new Error('You must provide a questionId')

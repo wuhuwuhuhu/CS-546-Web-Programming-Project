@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const data = require('../data');
 const questionsData = data.questions;
-const session = require('express-session');
 const mongoCollections = require('../config/mongoCollections');
 const systemConfigs = data.systemConfigs;
 const questions = mongoCollections.questions;
@@ -16,9 +15,10 @@ router.get('/', async (req, res) => {
 		topics = await systemConfigs.getTopics()
 		res.render('ask/ask', { topic: topics });
 	} catch (error) {
-		const errorMsg = "Page inital wrong, try again later.";
+		const errorMsg = "Page inital wrong.";
 		errors.push(errorMsg);
-		res.render('ask/ask', { errors: errors, topic: [], question: ''});
+		res.status(500).render('ask/ask', { errors: errors, topic: [], question: ''});
+		return
 	}
 	
 
@@ -41,7 +41,7 @@ router.post('/', async (req, res) => {
 	} catch (error) {
 		const errorMsg = "Get topics wrong."
 		errors.push(errorMsg)
-		res.render('ask/ask', { errors: errors});
+		res.status(404).render('ask/ask', { errors: errors});
 		return;
 		
 	}
@@ -52,7 +52,7 @@ router.post('/', async (req, res) => {
 	if (!quesInfo) {
 		const errorMsg = "You need to write something for the question";
 		errors.push(errorMsg);
-		res.render('ask/ask', { errors: errors});
+		res.status(404).render('ask/ask', { errors: errors});
 		return;
 
 	}
@@ -102,7 +102,7 @@ router.post('/', async (req, res) => {
 	
 		const errorMsg = "Ask question failed."
 		errors.push(error);
-		res.render('ask/ask', { errors: errors, topic: topics, question: content });
+		res.status(404).render('ask/ask', { errors: errors, topic: topics, question: content });
 		return;
 	}
 

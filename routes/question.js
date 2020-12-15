@@ -41,7 +41,7 @@ router.get('/:id', async (req, res) => {
             for (let j = 0; j < curReviewIdArray.length; j++) {
                 let curReviewId = curReviewIdArray[j];
                 let curReview = await reviewDate.getReviewById(curReviewId)
-                curReview.reviewId=curReviewId
+                curReview.reviewId = curReviewId
                 curReview.recentUpdatedTime = await answerDate.transferData(curReview.recentUpdatedTime)
                 curReview.voteUpNumber = curReview.voteUp.length
                 curReview.voteDownNumber = curReview.voteDown.length
@@ -84,7 +84,7 @@ router.post('/addAnswer/:questionId', async (req, res) => {
         let questionId = xss(req.params.questionId);
         let content = xss(req.body.content)
         const newAnswer = await answerDate.addAnswer(content, userId, questionId)
-        const newAnswerList = await transferData(questionId,req,res,userId)
+        const newAnswerList = await transferData(questionId, req, res, userId)
         res.json({
             status: true,
             newAnswerList: newAnswerList
@@ -103,42 +103,103 @@ router.post('/addReview/:questionId/:answerId', async (req, res) => {
     let content = xss(req.body.content)
     let questionId = xss(req.params.questionId);
     let answerId = xss(req.params.answerId);
-    const newReview = await reviewDate.addReview(content, userId, answerId)
-    res.json({
-        
-    });
+    console.log(content);
+    console.log(questionId);
+    console.log(answerId);
+    // const newReview = await reviewDate.addReview(content, userId, answerId)
+    // const newAnswerList = await transferData(questionId,req,res,userId)
+    // res.json({
+    //     status: true,
+    //     newAnswerList: newAnswerList
+    // });
 })
 
 /**
  * vote up an answer
  */
 router.post('/voteUpAnswer/:questionId/:answerId', async (req, res) => {
-
+    try {
+        let userId = xss(req.session.user)
+        userId = "5fd2bcbadc020240556f3a8e";
+        let questionId = xss(req.params.questionId);
+        let answerId = xss(req.params.answerId);
+        await answerDate.updateVoteUp(answerId, userId)
+        const newAnswerList = await transferData(questionId, req, res, userId)
+        res.json({
+            status: true,
+            newAnswerList: newAnswerList
+        });
+    } catch (error) {
+        throw error
+    }
 })
 
 /**
  * vote down an answer
  */
 router.post('/voteDownAnswer/:questionId/:answerId', async (req, res) => {
-
+    try {
+        let userId = xss(req.session.user)
+        userId = "5fd2bcbadc020240556f3a8e";
+        let questionId = xss(req.params.questionId);
+        let answerId = xss(req.params.answerId);
+        await answerDate.updateVoteDown(answerId, userId)
+        const newAnswerList = await transferData(questionId, req, res, userId)
+        res.json({
+            status: true,
+            newAnswerList: newAnswerList
+        });
+    } catch (error) {
+        throw error
+    }
 })
 
 /**
  * vote up an review
  */
-router.post('/voteUpReview/:questionId/:answerId/:reviewId', async (req, res) => {
-
+router.post('/voteUpReview/:questionId/:reviewId', async (req, res) => {
+    try {
+        let userId = xss(req.session.user)
+        userId = "5fd2bcbadc020240556f3a8e";
+        let questionId = xss(req.params.questionId);
+        let reviewId = xss(req.params.reviewId);
+        let newReview=await reviewDate.updateVoteUp(reviewId,userId)
+        let newReviewInAnswer=newReview.answerId
+        const newAnswerList = await transferData(questionId, req, res, userId)
+        res.json({
+            status: true,
+            newAnswerList: newAnswerList,
+            newReviewInAnswer:newReviewInAnswer
+        });
+    } catch (error) {
+        throw error
+    }
 })
 
 /**
  * vote down an review
  */
-router.post('/voteDownReview/:questionId/:answerId/:reviewId', async (req, res) => {
-
+router.post('/voteDownReview/:questionId/:reviewId', async (req, res) => {
+    try {
+        let userId = xss(req.session.user)
+        userId = "5fd2bcbadc020240556f3a8e";
+        let questionId = xss(req.params.questionId);
+        let reviewId = xss(req.params.reviewId);
+        let newReview=await reviewDate.updateVoteDown(reviewId,userId)
+        let newReviewInAnswer=newReview.answerId
+        const newAnswerList = await transferData(questionId, req, res, userId)
+        res.json({
+            status: true,
+            newAnswerList: newAnswerList,
+            newReviewInAnswer:newReviewInAnswer
+        });
+    } catch (error) {
+        throw error
+    }
 })
 
 
-async function transferData(questionId,req, res,userId) {
+async function transferData(questionId, req, res, userId) {
     const question = await questionsData.getQuestionById(questionId)
     questionContent = question.content
     const answersId = question.answers
@@ -151,7 +212,7 @@ async function transferData(questionId,req, res,userId) {
         for (let j = 0; j < curReviewIdArray.length; j++) {
             let curReviewId = curReviewIdArray[j];
             let curReview = await reviewDate.getReviewById(curReviewId)
-            curReview.reviewId=curReviewId
+            curReview.reviewId = curReviewId
             curReview.recentUpdatedTime = await answerDate.transferData(curReview.recentUpdatedTime)
             curReview.voteUpNumber = curReview.voteUp.length
             curReview.voteDownNumber = curReview.voteDown.length

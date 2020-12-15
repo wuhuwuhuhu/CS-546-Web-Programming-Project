@@ -27,7 +27,7 @@ const xss = require('xss');
 router.get('/:id', async (req, res) => {
     try {
         let userId = xss(req.session.user)
-        userId = "5fd82a4799eb7c385db27e09"
+        // userId = "5fd82a4799eb7c385db27e09"
         let id = xss(req.params.id)
         const question = await questionsData.getQuestionById(id)
         questionContent = question.content
@@ -84,7 +84,7 @@ router.get('/:id', async (req, res) => {
 router.post('/addAnswer/:questionId', async (req, res) => {
     try {
         let userId = xss(req.session.user)
-        userId = "5fd82a4799eb7c385db27e09";
+        // userId = "5fd82a4799eb7c385db27e09";
         let questionId = xss(req.params.questionId);
         let content = xss(req.body.content)
         const newAnswer = await answerDate.addAnswer(content, userId, questionId)
@@ -103,7 +103,7 @@ router.post('/addAnswer/:questionId', async (req, res) => {
  */
 router.post('/addReview/:answerId', async (req, res) => {
     let userId = xss(req.session.user)
-    userId = "5fd82a4799eb7c385db27e09";
+    // userId = "5fd82a4799eb7c385db27e09";
     let content = xss(req.body.content)
     let questionId = xss(req.body.questionId);
     let answerId = xss(req.params.answerId);
@@ -129,7 +129,7 @@ router.post('/addReview/:answerId', async (req, res) => {
 router.post('/voteUpAnswer/:questionId/:answerId', async (req, res) => {
     try {
         let userId = xss(req.session.user)
-        userId = "5fd82a4799eb7c385db27e09";
+        // userId = "5fd82a4799eb7c385db27e09";
         let questionId = xss(req.params.questionId);
         let answerId = xss(req.params.answerId);
         await answerDate.updateVoteUp(answerId, userId)
@@ -149,7 +149,7 @@ router.post('/voteUpAnswer/:questionId/:answerId', async (req, res) => {
 router.post('/voteDownAnswer/:questionId/:answerId', async (req, res) => {
     try {
         let userId = xss(req.session.user)
-        userId = "5fd82a4799eb7c385db27e09";
+        // userId = "5fd82a4799eb7c385db27e09";
         let questionId = xss(req.params.questionId);
         let answerId = xss(req.params.answerId);
         await answerDate.updateVoteDown(answerId, userId)
@@ -169,7 +169,7 @@ router.post('/voteDownAnswer/:questionId/:answerId', async (req, res) => {
 router.post('/voteUpReview/:questionId/:reviewId', async (req, res) => {
     try {
         let userId = xss(req.session.user)
-        userId = "5fd82a4799eb7c385db27e09";
+        // userId = "5fd82a4799eb7c385db27e09";
         let questionId = xss(req.params.questionId);
         let reviewId = xss(req.params.reviewId);
         let newReview=await reviewDate.updateVoteUp(reviewId,userId)
@@ -191,7 +191,7 @@ router.post('/voteUpReview/:questionId/:reviewId', async (req, res) => {
 router.post('/voteDownReview/:questionId/:reviewId', async (req, res) => {
     try {
         let userId = xss(req.session.user)
-        userId = "5fd82a4799eb7c385db27e09";
+        // userId = "5fd82a4799eb7c385db27e09";
         let questionId = xss(req.params.questionId);
         let reviewId = xss(req.params.reviewId);
         let newReview=await reviewDate.updateVoteDown(reviewId,userId)
@@ -210,7 +210,7 @@ router.post('/voteDownReview/:questionId/:reviewId', async (req, res) => {
 router.post('/sortByRecent', async (req, res) => {
     try {
         let userId = xss(req.session.user)
-        userId = "5fd82a4799eb7c385db27e09";
+        // userId = "5fd82a4799eb7c385db27e09";
         let questionId = xss(req.body.questionId);
         let answerList=await transferData(questionId, req, res, userId)
         let sortedAnswerList=await answerDate.sortAnswersByTime(answerList,-1);
@@ -226,7 +226,7 @@ router.post('/sortByRecent', async (req, res) => {
 router.post('/sortByPopular', async (req, res) => {
     try {
         let userId = xss(req.session.user)
-        userId = "5fd82a4799eb7c385db27e09";
+        // userId = "5fd82a4799eb7c385db27e09";
         let questionId = xss(req.body.questionId);
         let answerList=await transferData(questionId, req, res, userId)
         let sortedAnswerList=await answerDate.sortAnswersByVote(answerList,-1);
@@ -242,7 +242,7 @@ router.post('/sortByPopular', async (req, res) => {
 router.post('/sortReview/sortByPopular', async (req, res) => {
     try {
         let userId = xss(req.session.user)
-        userId = "5fd82a4799eb7c385db27e09";
+        // userId = "5fd82a4799eb7c385db27e09";
         let questionId = xss(req.body.questionId);
         let answerId = xss(req.body.answerId);
         const answer=await answerDate.getAnswerById(answerId)
@@ -273,7 +273,7 @@ router.post('/sortReview/sortByPopular', async (req, res) => {
 router.post('/sortReview/sortByRecent', async (req, res) => {
     try {
         let userId = xss(req.session.user)
-        userId = "5fd82a4799eb7c385db27e09";
+        // userId = "5fd82a4799eb7c385db27e09";
         let questionId = xss(req.body.questionId);
         let answerId = xss(req.body.answerId);
         const answer=await answerDate.getAnswerById(answerId)

@@ -41,7 +41,7 @@ let exportedMethods = {
             throw `questionId in /data/answers.js/addAnswer has error`
         }
         try {
-            if (questionsMethods.getQuestionById(questionId) == null) {
+            if (await  questionsMethods.getQuestionById(questionId) == null) {
                 throw `did not find question by id ${questionId} in answers/addAnswer`
             }
             const realDate = new Date()
@@ -66,13 +66,13 @@ let exportedMethods = {
             // add answer to question
             const answerAddedInQus = await questionsMethods.addAnswer(questionId, newId)
             if (answerAddedInQus == null) {
-                throw 'Insert failed!';
+                return null
             }
             //update user
             try {
                 const answerAddedInUsr = await usersMethods.addAnswer(answerer, newId)
                 if (answerAddedInUsr == null) {
-                    throw 'Insert failed!';
+                    return null
                 }
             } catch (error) {
                 throw error
@@ -99,7 +99,7 @@ let exportedMethods = {
             }
             const answer = await this.getAnswerById(id)
             if (answer == null) {
-                throw `did not find answer by id ${id} in answer/removeAnswer`
+                return null
             }
             let reviewArray = answer.reviews
             const reviewsCollection = await reviews();
@@ -112,7 +112,8 @@ let exportedMethods = {
                 //update user review
                 let curRewDeletedInUsr = await usersMethods.removeReview(userId, rewId)
                 if (curRewDeletedInUsr == null) {
-                    throw `Failed to update user by deleting review by id ${rewId} in answer/removeAnswer`
+                    // throw `Failed to update user by deleting review by id ${rewId} in answer/removeAnswer`
+                    return null
                 }
             }
             //delete answer
@@ -124,12 +125,14 @@ let exportedMethods = {
             //update user answer
             let curAnsDeletedInUsr = await usersMethods.removeAnswer(userId, id)
             if (curAnsDeletedInUsr == null) {
-                throw `Failed to update answer by deleting review by id ${rewId} in answer/removeAnswer`
+                // throw `Failed to update answer by deleting review by id ${rewId} in answer/removeAnswer`
+                return null
             }
             //update question
             let curRewDeletedInQus = await questionsMethods.removeAnswer(questionId, id)
             if (curRewDeletedInQus == null) {
-                throw `Failed to update question by deleting review by id ${rewId} in answer/removeAnswer`
+                // throw `Failed to update question by deleting review by id ${rewId} in answer/removeAnswer`
+                return null
             }
         } catch (error) {
             throw error

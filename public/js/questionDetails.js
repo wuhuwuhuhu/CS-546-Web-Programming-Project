@@ -45,7 +45,7 @@
                 $("#ReviewNumberIdShow" + answerId).show()
             }
             else {
-                console.log("something wrong");
+                alert("something wrong")
             }
         });
     })
@@ -73,7 +73,7 @@
                 $("#ReviewNumberIdShow" + answerId).show()
             }
             else {
-                console.log("something wrong");
+                alert("something wrong")
             }
         });
     })
@@ -111,7 +111,7 @@
                 $("#ReviewNumberIdShow" + answerid).show()
             }
             else {
-                console.log("something wrong");
+                alert("something wrong")
             }
         });
 
@@ -151,7 +151,7 @@
                 $("#ReviewNumberIdShow" + answerId).show()
             }
             else {
-                console.log("something wrong");
+                alert("something wrong")
             }
         });
     })
@@ -163,6 +163,7 @@
         var answerId = a.replace("submitReview", "");
         var url = "/question/addReview/" + answerId;
         var content = $('#reviewContent' + answerId).val();
+        $('#reviewContent' + answerId).val("");
         if(!content || typeof content != 'string' || content.match(/^[ ]*$/)){
             alert("Can not submit blank data")
             return
@@ -220,14 +221,14 @@
                 $('#ReviewNumberIdShow' + answerId).show()
             }
             else {
-                console.log("something wrong");
+                alert("submit failed,something wrong")
             }
         });
     })
 
     $(document).on('change', '.ReviewSorted', function (event) {
         event.preventDefault();
-        var questionId = quesId.text()
+        // var questionId = quesId.text()
         var selected = $(this).children('option:selected').val();
         var answerId
         if (selected != '0') {
@@ -247,7 +248,7 @@
                 url: url,
                 contentType: 'application/json',
                 data: JSON.stringify({
-                    questionId: questionId,
+                    // questionId: questionId,
                     answerId: answerId
                 })
             };
@@ -291,7 +292,7 @@
                     // console.log(subTableTody);
                 }
                 else {
-                    console.log("something wrong");
+                    alert("something wrong")
                 }
                 $('#' + tBodyReviews).show()
             });

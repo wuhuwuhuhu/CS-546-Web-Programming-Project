@@ -28,11 +28,15 @@ router.get('/:id', async (req, res) => {
     try {
         const userId = xss(req.session.user)
         // userId = "5fd82a4799eb7c385db27e09"
+        if(!userId){
+            res.redirect("/login")
+        }
         const id = xss(req.params.id)
         const question = await questionsData.getQuestionById(id)
-        const questionContent = question.content
+        // const questionContent = question.content
         const answersId = question.answers
-        
+
+
         let answersInQuestion = new Array()     //obj array 
         for (let index = 0; index < answersId.length; index++) {
             let curReviewsInAnswers = new Array()
@@ -85,9 +89,18 @@ router.get('/:id', async (req, res) => {
 router.post('/addAnswer/:questionId', async (req, res) => {
     try {
         let userId = xss(req.session.user)
+        if(!userId){
+            res.redirect("/login")
+        }
         // userId = "5fd82a4799eb7c385db27e09";
         let questionId = xss(req.params.questionId);
         let content = xss(req.body.content)
+        if(!questionId||!content){
+            res.json({
+                status: false,
+            });
+            return
+        }
         const newAnswer = await answerDate.addAnswer(content, userId, questionId)
         const newAnswerList = await transferData(questionId, req, res, userId)
         res.json({
@@ -104,10 +117,19 @@ router.post('/addAnswer/:questionId', async (req, res) => {
  */
 router.post('/addReview/:answerId', async (req, res) => {
     let userId = xss(req.session.user)
+    if(!userId){
+        res.redirect("/login")
+    }
     // userId = "5fd82a4799eb7c385db27e09";
     let content = xss(req.body.content)
-    let questionId = xss(req.body.questionId);
+    // let questionId = xss(req.body.questionId);
     let answerId = xss(req.params.answerId);
+    if(!content||!answerId){
+        res.json({
+            status: false,
+        });
+        return
+    }
     const curReview = await reviewDate.addReview(content, userId, answerId)
     const curId=curReview._id.toString()
     curReview.reviewId = curId
@@ -130,9 +152,18 @@ router.post('/addReview/:answerId', async (req, res) => {
 router.post('/voteUpAnswer/:questionId/:answerId', async (req, res) => {
     try {
         let userId = xss(req.session.user)
+        if(!userId){
+            res.redirect("/login")
+        }
         // userId = "5fd82a4799eb7c385db27e09";
         let questionId = xss(req.params.questionId);
         let answerId = xss(req.params.answerId);
+        if(!questionId||!answerId){
+            res.json({
+                status: false,
+            });
+            return
+        }
         await answerDate.updateVoteUp(answerId, userId)
         const newAnswerList = await transferData(questionId, req, res, userId)
         res.json({
@@ -150,9 +181,18 @@ router.post('/voteUpAnswer/:questionId/:answerId', async (req, res) => {
 router.post('/voteDownAnswer/:questionId/:answerId', async (req, res) => {
     try {
         let userId = xss(req.session.user)
+        if(!userId){
+            res.redirect("/login")
+        }
         // userId = "5fd82a4799eb7c385db27e09";
         let questionId = xss(req.params.questionId);
         let answerId = xss(req.params.answerId);
+        if(!questionId||!answerId){
+            res.json({
+                status: false,
+            });
+            return
+        }
         await answerDate.updateVoteDown(answerId, userId)
         const newAnswerList = await transferData(questionId, req, res, userId)
         res.json({
@@ -170,9 +210,18 @@ router.post('/voteDownAnswer/:questionId/:answerId', async (req, res) => {
 router.post('/voteUpReview/:questionId/:reviewId', async (req, res) => {
     try {
         let userId = xss(req.session.user)
+        if(!userId){
+            res.redirect("/login")
+        }
         // userId = "5fd82a4799eb7c385db27e09";
         let questionId = xss(req.params.questionId);
         let reviewId = xss(req.params.reviewId);
+        if(!questionId||!reviewId){
+            res.json({
+                status: false,
+            });
+            return
+        }
         // let test=req.body.test
         // console.log(test);
         let newReview=await reviewDate.updateVoteUp(reviewId,userId)
@@ -194,9 +243,18 @@ router.post('/voteUpReview/:questionId/:reviewId', async (req, res) => {
 router.post('/voteDownReview/:questionId/:reviewId', async (req, res) => {
     try {
         let userId = xss(req.session.user)
+        if(!userId){
+            res.redirect("/login")
+        }
         // userId = "5fd82a4799eb7c385db27e09";
         let questionId = xss(req.params.questionId);
         let reviewId = xss(req.params.reviewId);
+        if(!questionId||!reviewId){
+            res.json({
+                status: false,
+            });
+            return
+        }
         let newReview=await reviewDate.updateVoteDown(reviewId,userId)
         let newReviewInAnswer=newReview.answerId
         const newAnswerList = await transferData(questionId, req, res, userId)
@@ -213,8 +271,17 @@ router.post('/voteDownReview/:questionId/:reviewId', async (req, res) => {
 router.post('/sortByRecent', async (req, res) => {
     try {
         let userId = xss(req.session.user)
+        if(!userId){
+            res.redirect("/login")
+        }
         // userId = "5fd82a4799eb7c385db27e09";
         let questionId = xss(req.body.questionId);
+        if(!questionId){
+            res.json({
+                status: false,
+            });
+            return
+        }
         let answerList=await transferData(questionId, req, res, userId)
         let sortedAnswerList=await answerDate.sortAnswersByTime(answerList,-1);
         res.json({
@@ -229,8 +296,17 @@ router.post('/sortByRecent', async (req, res) => {
 router.post('/sortByPopular', async (req, res) => {
     try {
         let userId = xss(req.session.user)
+        if(!userId){
+            res.redirect("/login")
+        }
         // userId = "5fd82a4799eb7c385db27e09";
         let questionId = xss(req.body.questionId);
+        if(!questionId){
+            res.json({
+                status: false,
+            });
+            return
+        }
         let answerList=await transferData(questionId, req, res, userId)
         let sortedAnswerList=await answerDate.sortAnswersByVote(answerList,-1);
         res.json({
@@ -245,9 +321,18 @@ router.post('/sortByPopular', async (req, res) => {
 router.post('/sortReview/sortByPopular', async (req, res) => {
     try {
         let userId = xss(req.session.user)
+        if(!userId){
+            res.redirect("/login")
+        }
         // userId = "5fd82a4799eb7c385db27e09";
-        let questionId = xss(req.body.questionId);
+        // let questionId = xss(req.body.questionId);
         let answerId = xss(req.body.answerId);
+        if(!answerId){
+            res.json({
+                status: false,
+            });
+            return
+        }
         const answer=await answerDate.getAnswerById(answerId)
         let reviewListId=answer.reviews
         let reviewList=[];
@@ -276,9 +361,18 @@ router.post('/sortReview/sortByPopular', async (req, res) => {
 router.post('/sortReview/sortByRecent', async (req, res) => {
     try {
         let userId = xss(req.session.user)
+        if(!userId){
+            res.redirect("/login")
+        }
         // userId = "5fd82a4799eb7c385db27e09";
-        let questionId = xss(req.body.questionId);
+        // let questionId = xss(req.body.questionId);
         let answerId = xss(req.body.answerId);
+        if(!answerId){
+            res.json({
+                status: false,
+            });
+            return
+        }
         const answer=await answerDate.getAnswerById(answerId)
         let reviewListId=answer.reviews
         let reviewList=[];

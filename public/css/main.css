@@ -37,3 +37,8 @@
   background-color: #a9a9f0;
   color: white;
 }
+
+.navbar-custom .active {
+  background-color: #cfd2e8;
+  color: #566b65;
+}

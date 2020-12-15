@@ -100,7 +100,7 @@
                 hashedPassword: hash,
                 userName: userName,
                 questions: [],
-                data:new Date,
+                dateSignedIn:new Date,
                 reviews: [],
                 answers: [],
                 votedForReviews:[],

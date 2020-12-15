@@ -163,6 +163,10 @@
         var answerId = a.replace("submitReview", "");
         var url = "/question/addReview/" + answerId;
         var content = $('#reviewContent' + answerId).val();
+        if(!content || typeof content != 'string' || content.match(/^[ ]*$/)){
+            alert("Can not submit blank data")
+            return
+        }
         console.log(content);
         var requestConfig = {
             method: 'POST',
@@ -299,6 +303,10 @@
     answerSubmit.click(function (event) {
         event.preventDefault();
         var content = answerContent.val();
+        if(!content || typeof content != 'string' || content.match(/^[ ]*$/)){
+            alert("Can not submit blank data")
+            return
+        }
         const questionId = quesId.text()
         let url = '/question/addAnswer/' + questionId
         var requestConfig = {

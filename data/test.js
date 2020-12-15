@@ -135,8 +135,36 @@ async function test16(){
     console.log(await reviewsMethods.judgeVoteUpInReviews("5fd2bcbadc020240556f3a91","5fd2bcbadc020240556f3b06"));
 
 }
-
-
-test1()
+async function test17(){
+    try{
+        const data = await usersdMethods.changPassword("5fd85e72e91c61bfb8d9337c","qwe123","Qwe123")
+        console.log(data);
+        console.log("1");
+    }
+  catch(error){
+    console.log(error)
+  }
+}
+async function test18(){
+    try{
+        const data = await usersdMethods.setPassword("5fd85e72e91c61bfb8d9337c","qwe123")
+        console.log(data);
+        console.log("1");
+    }
+  catch(error){
+    console.log(error)
+  }
+}
+async function test19(){
+    try{
+        const data = await usersdMethods.checkPassword("test1@test.com","qqwe123")
+        console.log(data);
+        console.log("1");
+    }
+  catch(error){
+    console.log(error)
+  }
+}
+test19();
 
 

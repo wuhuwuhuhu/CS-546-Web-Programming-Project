@@ -26,12 +26,13 @@ const xss = require('xss');
  */
 router.get('/:id', async (req, res) => {
     try {
-        let userId = xss(req.session.user)
+        const userId = xss(req.session.user)
         // userId = "5fd82a4799eb7c385db27e09"
-        let id = xss(req.params.id)
+        const id = xss(req.params.id)
         const question = await questionsData.getQuestionById(id)
-        questionContent = question.content
+        const questionContent = question.content
         const answersId = question.answers
+        
         let answersInQuestion = new Array()     //obj array 
         for (let index = 0; index < answersId.length; index++) {
             let curReviewsInAnswers = new Array()
@@ -172,6 +173,8 @@ router.post('/voteUpReview/:questionId/:reviewId', async (req, res) => {
         // userId = "5fd82a4799eb7c385db27e09";
         let questionId = xss(req.params.questionId);
         let reviewId = xss(req.params.reviewId);
+        // let test=req.body.test
+        // console.log(test);
         let newReview=await reviewDate.updateVoteUp(reviewId,userId)
         let newReviewInAnswer=newReview.answerId
         const newAnswerList = await transferData(questionId, req, res, userId)

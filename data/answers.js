@@ -41,8 +41,10 @@ let exportedMethods = {
             throw `questionId in /data/answers.js/addAnswer has error`
         }
         try {
-            if (await  questionsMethods.getQuestionById(questionId) == null) {
-                throw `did not find question by id ${questionId} in answers/addAnswer`
+            try {
+                await questionsMethods.getQuestionById(questionId)
+            } catch (error) {
+                throw `didn't find question in answer/addAnswer`
             }
             const realDate = new Date()
             let voteUpArr = []
@@ -119,7 +121,7 @@ let exportedMethods = {
             //delete answer
             const answersCollection = await answers()
             let answerDeleted = await answersCollection.deleteOne({ _id: ObjectId(id) });
-            if (answerDeleted == null) {
+            if (answerDeleted.deletedCount === 0) {
                 throw `Failed to delete answer by id ${id} in answer/removeAnswer`
             }
             //update user answer
@@ -404,12 +406,12 @@ let exportedMethods = {
         }
     },
 
-    async transferData(data){
+    async transferData(data) {
         var s;
-        var month=data.getMonth()+1
-        var day=data.getDate()
-        var year=data.getFullYear()
-        var s=month+"/"+day+"/"+year
+        var month = data.getMonth() + 1
+        var day = data.getDate()
+        var year = data.getFullYear()
+        var s = month + "/" + day + "/" + year
         return s
     }
 };

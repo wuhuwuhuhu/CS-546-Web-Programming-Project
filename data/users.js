@@ -203,6 +203,7 @@
             if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw 'Update failed';
         
             return await this.getUserById(userId);
+
         },
         async setPassword(id,newPassword){
             if(!id)
@@ -251,7 +252,9 @@
             return this.getUserById(id);
         
         }
-    }
+
+        
+}
 
     // removeUser(userId){
     //     1. remove user

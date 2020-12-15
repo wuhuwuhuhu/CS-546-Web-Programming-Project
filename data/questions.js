@@ -49,13 +49,13 @@ let exportedMethods = {
 	//create a new question
 	//update users db, add question id to user.questions
 	async addQuestion(content, topic, questioner) {
-		if (!content ) {
+		if (!content) {
 			console.log(topic)
 			console.log(questioner)
 			throw 'questions.js|addQuestion():You need to provide content'
 		}
-		if(!topic) throw 'questions.js|addQuestion():You need to provide topic'
-		if(!questioner) throw 'questions.js|addQuestion():You need to provide questioner id'
+		if (!topic) throw 'questions.js|addQuestion():You need to provide topic'
+		if (!questioner) throw 'questions.js|addQuestion():You need to provide questioner id'
 		if (typeof content !== 'string' || content.trim() === '') {
 			throw 'questions.js|addQuestion():Question content must be non-empty string'
 		}
@@ -135,22 +135,23 @@ let exportedMethods = {
 				if (deleteAnswerInfo.deletedCount === 0) throw 'questions.js|removeQuestion(): no answers been deleted.'
 
 			}
-			//remove question
-			const questionObjectId = await myDBfunction(id.trim())
-			const questionCollection = await questions()
-			const deleteQuestionInfo = await questionCollection.deleteOne({_id:questionObjectId})
-			if (deleteQuestionInfo.deletedCount === 0) throw 'questions.js|removeQuestion(): no question been deleted.'
-			//remove from user db
-			const userId = question.questioner
-			const objetUserId = await myDBfunction(userId)
-			const userCollection = await users()
-			const updatedInfo = await userCollection.updateOne({_id:objetUserId},{ $pull: { questions: id.trim() } })
-			if (updatedInfo.matchedCount === 0 || updatedInfo.modifiedCount === 0) {
-				throw 'questions.js|removeQuestion():No user being updated.'
-			}
-
-			
 		}
+		//remove question
+		const questionObjectId = await myDBfunction(id.trim())
+		const questionCollection = await questions()
+		const deleteQuestionInfo = await questionCollection.deleteOne({ _id: questionObjectId })
+		if (deleteQuestionInfo.deletedCount === 0) throw 'questions.js|removeQuestion(): no question been deleted.'
+		//remove from user db
+		const userId = question.questioner
+		const objetUserId = await myDBfunction(userId)
+		const userCollection = await users()
+		const updatedInfo = await userCollection.updateOne({ _id: objetUserId }, { $pull: { questions: id.trim() } })
+		if (updatedInfo.matchedCount === 0 || updatedInfo.modifiedCount === 0) {
+			throw 'questions.js|removeQuestion():No user being updated.'
+		}
+
+
+
 		return question
 	},
 
@@ -163,7 +164,7 @@ let exportedMethods = {
 
 		const questionCollection = await questions()
 		const findQuestion = await this.getQuestionById(id.trim())
-		if(findQuestion == null) throw 'question.js|updateQuestion(): question not found.'
+		if (findQuestion == null) throw 'question.js|updateQuestion(): question not found.'
 		const objectId = await myDBfunction(id.trim())
 		const updateInfo = await questionCollection.updateOne({ _id: objectId }, { $set: { content: content.trim(), topic: topic.trim() } })
 		if (updateInfo.matchedCount === 0) throw `questions.js|updateQeustion(): question ${id} not found`
@@ -205,7 +206,7 @@ let exportedMethods = {
 		return updatedQuestion;
 	},
 
-	
+
 
 	async getQuestionsByTopic(topic) {
 		if (!topic) throw 'questions.js|getQuestionsByTopic: you need to input topic'

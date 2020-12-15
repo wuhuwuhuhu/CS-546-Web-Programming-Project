@@ -68,8 +68,22 @@
            
             console.log("-------addd")
             if (!email) throw new Error('You must provide an email');
-            if (!hashedPassword) throw new Error('You must provide a password');
-            if (!userName) throw new Error('You must provide a userName');
+            if (!hashedPassword) throw new Error('You must provide a hashed password');
+            if (!userName) throw new Error('You must provide a userNme');
+            if (userName.length>3&&userName.length<16){
+                
+            }else{
+                throw new Error('You userName  should  3 - 16 length');
+            }
+            if (hashedPassword.length>3&&hashedPassword.length<16){
+               
+            }else{
+                throw new Error('You password  should  3 - 16 length');
+            }
+            let reg = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
+            if(!reg.test(email)){
+                throw new Error('You email type error');
+            }
             if (typeof email !== 'string') throw new TypeError('email must be a string');
             if (typeof hashedPassword !== 'string') throw new TypeError('hashedPassword must be a string');
             if (typeof userName !== 'string') throw new TypeError('userName must be a string');
@@ -82,16 +96,7 @@
             } catch (err) {
                 emailExists = false;
             }
-		let userNameExists = false;
-            try {
-                const user = await this.getUserByEmail(userName);
-                if(user != null)
-                userNameExists = true;
-            } catch (err) {
-                userNameExists = false;
-            }
-            if (userNameExists)
-             throw new Error('Username already registered');
+
             if (emailExists) throw new Error('Email already registered');
             const salt = bcryptjs.genSaltSync(16);
             const hash = bcryptjs.hashSync(hashedPassword, salt);
@@ -111,7 +116,6 @@
             const newInsertInformation = await userCollection.insertOne(newUser);
             return await this.getUserById((newInsertInformation.insertedId) );
         },
-
         // async removeUser(id) {
         //     if (!id) throw new Error('You must provide an id');
         //     if (typeof id !== 'string') throw new TypeError('id must be a string');
@@ -204,6 +208,18 @@
         
             return await this.getUserById(userId);
 
+        },
+        async checkPassword(email,password){
+            if(!email)
+            throw "you should input a vaild email";
+            if (!password || typeof password !== "string")
+            throw 'you should input a string as the password'; 
+            let newUser = await this.getUserByEmail(email);
+            let passwordMatch = await bcryptjs.compare(password, newUser.hashedPassword);
+            if(!passwordMatch){
+                throw "password error";
+            }
+            return await this.getUserByEmail(email);
         },
         async setPassword(id,newPassword){
             if(!id)

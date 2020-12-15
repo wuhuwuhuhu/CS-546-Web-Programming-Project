@@ -1,13 +1,11 @@
 (function ($) {
 
     const elementEmail = $("#email");
-    const elementPassword = $("#password");
     const elementError = $("#error");
-    const loginSuccess = $("#loginSuccess");
+    const resetSuccess = $("#resetSuccess");
     const progressBar = $("#progressBar");
-    const elementLoginButton = $("#loginButton");
+    const elementResetButton = $("#resetButton");
     const emailStatus = $("#emailStatus");
-    const passwordStatus = $("#passwordStatus");
 
     //init
     hideStatus();
@@ -16,18 +14,12 @@
     //bind 
     elementEmail.focusout(function() {
         validateEmail();
-        validateAll();
 
     });
-    elementPassword.focusout(function() {
-        validatePassword();
-        validateAll();
-    });
-
-    elementLoginButton.click(function(event){
+    
+    elementResetButton.click(function(event){
         event.preventDefault();
         validateEmail();
-        validatePassword();
         if(!validateAll()){
             return;
         }
@@ -43,14 +35,13 @@
         },400)
  
 
-        let targetUrl = "/login";
+        let targetUrl = "/reset";
         let requestConfig = {
         method: 'POST',
         url: targetUrl,
         contentType: 'application/json',
         data: JSON.stringify({
             email: elementEmail.val(),
-            password: elementPassword.val()
         })
         };
         $.ajax(requestConfig).then(function (responseMessage) {
@@ -59,8 +50,8 @@
                 progressBar.attr("class","progress-bar progress-bar-success");
                 progressBar.attr("style",`width:100%`);
                 progressBar.html(`100%`);
-                loginSuccess.text("You have successfully logged in and will automatically jump to the home page");
-                loginSuccess.show();
+                resetSuccess.text("New password has been send to your email.");
+                resetSuccess.show();
                 setTimeout(() => {
                     window.location.href = "/";
                 }, 3000);
@@ -73,7 +64,6 @@
                     let listItem = $(`<li>${responseMessage.error[i]}</li>`);
                     elementError.append(listItem);
                 }
-                elementError.append($("<li>Please input right password.</li>"));
                 elementError.show();
             } 
         });
@@ -85,7 +75,6 @@
     function hideStatus(){
         elementError.hide();
         emailStatus.hide();
-        passwordStatus.hide();
         progressBar.hide();
     }
     function setStatusTextandClass(element, text, style){
@@ -96,13 +85,12 @@
 
 
     function validateAll(){
-        elementError.empty();
         elementError.hide();
-        if(emailStatus.attr("class") === "text-danger" || passwordStatus.attr("class") === "text-danger"){
-            elementLoginButton.attr("disabled","true");
+        if(emailStatus.attr("class") === "text-danger"){
+            elementResetButton.attr("disabled","true");
             return false;
         }else{
-            elementLoginButton.removeAttr("disabled");
+            elementResetButton.removeAttr("disabled");
             return true;
         }
     }
@@ -116,7 +104,7 @@
             return;
         }
 
-        let targetUrl = `/login/validateUserEmail/${email}`;
+        let targetUrl = `/reset/validateUserEmail/${email}`;
         let requestConfig = {
             method: 'GET',
             url: targetUrl
@@ -124,22 +112,12 @@
         $.ajax(requestConfig).then(function (responseMessage) {
             if(responseMessage.status === "true"){
                 setStatusTextandClass(emailStatus, "This email is available.","text-success");
+                elementResetButton.removeAttr("disabled");
                 return;
             }else{
                 setStatusTextandClass(emailStatus, responseMessage.error,"text-danger");
                 return;
             }
         });
-    }
-    function validatePassword(){
-        const password = elementPassword.val();
-        if(password.trim().length < 3 || password.trim().length > 16){
-            setStatusTextandClass(passwordStatus, "Please use 3-16 characters long password.", "text-danger")
-            return;
-        }
-        else{
-            setStatusTextandClass(passwordStatus, "This password is legal.","text-success");
-            return;
-        }
     }
 })(window.jQuery);

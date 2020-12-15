@@ -76,6 +76,7 @@
             </article>
             {{/each}}
         </div>
+        <p class="text-info" id="questionsStatus"></p>
     </fieldset>
 </div>
 <div id="answersDiv" class="row container">
@@ -104,6 +105,7 @@
             </article>
             {{/each}}
         </div>
+        <p class="text-info" id="answersStatus"></p>
     </fieldset>
 </div>
 <div id="reviewsDiv" class="row container">
@@ -133,12 +135,13 @@
             </article>
             {{/each}}
         </div>
+        <p class="text-info" id="reviewsStatus"></p>
     </fieldset>
 </div>
 <div id="votedAnswersDiv" class="row container">
     <fieldset>
         <legend>VotedAnswers</legend>
-        <div id="reviewsSelector">
+        <div id="votedAnswersSelector">
             <label for="votedAnswersSortSelect">Sort: </label>
             <select id="votedAnswersSortSelect">
                 <option value="Updated date of the answer from new to old" selected="selected">Updated date of the
@@ -164,6 +167,7 @@
             </article>
             {{/each}}
         </div>
+        <p class="text-info" id="votedAnswersStatus"></p>
     </fieldset>
 </div>
 <div id="votedReviewsAnswersDiv" class="row container ">
@@ -196,6 +200,7 @@
             </article>
             {{/each}}
         </div>
+        <p class="text-info" id="votedReviewsStatus"></p>
     </fieldset>
 </div>
 <script src="/public/js/user.js"></script>

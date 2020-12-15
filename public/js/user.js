@@ -7,7 +7,11 @@
     const changePasswordFormOldPassword = $('#changePasswordFormOldPassword');
     const changePasswordFormNewPassword = $('#changePasswordFormNewPassword');
     const changePasswordFormNewPasswordCheck = $('#changePasswordFormNewPasswordCheck');
-
+    const questionsStatus = $('#questionsStatus');
+    const answersStatus = $('#answersStatus');
+    const reviewsStatus = $('#reviewsStatus');
+    const votedAnswersStatus = $('#votedAnswersStatus');
+    const votedReviewsStatus = $('#votedReviewsStatus');
     //init
     
 
@@ -116,6 +120,11 @@
     function init_page(){
         changePasswordDiv.hide();
         changePasswordFormStatus.hide();
+        questionsStatus.hide();
+        answersStatus.hide();
+        reviewsStatus.hide();
+        votedAnswersStatus.hide();
+        votedReviewsStatus.hide();
     }
     function checkPassword(oldPassword, newPassword, newPassword2){
         try {
@@ -177,33 +186,14 @@
         };
         $.ajax(requestConfig).then(function (responseMessage) {
             const userQuestionsList = responseMessage.userQuestionsList;
-            // add the selection form
-            // const limitSelect = $(
-            //     `<select id="LimitSelect">
-            //         <option value="10">10</option>
-            //         <option value="20">20</option>
-            //         <option value="50">50</option>
-            //     </select>`);
-            // const sortSelect = $(
-            //     `<select id="sortSelect">
-            //         <option value="Date from new to old">date</option>
-            //         <option value="Answers number from high to low">answer</option>
-            //     </select>`
-            // );
-            // limitSelect.val = limit;
-            // if(sort === "date"){
-            //     sortSelect.val = "Date from new to old"
-            // }else{
-            //     sortSelect.val = "Answers number from high to low"
-            // }
-            
-            //add the select form
-            // questionsDivList.append($('<label for="sortSelect">Sort: </label>'))
-            // questionsDivList.append(sortSelect);
-            // questionsDivList.append($('<br>'));
-            // questionsDivList.append($('<label for="LimitSelect">Limit: </label>'))
-            // questionsDivList.append(limitSelect);
-            // questionsDivList.append($('<br>'));
+
+            if(userQuestionsList.length === 0){
+                questionsStatus.text("You haven't asked any question.");
+                $('#questionsSelector').hide();
+                questionsStatus.show();
+                return;
+            }
+
             let questionTable = $(`
                 <table class="table table-bordered table-hover">
                     <caption>Questions you asked</caption>         
@@ -289,6 +279,13 @@
         };
         $.ajax(requestConfig).then(function (responseMessage) {
             const userAnswersList = responseMessage.userAnswersList;
+
+            if(userAnswersList.length === 0){
+                answersStatus.text("You haven't answered any question.");
+                $('#answersSelector').hide();
+                answersStatus.show();
+                return;
+            }
 
             let answerTable = $(`
                 <table class="table table-bordered table-hover">
@@ -390,6 +387,13 @@
         $.ajax(requestConfig).then(function (responseMessage) {
             const userReviewsList = responseMessage.userReviewsList;
 
+            if(userReviewsList.length === 0){
+                reviewsStatus.text("You haven't reviewed any answer.");
+                $('#reviewsSelector').hide();
+                reviewsStatus.show();
+                return;
+            }
+
             let reviewTable = $(`
                 <table class="table table-bordered table-hover">
                     <caption>Answers you reviewed</caption>         
@@ -477,6 +481,13 @@ function init_votedAnswers(limit = "10", sort = "date"){
     };
     $.ajax(requestConfig).then(function (responseMessage) {
         const userVotedAnswersList = responseMessage.userVotedAnswersList;
+
+        if(userVotedAnswersList.length === 0){
+            votedAnswersStatus.text("You haven't voted any answer.");
+            $('#votedAnswersSelector').hide();
+            votedAnswersStatus.show();
+            return;
+        }
 
         let votedAnswerTable = $(`
             <table class="table table-bordered table-hover">
@@ -623,6 +634,13 @@ function init_votedReviews(limit = "10", sort = "date"){
     };
     $.ajax(requestConfig).then(function (responseMessage) {
         const userVotedReviewsList = responseMessage.userVotedReviewsList;
+        
+        if(userVotedReviewsList.length === 0){
+            votedReviewsStatus.text("You haven't voted any review.");
+            $('#votedReviewsSelector').hide();
+            votedReviewsStatus.show();
+            return;
+        }
 
         let votedReviewTable = $(`
             <table class="table table-bordered table-hover">

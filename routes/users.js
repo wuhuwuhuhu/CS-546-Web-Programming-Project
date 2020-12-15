@@ -178,11 +178,13 @@ router.post('/getQuestions', async(req,res) => {
         let question = await questionsData.getQuestionById(userQuestions[i]);
         userQuestionsObjectsList.push(question);
     }
-    if(sort === "Answers number from high to low"){
-        userQuestionsObjectsList = await questionsData.sortQuestionsByAnsNum(userQuestionsObjectsList, limit);
-    }
-    else{
-        userQuestionsObjectsList = await questionsData.sortQuestionsByTime(userQuestionsObjectsList, limit);
+    if(userQuestionsObjectsList.length != 0){
+        if(sort === "Answers number from high to low"){
+            userQuestionsObjectsList = await questionsData.sortQuestionsByAnsNum(userQuestionsObjectsList, limit);
+        }
+        else{
+            userQuestionsObjectsList = await questionsData.sortQuestionsByTime(userQuestionsObjectsList, limit);
+        }
     }
     
     for(let i = 0; i < userQuestionsObjectsList.length; i++)
@@ -235,13 +237,16 @@ router.post('/getAnswers', async(req,res) => {
         let answer = await answersData.getAnswerById(userAnswers[i]);
         userAnswersObjectsList.push(answer);
     }
-    if(sort === "Voted score from high to low"){
-        userAnswersObjectsList = await answersData.sortAnswersByVote
-(userAnswersObjectsList, limit);
+    if(userAnswersObjectsList.length != 0){
+        if(sort === "Voted score from high to low"){
+            userAnswersObjectsList = await answersData.sortAnswersByVote
+    (userAnswersObjectsList, limit);
+        }
+        else{
+            userAnswersObjectsList = await answersData.sortAnswersByTime(userAnswersObjectsList, limit);
+        }
     }
-    else{
-        userAnswersObjectsList = await answersData.sortAnswersByTime(userAnswersObjectsList, limit);
-    }
+    
     
     for(let i = 0; i < userAnswersObjectsList.length; i++)
     {
@@ -315,12 +320,14 @@ router.post('/getReviews', async(req,res) => {
         if(review === null) continue;
         userReviewsObjectsList.push(review);
     }
-    if(sort === "Voted score from high to low"){
-        userReviewsObjectsList = await reviewsData.sortReviewsByVote
-(userReviewsObjectsList, limit);
-    }
-    else{
-        userReviewsObjectsList = await reviewsData.sortReviewsByTime(userReviewsObjectsList, limit);
+    if(userReviewsObjectsList.length != 0){
+        if(sort === "Voted score from high to low"){
+            userReviewsObjectsList = await reviewsData.sortReviewsByVote
+    (userReviewsObjectsList, limit);
+        }
+        else{
+            userReviewsObjectsList = await reviewsData.sortReviewsByTime(userReviewsObjectsList, limit);
+        }
     }
     
     for(let i = 0; i < userReviewsObjectsList.length; i++)
@@ -399,13 +406,16 @@ router.post('/getVotedAnswers', async(req,res) => {
         userVotedAnswersObjectsList.push(votedAnswer);
     }
     //Voted score of the answer from high to low
-    if(sort.split(" ")[0] === "Voted"){
-        userVotedAnswersObjectsList = await answersData.sortAnswersByVote
-(userVotedAnswersObjectsList, limit);
+    if(userVotedAnswersObjectsList.length != 0){
+        if(sort.split(" ")[0] === "Voted"){
+            userVotedAnswersObjectsList = await answersData.sortAnswersByVote
+    (userVotedAnswersObjectsList, limit);
+        }
+        else{
+            userVotedAnswersObjectsList = await answersData.sortAnswersByTime(userVotedAnswersObjectsList, limit);
+        }
     }
-    else{
-        userVotedAnswersObjectsList = await answersData.sortAnswersByTime(userVotedAnswersObjectsList, limit);
-    }
+    
     
     for(let i = 0; i < userVotedAnswersObjectsList.length; i++)
     {
@@ -482,12 +492,14 @@ router.post('/getVotedReviews', async(req,res) => {
         userVotedReviewsObjectsList.push(votedReview);
     }
     //Voted score of the review from high to low
-    if(sort.split(" ")[0] === "Voted"){
-        userVotedReviewsObjectsList = await reviewsData.sortReviewsByVote
-(userVotedReviewsObjectsList, limit);
-    }
-    else{
-        userVotedReviewsObjectsList = await reviewsData.sortReviewsByTime(userVotedReviewsObjectsList, limit);
+    if(userVotedReviewsObjectsList.length != 0){
+        if(sort.split(" ")[0] === "Voted"){
+            userVotedReviewsObjectsList = await reviewsData.sortReviewsByVote
+    (userVotedReviewsObjectsList, limit);
+        }
+        else{
+            userVotedReviewsObjectsList = await reviewsData.sortReviewsByTime(userVotedReviewsObjectsList, limit);
+        }
     }
     
     for(let i = 0; i < userVotedReviewsObjectsList.length; i++)

@@ -35,7 +35,7 @@
                     <thead>
                         <tr>
                             <th>{{answersInQuestion.length}} answers
-                                <button style="margin:5px" class="btn btn-primary pull-right" id="sortByrecent">sorted
+                                <button style="margin:5px" class="btn btn-primary pull-right" id="sortByRecent">sorted
                                     by most
                                     recent</button>
                                 <button style="margin:5px" class="btn btn-primary pull-right" id="sortByPopular">sorted
@@ -53,6 +53,13 @@
                                     <tr>
                                         <td class="questionInnerTableTr-1">
                                             <p class="text-primary">{{this.content}}</p>
+                                        </td>
+                                        <td>
+                                            <select id="{{this.answerId}}ReviewSorted" class="ReviewSorted">
+                                                <option value="0" selected="selected">Sort Reviews</option>
+                                                <option value="1">Most recent</option>
+                                                <option value="2">Most popular</option>
+                                            </select>
                                         </td>
                                         <td class="questionInnerTableTr-2">
                                             <button class="ReviewNumberShowButton"
@@ -77,14 +84,14 @@
                                                                 </h4>
                                                             </div>
                                                             <div class="modal-body">
-                                                                <textarea class="form-control" id="answerContent"
+                                                                <textarea class="form-control" id="reviewContent{{this.answerId}}"
                                                                     rows="16" style="min-width: 90%"
                                                                     placeholder="Welcome to share your idea"></textarea>
                                                             </div>
                                                             <div class="modal-footer">
-                                                                <button type="button" class="btn btn-default"
+                                                                <button type="button" id="closeButton{{this.answerId}}"
                                                                     data-dismiss="modal">Close</button>
-                                                                <button type="button" class="btn btn-primary"
+                                                                <button type="button" class="submitReview"
                                                                     id="submitReview{{this.answerId}}">Save</button>
                                                             </div>
                                                         </form>
@@ -97,15 +104,19 @@
                                         </td>
                                         <td class="questionInnerTableTr-2">
                                             {{#if voteUpJudge}}
-                                            <button class="answerButtonVoted" disabled="disabled">Vote Up / {{this.voteUpNumber}}</button>
+                                            <button class="answerButtonVoted" disabled="disabled">Vote Up /
+                                                {{this.voteUpNumber}}</button>
                                             {{else}}
-                                            <button class="answerButtonUnVoted" id="voteUp{{this.answerId}}">Vote Up / {{this.voteUpNumber}}</button>
+                                            <button class="answerButtonUnVoted" id="voteUp{{this.answerId}}">Vote Up /
+                                                {{this.voteUpNumber}}</button>
                                             {{/if}}
                                             &nbsp;
                                             {{#if voteDownJudge}}
-                                            <button class="answerButtonVoted" disabled="disabled">Vote Down / {{this.voteDownNumber}}</button>
+                                            <button class="answerButtonVoted" disabled="disabled">Vote Down /
+                                                {{this.voteDownNumber}}</button>
                                             {{else}}
-                                            <button class="answerButtonUnVoted" id="voteDn{{this.answerId}}">Vote Down / {{this.voteUpNumber}}</button>
+                                            <button class="answerButtonUnVoted" id="voteDn{{this.answerId}}">Vote Down /
+                                                {{this.voteUpNumber}}</button>
                                             {{/if}}
                                         </td>
                                     </tr>
@@ -124,18 +135,24 @@
                                             <td>
                                             </td>
                                             <td>
+                                            </td>
+                                            <td>
                                                 <p>{{this.recentUpdatedTime}}</p>
                                             </td>
                                             <td>
                                                 {{#if voteUpJudge}}
-                                                <button class="reviewButtonVoted" disabled="disabled">Vote Up / {{this.voteUpNumber}}</button>
+                                                <button class="reviewButtonVoted" disabled="disabled">Vote Up /
+                                                    {{this.voteUpNumber}}</button>
                                                 {{else}}
-                                                <button class="reviewButtonUnVoted" id="voteUp{{this.reviewId}}">Vote Up / {{this.voteUpNumber}}</button>
+                                                <button class="reviewButtonUnVoted" id="voteUp{{this.reviewId}}">Vote Up
+                                                    / {{this.voteUpNumber}}</button>
                                                 {{/if}}
                                                 {{#if voteDownJudge}}
-                                                <button class="reviewButtonVoted" disabled="disabled">Vote Down / {{this.voteDownNumber}}</button>
+                                                <button class="reviewButtonVoted" disabled="disabled">Vote Down /
+                                                    {{this.voteDownNumber}}</button>
                                                 {{else}}
-                                                <button class="reviewButtonUnVoted" id="voteDn{{this.reviewId}}">Vote Down / {{this.voteUpNumber}}</button>
+                                                <button class="reviewButtonUnVoted" id="voteDn{{this.reviewId}}">Vote
+                                                    Down / {{this.voteUpNumber}}</button>
                                                 {{/if}}
                                             </td>
                                         </tr>

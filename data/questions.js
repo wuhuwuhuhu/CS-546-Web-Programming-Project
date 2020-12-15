@@ -105,52 +105,117 @@ let exportedMethods = {
 
 	//remove question
 	//remove related answers, reviews
-	//remove question id from user db
+	//remove question id, voteForAnswers voteForReviews from user db
 	async removeQuestion(id) {
 		if (!id) throw 'questions.js|removeQuestion(): you need to provide an id'
 		if (typeof id !== 'string' || id.trim() === '') throw 'questions.js|removeQuestion(): id must be non-empty string'
 
 		const question = await this.getQuestionById(id);
+		
+		
 		if (question == null) throw `questions.js|removeQuestion(): question with ${id} not found`
 		//  remove answers first
-		if (question.answers.length !== 0) {
-			//loop the answers array to delete all the related answers;
-			for (let answerId of question.answers) {
-				const answerCollection = await answers();
-				const answerObjectId = await myDBfunction(answerId);
-				const findAnswer = await answerCollection.findOne({ _id: answerObjectId });
-				if (findAnswer == null) throw 'questions.js|removeQuestion():answer not found';
-				// remove related reviews
-				if (findAnswer.reviews.length !== 0) {
-					let reviewsList = findAnswer.reviews;
-					for (let reviewId of reviewsList) {
-						//console.log(reviewId)
-						const reviewCollection = await reviews();
-						let reviewObjectId = await myDBfunction(reviewId);
-						const deleteReviewInfo = await reviewCollection.deleteOne({ _id: reviewObjectId });
-						if (deleteReviewInfo.deletedCount === 0) throw 'questions.js|removeQuestion(): no reviews been deleted.'
-					}
+		let answerList = question.answers
+		const userCollection = await users()
+		//loop the answers array to delete all the related answers;
+		for (let i = 0; i < answerList.length; i++) {
+			let answerId = answerList[i];
+			//console.log("answer id")
+			//console.log(answerId)
+			const answerCollection = await answers();
+			const answerObjectId = await myDBfunction(answerId);
+			const findAnswer = await answerCollection.findOne({ _id: answerObjectId });
+			if (findAnswer == null) throw 'questions.js|removeQuestion():answer not found';
+			// remove related reviews
+
+			let reviewsList = findAnswer.reviews;
+			for (let i = 0; i < reviewsList.length; i++) {
+				let reviewId = reviewsList[i];
+				//console.log("review of this answer")
+			//	console.log(reviewId)
+				const reviewCollection = await reviews();
+				const reviewObjectId = await myDBfunction(reviewId);
+				const find = await reviewCollection.findOne({ _id: reviewObjectId })
+				if (find == null) throw `questions.js|removeQuestion: review id ${reviewId} not found`
+				//console.log(find)
+				let voteUpUserList = find.voteUp;
+				//console.log("voteup list of this review:")
+				//console.log(voteUpUserList)
+				let voteDownUserList = find.voteDown;
+				//console.log("votedown list of this review:")
+				//console.log(voteDownUserList)
+				//update the review's voteUp users db
+				for (let i = 0; i < voteUpUserList.length; i++) {
+					const objectUserId = await myDBfunction(voteUpUserList[i])
+					const updatedInfo = await userCollection.updateOne({ _id: objectUserId }, { $pull: { votedForReviews: reviewId } })
+					if (updatedInfo.matchedCount === 0) throw 'questions.js|removeQuestion():no user been found.'
+					if (updatedInfo.modifiedCount === 0) throw 'questions.js|removeQuestion():No user votedForReviews being updated.'
 				}
-				const deleteAnswerInfo = await answerCollection.deleteOne({ _id: answerObjectId })
-				if (deleteAnswerInfo.deletedCount === 0) throw 'questions.js|removeQuestion(): no answers been deleted.'
+				//update the review's voteDown users db
+				for (let i = 0; i < voteDownUserList.length; i++) {
+					const objectUserId = await myDBfunction(voteDownUserList[i])
+					const updatedInfo = await userCollection.updateOne({ _id: objectUserId }, { $pull: { votedForReviews: reviewId } })
+					if (updatedInfo.matchedCount === 0) throw 'questions.js|removeQuestion():no user been found.'
+					if (updatedInfo.modifiedCount === 0) throw 'questions.js|removeQuestion():No user votedForReviews being updated.'
+				}
+				//update this review's creator's user db
+				const userId = find.reviewer
+				const objectUserId = await myDBfunction(userId)
+				const updatedInfo = await userCollection.updateOne({_id:objectUserId},{ $pull: { reviews: reviewId } })
+				if (updatedInfo.matchedCount === 0) throw 'questions.js|removeQuestion():no user been found.'
+				if (updatedInfo.modifiedCount === 0) throw 'questions.js|removeQuestion():No user reviews being updated.'
+				//delete this review
+				
+				const deleteReviewInfo = await reviewCollection.deleteOne({ _id: reviewObjectId });
+				if (deleteReviewInfo.deletedCount === 0) throw 'questions.js|removeQuestion(): no reviews been deleted.'
 
 			}
+			let voteUpUserList = findAnswer.voteUp;
+			//console.log("voteUpList of this answer")
+		//	console.log(voteUpUserList)
+			let voteDownUserList = findAnswer.voteDown;
+			//console.log("voteDownList of this answer")
+			//console.log(voteDownUserList)
+			//update the answer's voteUp users db
+			for (let i = 0; i < voteUpUserList.length; i++) {
+				const objectUserId = await myDBfunction(voteUpUserList[i])
+				const updatedInfo = await userCollection.updateOne({ _id: objectUserId }, { $pull: { votedForAnswers: answerId } })
+				if (updatedInfo.matchedCount === 0) throw 'questions.js|removeQuestion():no user been found.'
+				if (updatedInfo.modifiedCount === 0) throw 'questions.js|removeQuestion():No user votedForAnswers being updated.'
+			}
+			//update the answer's voteDown users db
+			for (let i = 0; i < voteDownUserList.length; i++) {
+				const objectUserId = await myDBfunction(voteDownUserList[i])
+				const updatedInfo = await userCollection.updateOne({ _id: objectUserId }, { $pull: { votedForAnswers: answerId } })
+				if (updatedInfo.matchedCount === 0) throw 'questions.js|removeQuestion():no user been found.'
+				if (updatedInfo.modifiedCount === 0) throw 'questions.js|removeQuestion():No user votedForAnswers being updated.'
+			}
+
+			//update this answer's creator's user db
+			const userId = findAnswer.answerer
+			const objectUserId = await myDBfunction(userId)
+			const updatedInfo = await userCollection.updateOne({_id:objectUserId},{ $pull: { answers: answerId } })
+			if (updatedInfo.matchedCount === 0) throw 'questions.js|removeQuestion():no user been found.'
+			if (updatedInfo.modifiedCount === 0) throw 'questions.js|removeQuestion():No user answer being updated.'
+			//remove answerId from db
+			const deleteAnswerInfo = await answerCollection.deleteOne({ _id: answerObjectId })
+			if (deleteAnswerInfo.deletedCount === 0) throw 'questions.js|removeQuestion(): no answers been deleted.'
+			
 		}
-		//remove question
+
+		//remove question from db
 		const questionObjectId = await myDBfunction(id.trim())
 		const questionCollection = await questions()
 		const deleteQuestionInfo = await questionCollection.deleteOne({ _id: questionObjectId })
 		if (deleteQuestionInfo.deletedCount === 0) throw 'questions.js|removeQuestion(): no question been deleted.'
-		//remove from user db
+		//remove question id from user db
+		
 		const userId = question.questioner
 		const objetUserId = await myDBfunction(userId)
-		const userCollection = await users()
 		const updatedInfo = await userCollection.updateOne({ _id: objetUserId }, { $pull: { questions: id.trim() } })
 		if (updatedInfo.matchedCount === 0 || updatedInfo.modifiedCount === 0) {
 			throw 'questions.js|removeQuestion():No user being updated.'
 		}
-
-
 
 		return question
 	},

@@ -8,6 +8,7 @@ const reviewDate = data.reviews;
 const session = require('express-session');
 const { ObjectId } = require('mongodb');
 const xss = require('xss');
+const { unfollowQuestion } = require('../data/users');
 
 /**
  * get all info of the question
@@ -35,7 +36,7 @@ router.get('/:id', async (req, res) => {
         const question = await questionsData.getQuestionById(id)
         // const questionContent = question.content
         const answersId = question.answers
-
+        const isFollowed= await userData.followQuestionCheck(userId,id)
 
         let answersInQuestion = new Array()     //obj array 
         for (let index = 0; index < answersId.length; index++) {
@@ -70,10 +71,12 @@ router.get('/:id', async (req, res) => {
             answersInQuestion.push(answerObj)
         }
         res.render('questionDetails/questionInfo.handlebars', {
+            title:"Question Page",
             userId: userId,
             questionId: id,
             questionText: question.content,
             answersInQuestion: answersInQuestion,
+            isFollowed:isFollowed
         });
     } catch (error) {
         throw error
@@ -392,6 +395,54 @@ router.post('/sortReview/sortByRecent', async (req, res) => {
         res.json({
             status: true,
             sortedReviewrList: reviewList,
+        });
+    } catch (error) {
+        throw error
+    }
+})
+
+router.post('/followQ', async (req, res) => {
+    try {
+        let userId = xss(req.session.user)
+        if(!userId){
+            res.redirect("/login")
+        }
+        // userId = "5fd82a4799eb7c385db27e09";
+        let questionId = xss(req.body.questionId);
+        if(!questionId){
+            res.json({
+                status: false,
+            });
+            return
+        }
+        await userData.followQuestion(userId,questionId)
+        res.json({
+            status: true,
+            option:"unfollow"
+        });
+    } catch (error) {
+        throw error
+    }
+})
+
+router.post('/unfollowQ', async (req, res) => {
+    try {
+        let userId = xss(req.session.user)
+        if(!userId){
+            res.redirect("/login")
+        }
+        // userId = "5fd82a4799eb7c385db27e09";
+        let questionId = xss(req.body.questionId);
+        if(!questionId){
+            res.json({
+                status: false,
+            });
+            return
+        }
+        await userData.unfollowQuestion(userId,questionId)
+        res.json({
+            status: true,
+            option:"follow"
         });
     } catch (error) {
         throw error

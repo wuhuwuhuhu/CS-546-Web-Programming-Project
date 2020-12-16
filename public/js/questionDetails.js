@@ -24,6 +24,44 @@
         window.open(url);
     })
 
+    
+    $(document).on('click', '#followQuestion', function (event) {
+        event.preventDefault();
+        var questionId = quesId.text()
+        var url="/question/"
+        var option=$('#followQuestion').text()
+        //go to follow it
+        if(option.indexOf('unfollow')==-1){
+            url=url+"followQ"
+        }else{
+            // go unfollow it
+            url=url+"unfollowQ"
+        }
+        var requestConfig = {
+            method: 'POST',
+            url: url,
+            contentType: 'application/json',
+            data: JSON.stringify({
+                questionId: questionId,
+            })
+        };
+        $.ajax(requestConfig).then(function (responseMessage) {
+            if (responseMessage.status === true) {
+                const option = responseMessage.option
+                if(option=='follow'){
+                    $('#followQuestion').text('follow question')
+                }else{
+                    $('#followQuestion').text('unfollow question')
+                }
+
+            }
+            else {
+                alert("something wrong")
+            }
+        });
+
+    })
+
     $(document).on('click', '.ReviewNumberShowButton', function (event) {
         event.preventDefault();
         var a = $(this).attr("id");
@@ -373,7 +411,7 @@
             var subTableTr1_ex = " <td><select id=\"" + curAnswerId + "ReviewSorted\" class=\"ReviewSorted\">  <option value=\"0\" selected=\"selected\">Sort Reviews</option><option value=\"1\">Most recent</option><option value=\"2\">Most popular</option></select></td>"
             var subTableTr1_td1 = " <td class=\"questionInnerTableTr-1\"><p class=\"text-primary\">" + curAnswerContent + "</p></td>";
             var subTableTr1_td2 = " <td class=\"questionInnerTableTr-2\"><button class=\"ReviewNumberShowButton\" id=\"" + curAnswerId + "ReviewNumberId\">" + curReviewListLen + " reviews</button></td>";
-            var subTableTr1_td3 = " <td><button class=\"btn\" data-toggle=\"modal\"data-target=\"#myReview" + curAnswerId + "\" type=\"button\">Review answer</button><div class=\"modal\" id=\"myReview" + curAnswerId + "\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"mySmallModalLabel\" aria-hidden=\"true\"><div class=\"modal-dialog\"><div class=\"modal-content\"><form><div class=\"modal-header\"> <button type=\"button\" class=\"close\"  data-dismiss=\"modal\"><span aria-hidden=\"true\">&times;</span><span class=\"sr-only\">Close</span></button><h4 class=\"modal-title\">Please write down your ideas </h4> </div> <div class=\"modal-body\"><textarea class=\"form-control\" id=\"reviewContent" + curAnswerId + "\" rows=\"16\" style=\"min-width: 90%\" placeholder=\"Welcome to share your idea\"></textarea> </div><div class=\"modal-footer\"> <button type=\"button\"  id=\"closeButton" + curAnswerId + "\" data-dismiss=\"modal\">Close</button> <button type=\"button\" class=\"submitReview\" id=\"submitReview" + curAnswerId + "\">Save</button> </div> </form> </div> </div> </div>  </td>"
+            var subTableTr1_td3 = " <td><button class=\"btn\" data-toggle=\"modal\"data-target=\"#myReview" + curAnswerId + "\" type=\"button\">Review answer</button><div class=\"modal\" id=\"myReview" + curAnswerId + "\" tabindex=\"-1\" role=\"dialog\" aria-hidden=\"true\"><div class=\"modal-dialog\"><div class=\"modal-content\"><form><div class=\"modal-header\"> <button type=\"button\" class=\"close\"  data-dismiss=\"modal\"><span aria-hidden=\"true\">&times;</span><span class=\"sr-only\">Close</span></button><h4 class=\"modal-title\">Please write down your ideas </h4> </div> <div class=\"modal-body\"><textarea class=\"form-control\" id=\"reviewContent" + curAnswerId + "\" rows=\"16\" style=\"min-width: 90%\" placeholder=\"Welcome to share your idea\"></textarea> </div><div class=\"modal-footer\"> <button type=\"button\"  id=\"closeButton" + curAnswerId + "\" data-dismiss=\"modal\">Close</button> <button type=\"button\" class=\"submitReview\" id=\"submitReview" + curAnswerId + "\">Save</button> </div> </form> </div> </div> </div>  </td>"
             var subTableTr1_td4 = "<td class=\"questionInnerTableTr-2\"> <p>" + curAnswerRecentUpdatedTime + "</p> </td>";
             var subTableTr1_td5_bt1 = ""
             if (curAnswer.voteUpJudge) {
@@ -389,7 +427,8 @@
             }
             var subTableTr1_td5 = " <td class=\"questionInnerTableTr-2\">" + subTableTr1_td5_bt1 + "&nbsp;" + subTableTr1_td5_bt2 + "</td>";
             var subTableTr1 = "<tr>" + subTableTr1_td1 + subTableTr1_ex + subTableTr1_td2 + subTableTr1_td3 + subTableTr1_td4 + subTableTr1_td5 + "</tr>";
-            var subTableTr2 = "<tr></tr>";
+            // var subTableTr2 = "<tr></tr>";
+            var subTableTr2 = "";
             var subTableTody = " <tbody id=\"ReviewNumberIdShow" + curAnswerId + "\" class=\"ReviewNumberShow\">";
             for (let index2 = 0; index2 < curReviewList.length; index2++) {
                 var curReview = curReviewList[index2];

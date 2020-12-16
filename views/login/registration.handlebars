@@ -2,7 +2,7 @@
 
 <form id="regForm">
 
-  <div class="form-group" class="row">
+  <div class="form-group row">
     <label for="userName">userName</label>
     <input type="text" maxlength="60" name="userName" class="form-control" id="userName" aria-describedby="userNameHelp"
       placeholder="userName">
@@ -10,29 +10,29 @@
     <p id="userNameStatus"></p>
   </div>
 
-  <div class="form-group" class="row">
+  <div class="form-group row">
     <label for="email">Email</label>
-    <input type="email" maxlength="60" name="email" class="form-control" id="email" aria-describedby="userNameHelp"
+    <input type="email" maxlength="60" name="email" class="form-control" id="email" aria-describedby="emailHelp"
       placeholder="Email">
-    <small id="userNameHelp" class="form-text text-muted">Email address shoud be vaild.</small>
+    <small id="emailHelp" class="form-text text-muted">Email address shoud be vaild.</small>
     <p id="emailStatus"></p>
   </div>
 
-  <div class="form-group" class="row">
+  <div class="form-group row">
     <label for="password">Password</label>
     <input type="password" maxlength="60" name="password" class="form-control" id="password"
       aria-describedby="passwordHelp" placeholder="Password">
     <small id="passwordHelp" class="form-text text-muted">Password should be in 3-16 characters long.</small>
     <p id="passwordStatus"></p>
   </div>
-  <ul class="text-danger row" id="error">error</ul>
+  <ul class="text-danger row" id="error"></ul>
   <div class="progress row" id="progressBar">
     <div class="progress-bar"> </div>
   </div>
   <br>
-  <h4 class="text-success text-center row" id="registerSuccess"></h4>
+  <p class="text-success text-center row" id="registerSuccess"></p>
   <div class="text-center row">
-    <button type="submit" class="btn btn-primary" id="registerButton" disabled="true">Register</button>
+    <button type="submit" class="btn btn-primary" id="registerButton" disabled="disabled">Register</button>
   </div>
 </form>
 <script src="/public/js/registerForm.js"></script>

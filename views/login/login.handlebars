@@ -1,28 +1,28 @@
 <h1> Log in</h1>
 <form id="loginForm">
-  <div class="form-group" class="row">
+  <div class="form-group row">
     <label for="email">Email</label>
     <input type="email" maxlength="60" name="email" class="form-control" id="email" aria-describedby="userNameHelp"
       placeholder="Email">
     <small id="userNameHelp" class="form-text text-muted">Email address shoud be vaild.</small>
     <p id="emailStatus"></p>
   </div>
-  <div class="form-group" class="row">
+  <div class="form-group row">
     <label for="password">Password</label>
     <input type="password" maxlength="60" name="password" class="form-control" id="password"
       aria-describedby="passwordHelp" placeholder="Password">
     <small id="passwordHelp" class="form-text text-muted">Password should be in 3-16 characters long.</small>
     <p id="passwordStatus"></p>
   </div>
-  <ul class="text-danger row" id="error">error</ul>
+  <ul class="text-danger row" id="error"></ul>
   <div class="progress row" id="progressBar">
     <div class="progress-bar"> </div>
   </div>
   <br>
-  <h4 class="text-success text-center row" id="loginSuccess"></h4>
+  <p class="text-success text-center row" id="loginSuccess"></p>
   <div class="text-center row">
-    <a type="button" class="btn btn-primary" href="/reset">Reset Password</a>
-    <button type="submit" class="btn btn-primary" id="loginButton" disabled="true">Log In</button>
+    <a class="btn btn-primary" href="/reset">Reset Password</a>
+    <button type="submit" class="btn btn-primary" id="loginButton" disabled="disabled">Log In</button>
   </div>
 </form>
 <script src="/public/js/login.js"></script>

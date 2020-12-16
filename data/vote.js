@@ -14,13 +14,27 @@ let exportedMethods = {
             userName =alluser[i].userName;
             userAnswer = alluser[i].answers;
             userReviews = alluser[i].reviews;
-            for(let j=0;j<userAnswer.length;j++){
-                let userEachAnswer=await getAnswerById(userAnswer[j]);
-                userGetVote=userGetVote+ userEachAnswer.voteUp.length-userEachAnswer.voteDown.length;
+            if(!userAnswer.length){}
+            else{
+                for(let j=0;j<userAnswer.length;j++){
+                    let userEachAnswer=await getAnswerById(userAnswer[j]);
+                    if(!userEachAnswer|| !userEachAnswer.voteUp|| !userEachAnswer.voteDown){
+
+                    }
+                    else{
+                        userGetVote=userGetVote+ userEachAnswer.voteUp.length-userEachAnswer.voteDown.length;
+                    }
+                }
             }
-            for(let l=0;l<userReviews.length;l++){
-                let userEachReview = await getReviewById(userReviews[l]);
-                userGetVote=userGetVote+ userEachReview.voteUp.length-userEachReview.voteDown.length;
+            if(!userReviews){}
+            else{
+                for(let l=0;l<userReviews.length;l++){
+                    let userEachReview = await getReviewById(userReviews[l]);
+                    if(!userEachReview|| !userEachReview.voteUp || !userEachReview.voteDown){}
+                    else{    
+                        userGetVote=userGetVote+ userEachReview.voteUp.length-userEachReview.voteDown.length;
+                    }
+                }
             }
             let voteObject ={userName:userName,userGetVote:userGetVote};
             if(topList.length<10){

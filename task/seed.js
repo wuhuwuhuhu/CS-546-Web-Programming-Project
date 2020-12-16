@@ -33,11 +33,11 @@ const main = async () => {
 	await db.dropDatabase();
 
 	//initial topics
-	
+
 	try {
 		const initTopics = await systemConfigs.initialTopics()
 		let topics = await systemConfigs.getTopics();
-	
+
 	} catch (error) {
 		console.log(error)
 	}
@@ -88,15 +88,15 @@ const main = async () => {
 		'$2b$16$lPMcKMOYl2qzIyBU.8zIRu0GBrafCdeSllX/NEUZRCiwSCr6F9PnO',
 		'$2b$16$RKt5IbwRqBQwX3KTjsHtLeNii9jwUmkF5GDLwCROaIVUx1snR6pqe',
 		'$2b$16$LfdX7neQbi6S4.AM11bnzuZ4b8A/56pZvBH76mM4xxGOLikp2xjUK'
-	  ]
-//
-//	  const hash = await bcrypt.hash('Test1234',saltRounds);
-//			console.log(hash)
+	]
+	//
+	//	  const hash = await bcrypt.hash('Test1234',saltRounds);
+	//			console.log(hash)
 	try {
 		for (let i = 0; i < userNameList.length; i++) {
 			let newTime = randomTime('July 20, 2000 00:20:18 GMT+00:00', 'December 02, 2010 00:20:18 GMT+00:00');
 			//console.log(newTime);
-			
+
 			const newUser = {
 				userName: userNameList[i],
 				email: emailList[i],
@@ -109,7 +109,7 @@ const main = async () => {
 				votedForAnswers: [],
 				followedQuestions: []
 			};
-		//	const addUser = await users.addUser(emailList[i],hashList[i],userNameList[i])
+			//	const addUser = await users.addUser(emailList[i],hashList[i],userNameList[i])
 			//shuffle user created time
 			const insertInfo = await usersCollection.insertOne(newUser)
 			if (insertInfo.insertedCount === 0) throw `Error: could not add new user.`;
@@ -119,12 +119,12 @@ const main = async () => {
 			//if (updatedInfo.matchedCount === 0 || updatedInfo.modifiedCount === 0) {
 			//	throw 'seed.js: no time of reviews being updated.'
 			//}
-			
-			
-			
-		//	userIdList.push(addUser._id.toString())
+
+
+
+			//	userIdList.push(addUser._id.toString())
 		}
-		
+
 		//	console.log(userIdList)
 	} catch (error) {
 		console.log(error)
@@ -132,29 +132,30 @@ const main = async () => {
 
 
 	let bookQuestionList = ["What is the best non-fiction book of 2020?", "Any Horror novelist better than Steven King?", "Is Pulizer the highest honor for novels?", "What is the best book you've read in 2020?", "How to read books fast?", "Where to buy second-hand Computer Science books?",
-		"Is there a book that change your life？", "When is your favourite time to read?", "Everything on web now, do we still need paper-version book any more?","When will Micheal Cunningham publish his new novel? Can't wait...",
-		"Is there more Harry Porter series?","Is Game of Thrones book series finished?","Which book in the world has the most popular reader?"]
+		"Is there a book that change your life？", "When is your favourite time to read?", "Everything on web now, do we still need paper-version book any more?", "When will Micheal Cunningham publish his new novel? Can't wait...",
+		"Is there more Harry Porter series?", "Is Game of Thrones book series finished?", "Which book in the world has the most popular reader?"]
 	let musicQuestionList = ["Why jazz music makes me feel relaxed?", "What do you listen when driving?", "Who is Game of Thrones TV music composer?",
 		"Which prime musci station do you recommand for listening during coding?", "Why classical music not popular anymore?",
 		"Which singer is your favourite?", "Why people say 'The Beatles' creates a history?", "What music is most popular restaurant music?"
-		,"What does the BillBoard mean to a singer?","Why country music not popular anymore?",
-		"What do you listen when you are cooking?","Who's songs are popular in 2020?","What is your favourite classical music composer?","Why Billie Ellish so popular? Do you think her songs are good?"]
+		, "What does the BillBoard mean to a singer?", "Why country music not popular anymore?",
+		"What do you listen when you are cooking?", "Who's songs are popular in 2020?", "What is your favourite classical music composer?", "Why Billie Ellish so popular? Do you think her songs are good?"]
 	let movieQuestionList = ["Best Si-Fi movie you think?", "Best romantic movie in your opinion?",
-		"What is the highest rated movie you think?", "When will 'Avatar2' be revealed?", "Why it takes more than 10 years to produce Avatar2?","Do you like Disney Animation or Pixar? why",
-		"Movies that you didn't figured out after watching it?", "What movie to watch in the first date?","What does drama genre mean for movie?","What does PG movie mean?","Is kids movies really good for kids to watch?",
-		"Any movies recommand for Christmas Eve?","What is the most popular Horror movies?","Why there is not much new movies this year?","Any forein language movies recommand?"]
+		"What is the highest rated movie you think?", "When will 'Avatar2' be revealed?", "Why it takes more than 10 years to produce Avatar2?", "Do you like Disney Animation or Pixar? why",
+		"Movies that you didn't figured out after watching it?", "What movie to watch in the first date?", "What does drama genre mean for movie?", "What does PG movie mean?", "Is kids movies really good for kids to watch?",
+		"Any movies recommand for Christmas Eve?", "What is the most popular Horror movies?", "Why there is not much new movies this year?", "Any forein language movies recommand?"]
 	let wineQuestionList = ["Is California the biggest wine producing location?", "Why people in cold area drink more than other area?",
-		"Why young people choose beer over wine?", "Is white wine really anti-aging?","Red or white wine, which do you prefer?","Which French brand wine do you recommand?","Why grape wine is popular?"]
-	let cookQuestionList = ["Cooking 2 hours, eating 10 minutes, worth it?", "How to master French cooking?","How to cook pasta?",
-		"What is best cooking recipies website?","How to cook beef broth?","How to make pizza?","How to cook fried rice?","How to cook Italian style meatball?",
-		"Why cooking videos are popular in YouTube?", "Why Chinese takout so popular in NY?", "Is boroccoli the healthest vegi?","Why cast iron cook are good choice for making broth?","Air dry machine better than oven?"]
-	let travelQuestionList = ["Why people like travel?", "What is the meaning of traveling?", "5 star hotel or knapsack travel, what do you get from different ways of travel?","What is the most popular place to go during Christmas?",
-"Please recommand some place to go during summer?","France vs. Japan? where for a 2 week vocation?","Which rent company do you recommand during travel?","Is it safe travel alone?"]
-	let otherQuestionList = ["What do you do when you're bored?", "Is there any people really viewing this website?", "Where are you going? Where Have You Been?","Is stock market better than last year?","Do you guys ask about life meaning related questions here?"]
-//
+		"Why young people choose beer over wine?", "Is white wine really anti-aging?", "Red or white wine, which do you prefer?", "Which French brand wine do you recommand?", "Why grape wine is popular?"]
+	let cookQuestionList = ["Cooking 2 hours, eating 10 minutes, worth it?", "How to master French cooking?", "How to cook pasta?",
+		"What is best cooking recipies website?", "How to cook beef broth?", "How to make pizza?", "How to cook fried rice?", "How to cook Italian style meatball?",
+		"Why cooking videos are popular in YouTube?", "Why Chinese takout so popular in NY?", "Is boroccoli the healthest vegi?", "Why cast iron cook are good choice for making broth?", "Air dry machine better than oven?"]
+	let travelQuestionList = ["Why people like travel?", "What is the meaning of traveling?", "5 star hotel or knapsack travel, what do you get from different ways of travel?", "What is the most popular place to go during Christmas?",
+		"Please recommand some place to go during summer?", "France vs. Japan? where for a 2 week vocation?", "Which rent company do you recommand during travel?", "Is it safe travel alone?"]
+	let otherQuestionList = ["What do you do when you're bored?", "Is there any people really viewing this website?", "Where are you going? Where Have You Been?", "Is stock market better than last year?", "Do you guys ask about life meaning related questions here?"]
+	//
 
 	let questionIdList = []
-	//create questions
+	//create questions 
+
 	let questionList = [bookQuestionList, musicQuestionList, movieQuestionList, wineQuestionList, cookQuestionList, travelQuestionList, otherQuestionList]
 	let remain = bookQuestionList.length + musicQuestionList.length + movieQuestionList.length + wineQuestionList.length + cookQuestionList.length + travelQuestionList.length + otherQuestionList.length
 	try {
@@ -171,7 +172,7 @@ const main = async () => {
 				}
 
 			}
-		
+
 			if (remain === 0) {
 				seeds = false;
 			}
@@ -181,6 +182,24 @@ const main = async () => {
 		console.log(error);
 
 	}
+	//add followers to question
+
+	for (let i = 0; i < userIdList.length; i++) {
+		for (let j = 0; j < questionIdList.length; j++) {
+			//  1/10 chance to follow or not
+			let follow = Math.floor(Math.random() * 10)
+			if (follow === 1) {
+				try {
+					const follower = await users.followQuestion(userIdList[i], questionIdList[j])
+				} catch (error) {
+					console.log(error)
+				}
+			}
+		}
+
+	}
+
+
 	//add answers
 	try {
 		//async addAnswer(content, answerer, questionId)
@@ -361,7 +380,7 @@ const main = async () => {
 				//	console.log(voteDown)
 				if (voteDown) {
 					await answers.updateVoteDown(answerIdList2[i], userIdList2[j]);
-				//	await updateMethods.addVoteDownForAnswer(answerIdList2[i], userIdList2[j]);
+					//	await updateMethods.addVoteDownForAnswer(answerIdList2[i], userIdList2[j]);
 					userIdList2.splice(j, 1)
 
 				}
@@ -395,7 +414,7 @@ const main = async () => {
 				let voteDown = Math.floor(Math.random() * Math.floor(2))
 				if (voteDown) {
 					await reviews.updateVoteDown(reviewIdList2[i], userIdList2[j]);
-				//	await updateMethods.addVoteDownForReview(reviewIdList2[i], userIdList2[j]);
+					//	await updateMethods.addVoteDownForReview(reviewIdList2[i], userIdList2[j]);
 					userIdList2.splice(j, 1)
 
 				}

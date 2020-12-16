@@ -50,8 +50,8 @@ let exportedMethods = {
 	//update users db, add question id to user.questions
 	async addQuestion(content, topic, questioner) {
 		if (!content) {
-			console.log(topic)
-			console.log(questioner)
+		//	console.log(topic)
+		//	console.log(questioner)
 			throw 'questions.js|addQuestion():You need to provide content'
 		}
 		if (!topic) throw 'questions.js|addQuestion():You need to provide topic'

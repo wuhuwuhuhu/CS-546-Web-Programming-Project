@@ -7,7 +7,8 @@ const { getAllUserVoteList } = require('../data/vote');
 const voteData = require('../data/vote')
 const xss= require('xss')
 router.get('/', async(req,res)=>  {
-    res.render("main/mainpage");   
+    res.render("main/mainpage",{
+        title: "Main Page"});   
 });
 
 router.post('/search', async(req,res)=>{
@@ -40,23 +41,42 @@ router.post('/search', async(req,res)=>{
         let A = [];
         if(sort=="Date from new to old"){
             if(topic=="allTopic"){
-                let searchQuestion=await getQuestionsByKeywords(keywords);
+                let searchQuestion;
+                try{
+                    searchQuestion=await getQuestionsByKeywords(keywords);
+                }catch (error) {
+                    console.log(error);
+                }
+                
                 if(searchQuestion.length==0){
                     A=[];
                 }
                 else{
-                    A= await sortQuestionsByTime(searchQuestion,limit);
+                    try{
+                        A= await sortQuestionsByTime(searchQuestion,limit);
+                    }catch (error) {
+                        console.log(error);
+                    }
                 }
                 
                 res.json({A});
             }
             else{
-                let getQuestion =await getQuestionsByKeywordsAndTopic(keywords,topic);
+                let getQuestion;
+                try {
+                    getQuestion =await getQuestionsByKeywordsAndTopic(keywords,topic);
+                    }catch (error) {
+                    console.log(error);
+                }
                 if(getQuestion.length==0){
                     A=[];
                 }
                 else{
-                    A = await sortQuestionsByTime(await getQuestionsByKeywordsAndTopic(keywords,topic),limit);
+                    try{
+                        A = await sortQuestionsByTime(await getQuestionsByKeywordsAndTopic(keywords,topic),limit);
+                    }catch (error) {
+                        console.log(error);
+                    }
                 }
                 res.json({A});
             }
@@ -69,17 +89,30 @@ router.post('/search', async(req,res)=>{
                     A=[]
                 }
                 else{
-                    A = await sortQuestionsByAnsNum(await getQuestionsByKeywords(keywords),limit);
+                    try{
+                        A = await sortQuestionsByAnsNum(await getQuestionsByKeywords(keywords),limit);
+                    }catch (error) {
+                        console.log(error);
+                    }
                 }
                 res.json({A});
             }
             else{
-                let searchQuestion =await getQuestionsByKeywordsAndTopic(keywords,topic);
+                let searchQuestion;
+                try{
+                    searchQuestion =await getQuestionsByKeywordsAndTopic(keywords,topic);
+                }catch (error) {
+                    console.log(error);
+                }
                 if(searchQuestion.length==0){
                     A =[];
                 }
                 else{
-                    A = await sortQuestionsByAnsNum(await getQuestionsByKeywordsAndTopic(keywords,topic),limit);
+                    try{
+                        A = await sortQuestionsByAnsNum(await getQuestionsByKeywordsAndTopic(keywords,topic),limit);
+                    }catch (error) {
+                        console.log(error);
+                    }
                 }
                 res.json({A});
             }
@@ -91,7 +124,13 @@ router.post('/search', async(req,res)=>{
 
 router.post('/popular',async(req,res)=>{
     if(req.body.ask==true){
-        let allQuestionSort =await sortQuestionsByAnsNum(await questions.getAllQuestions(), 10)
+        let allQuestionSort;
+        try{
+            allQuestionSort =await sortQuestionsByAnsNum(await questions.getAllQuestions(), 10)
+        }catch (error) {
+            console.log(error);
+        }
+
         // get the name for all question , using loop to return 
     
         let A = {returnPopular:allQuestionSort};
@@ -101,7 +140,12 @@ router.post('/popular',async(req,res)=>{
 
 router.post('/honorList',async(req,res)=>{
     if(req.body.honor==true){
-        let honorList = await getAllUserVoteList();
+        let honorList;
+        try{
+            honorList = await getAllUserVoteList();
+        }catch (error) {
+            console.log(error);
+        }
         let repsons = {honorList:honorList}
         res.json(repsons)
     }

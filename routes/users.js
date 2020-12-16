@@ -119,7 +119,7 @@ router.post('/changePassword', async(req,res) => {
             let userEmail = user["email"];
             let userName = user["userName"];
             
-            let subject = `Hi ${userName}, Your password has been changed to {newPassword}.`;
+            let subject = `Hi ${userName}, Your password has been changed to ${newPassword}.`;
             let text = `Hi ${userName},\n Your password has been changed to ${newPassword}.`;
             try {
                 await email(userEmail, subject, text);

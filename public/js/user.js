@@ -8,6 +8,7 @@
     const changePasswordFormOldPassword = $('#changePasswordFormOldPassword');
     const changePasswordFormNewPassword = $('#changePasswordFormNewPassword');
     const changePasswordFormNewPasswordCheck = $('#changePasswordFormNewPasswordCheck');
+    const progressBar = $("#progressBar");
     const followedQuestionsStatus = $('#followedQuestionsStatus');
     const questionsStatus = $('#questionsStatus');
     const answersStatus = $('#answersStatus');
@@ -74,6 +75,7 @@
     personalInfoChangePasswordButton.click(function(event){
         event.preventDefault();
         changePasswordDiv.show();
+        progressBar.hide();
         personalInfoChangePasswordButton.hide();
     })
 
@@ -157,6 +159,18 @@
             throw("The new password can not be same as the old password!");
         }
 
+        progressBar.attr("class","progress-bar");
+        progressBar.attr("style",`width:0%`);
+        progressBar.show();
+        let i = 0;
+        let timer = setInterval(function(){
+            progressBar.attr("style",`width:${i}0%`);
+            progressBar.html(`${i}0%`);
+            i += 1;
+            if(i === 10)
+                clearInterval(timer);
+        },700)
+
         let targetUrl = "/user/changePassword";
         let requestConfig = {
             method: 'POST',
@@ -169,11 +183,17 @@
         };
         $.ajax(requestConfig).then(function (responseMessage) {
             if(responseMessage.status === true){
+                changePasswordFormSubmitButton.hide();
+                clearInterval(timer);
+                progressBar.attr("class","progress-bar progress-bar-success");
+                progressBar.attr("style",`width:100%`);
+                progressBar.html(`100%`);
                 changePasswordFormStatus.empty();
                 changePasswordFormStatus.attr("class", "text-success")
-                changePasswordFormStatus.html("Password Changed successfully!");
+                changePasswordFormStatus.html("You have successfully changed your password, we will send your new password to your email.");
             }
             else{
+                progressBar.hide();
                 changePasswordFormStatus.empty();
                 changePasswordFormStatus.html(`${responseMessage.message}`);
             } 

@@ -1,6 +1,8 @@
     const mongoCollections = require('../config/mongoCollections');
     const users = mongoCollections.users;
     const questions = mongoCollections.questions;
+    const answers = mongoCollections.answers;
+    const reviews = mongoCollections.reviews;
     const { ObjectId } = require('mongodb');
     const bcryptjs = require("bcryptjs")
 
@@ -19,8 +21,7 @@
             if (!email) throw new Error('You must provide an email');
             if (typeof email !== 'string') 
                 throw new TypeError('email must be a string');
-
-            email = email.toLowerCase();
+            email = email.trim().toLowerCase();
             const userCollection = await users();
             try{
                 const userByEmail = await userCollection.findOne({ email: email });
@@ -50,7 +51,7 @@
             if (!name) throw new Error('You must provide an name');
             if (typeof name !== 'string') throw new TypeError('name must be a string');
 
-            name = name.toLowerCase();
+            name = name.trim().toLowerCase();
 
             const userCollection = await users();
             try{
@@ -63,10 +64,9 @@
 
             
         },
-        //userName cant be same 
+
         async addUser(email, password, userName) {
            
-            console.log("-------addd")
             if (!email) throw new Error('You must provide an email');
             if (!password) throw new Error('You must provide a password');
             if (!userName) throw new Error('You must provide a userNme');
@@ -87,7 +87,9 @@
             if (typeof email !== 'string') throw new TypeError('email must be a string');
             if (typeof password !== 'string') throw new TypeError('hashedPassword must be a string');
             if (typeof userName !== 'string') throw new TypeError('userName must be a string');
-            email = email.toLowerCase()
+            email = email.trim().toLowerCase();
+            userName = userName.trim().toLowerCase();
+            password = password.trim();
             let emailExists = false;
             try {
                 const user = await this.getUserByEmail(email);
@@ -97,7 +99,18 @@
                 emailExists = false;
             }
 
+            let userExists = false;
+            try {
+                const user = await this.getUserByName(userName);
+                if(user != null)
+                userExists = true;
+            } catch (err) {
+                userExists = false;
+            }
+
             if (emailExists) throw new Error('Email already registered');
+            if (userExists) throw new Error('User Name already registered');
+
             const salt = bcryptjs.genSaltSync(16);
             const hash = bcryptjs.hashSync(password, salt);
             let newUser = {
@@ -113,7 +126,13 @@
                 followedQuestions: []
             };
             const userCollection = await users();
-            const newInsertInformation = await userCollection.insertOne(newUser);
+            let newInsertInformation
+            try {
+                newInsertInformation = await userCollection.insertOne(newUser);
+            } catch (error) {
+                throw new Error('Can not insert user.');
+            }
+            
             return await this.getUserById((newInsertInformation.insertedId) );
         },
         // async removeUser(id) {
@@ -129,31 +148,39 @@
 
         //     return true;
         // },
-        async addQuestion(userId,QuestionId){
+        async addQuestion(userId,questionId){
             if (!userId) throw new Error('You must provide a userId');
-            if (!QuestionId) throw new Error('You must provide a questionId')
+            if (!questionId) throw new Error('You must provide a questionId')
+
+            const questionCollection = await questions();
+            const find = await questionCollection.findOne({ _id: ObjectId(questionId) });
+            if (find == null) throw  new Error ("We don't have this question.");
+
             const userCollection = await users();
             const updateInfo = await userCollection.updateOne(
                 { _id: ObjectId(userId) },
-                { $addToSet: { questions: QuestionId } }
+                { $addToSet: { questions: questionId } }
             );
-            if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw 'Update failed';
+            if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw new Error ('Update failed');
             return await this.getUserById(userId);
         },
-        async removeQuestion(userId,QuestionId){
+        async removeQuestion(userId,questionId){
             if (!userId) throw new Error('You must provide a userId');
-            if (!QuestionId) throw new Error('You must provide a QuestionId')
+            if (!questionId) throw new Error('You must provide a questionId')
             const userCollection = await users();
             // let user = await this.getUserById(userId);
             // // console.log(user);
             // for(let questionId of user.questions){
             //     // console.log(questionId);
             // }
+            const questionCollection = await questions();
+            const find = await questionCollection.findOne({ _id: ObjectId(questionId) });
+            if (find == null) throw  new Error ("We don't have this question.");            
             const updateInfo = await userCollection.updateOne(
                 { _id: ObjectId(userId) },
-                { $pull: { questions: QuestionId } }
+                { $pull: { questions: questionId } }
             );
-            if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw 'Update failed';
+            if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw new Error ('Update failed');
         
             return await this.getUserById(userId);
         },
@@ -161,6 +188,9 @@
         async removeReview(userId,reviewId){
             if (!userId) throw new Error('You must provide a userId');
             if (!reviewId) throw new Error('You must provide a reviewId')
+            const reviewCollection = await reviews();
+            const find = await reviewCollection.findOne({ _id: ObjectId(reviewId) });
+            if (find == null) throw  new Error ("We don't have this review.");           
             const userCollection = await users();
             const updateInfo = await userCollection.updateOne(
                 { _id: ObjectId(userId) },
@@ -173,7 +203,10 @@
 
         async addReview(userId,ReviewId){
             if (!userId) throw new Error('You must provide a userId');
-            if (!ReviewId) throw new Error('You must provide a reviewId')
+            if (!ReviewId) throw new Error('You must provide a reviewId');
+            const reviewCollection = await reviews();
+            const find = await reviewCollection.findOne({ _id: ObjectId(reviewId) });
+            if (find == null) throw  new Error ("We don't have this review.");        
             const userCollection = await users();
             const updateInfo = await userCollection.updateOne(
                 { _id: ObjectId(userId) },
@@ -183,10 +216,13 @@
             return await this.getUserById(userId);
         },
         //update user answer
-            async addAnswer(userId,answerId){//string
+        async addAnswer(userId,answerId){//string
 		    //the answerId is the answer that the user answered
             if (!userId) throw new Error('You must provide a userId');
             if (!answerId) throw new Error('You must provide a answerId')
+            const answerCollection = await answers();
+            const find = await answerCollection.findOne({ _id: ObjectId(answerId) });
+            if (find == null) throw  new Error ("We don't have this answer.");        
             const userCollection = await users();
             const updateInfo = await userCollection.updateOne(
                 { _id: ObjectId(userId) },
@@ -197,9 +233,11 @@
         },
         async removeAnswer(userId,answerId){
             if (!userId) throw new Error('You must provide a userId');
-            if (!answerId) throw new Error('You must provide a answerId')
+            if (!answerId) throw new Error('You must provide a answerId');
+            const answerCollection = await answers();
+            const find = await answerCollection.findOne({ _id: ObjectId(answerId) });
+            if (find == null) throw  new Error ("We don't have this answer.");
             const userCollection = await users();
-            
             const updateInfo = await userCollection.updateOne(
                 { _id: ObjectId(userId) },
                 { $pull: { answers: answerId } }
@@ -210,27 +248,39 @@
 
         },
         async checkPassword(email,password){
-            if(!email)
+            if(!email || typeof email !== "string")
             throw "you should input a vaild email";
             if (!password || typeof password !== "string")
-            throw 'you should input a string as the password'; 
+            throw 'you should input a string as the password';
+            email = email.trim().toLowerCase();
+            password = password.trim();
             let newUser = await this.getUserByEmail(email);
+            if(!newUser){
+                throw `We don't have user whose email is ${email}`;
+            }
             let passwordMatch = await bcryptjs.compare(password, newUser.hashedPassword);
             if(!passwordMatch){
-                throw "password error";
+                throw "The password does not match the email.";
             }
             return await this.getUserByEmail(email);
         },
         async setPassword(id,newPassword){
-            if(!id)
-            throw "need a vaild user ";
-            if(typeof id == 'string')
-                id = ObjectId(id);
+            if(!id) throw "need a vaild user id.";
+            if(typeof id != 'string' || id.length === 0) throw "need a vaild user id.";
+            if(!newPassword) throw "need a vaild new password.";
+            if(typeof newPassword != 'string' || newPassword.trim().length === 0) throw "need a vaild new password.";
+            
+            id = ObjectId(id);
+            newPassword = newPassword.trim();
             const userCollection = await users();
             const salt = bcryptjs.genSaltSync(16);
             const hash = bcryptjs.hashSync(newPassword, salt);
             let userUpdateInfo = {
                 hashedPassword: hash
+            };
+            let newUser = await this.getUserById(id);
+            if(!newUser){
+                throw `We don't have this user`;
             };
             let updatedInfo = await userCollection.updateOne(
                 { _id: id },
@@ -241,110 +291,113 @@
             return this.getUserById(id);
         },
         async changPassword(id,password,newPassword){
-            if(!id)
-                throw "Session expires";
-            if(typeof id == 'string')
-                id = ObjectId(id);
-            if (!password || typeof password !== "string")
-                throw 'you should input a string as the password';            
-                if (!newPassword || typeof newPassword !== "string")
-                throw 'you should input a string as the newPassword';
-
-            const userCollection = await users();
-            let newUser = await this.getUserById(id);
-            let passwordMatch = await bcryptjs.compare(password, newUser.hashedPassword);
-            if(!passwordMatch){
-                throw "password error";
-            }
-            const salt = bcryptjs.genSaltSync(16);
-            const hash = bcryptjs.hashSync(newPassword, salt);
-            let userUpdateInfo = {
-                hashedPassword: hash
-            };
-            let updatedInfo = await userCollection.updateOne({ _id: id }, { $set: userUpdateInfo });
-            if (updatedInfo.modifiedCount === 0) {
-                 throw 'could not edit the password successfully';
-        }   
-            return this.getUserById(id);
         
-        },
+        if(!id) throw "need a vaild user id.";
+        if(typeof id != 'string' || id.length === 0) throw "need a vaild user id.";
+        if(!password) throw "need a vaild password.";
+        if(typeof password != 'string' || password.trim().length === 0) throw "need a vaild password.";
+        if(!newPassword) throw "need a vaild new password.";
+        if(typeof newPassword != 'string' || newPassword.trim().length === 0) throw "need a vaild new password.";
+        
+        id = ObjectId(id);
+        password = password.trim();
+        newPassword = newPassword.trim();
 
-        //follow a question
-        async followQuestion(userId, questionId){
-            if (!userId || typeof userId != 'string') throw new Error('You must provide a valid userId');
-            if (!questionId || typeof userId != 'string') throw new Error('You must provide a valid questionId')
-            if(await this.followQuestionCheck(userId, questionId)) throw new Error('This question already had been followed.')
-            const userCollection = await users();
-            let user = await this.getUserById(userId);
-            const questionCollection = await questions();
-            // const ObjectId = await myDBfunction(id);
-            const find = await questionCollection.findOne({ _id: ObjectId(questionId) });
-            if (find == null) throw  new Error ("We don't have this question.");
-
-            let updateQuestion = await questionCollection.updateOne(
-                { _id: find["_id"] },
-                { $addToSet: { followers: userId } }
-            );
-            if (!updateQuestion.matchedCount && !updateInfo.modifiedCount) throw new Error ('updateQuestion failed');
-
-            let updateInfo;
-            if(user)
-            {
-                updateInfo = await userCollection.updateOne(
-                    { _id: user["_id"] },
-                    { $addToSet: { followedQuestions: questionId } }
-                );
-            if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw new Error ('Update failed');
-            }else{
-                throw new Error ("We don't have this question.");
-            }
-            user = await this.getUserById(userId);
-            return user;
-        },
-        async unfollowQuestion(userId, questionId){
-            if (!userId || typeof userId != 'string') throw new Error('You must provide a valid userId');
-            if (!questionId || typeof userId != 'string') throw new Error('You must provide a valid questionId')
-            if(!await this.followQuestionCheck(userId, questionId)) throw new Error("This question haven't been followed.")
-            const userCollection = await users();
-            let user = await this.getUserById(userId);
-            const questionCollection = await questions();
-            const find = await questionCollection.findOne({ _id: ObjectId(questionId) });
-            if (find == null) throw  new Error ("We don't have this question.");
-            let updateQuestion = await questionCollection.updateOne(
-                { _id: find["_id"] },
-                { $pull: { followers: userId } }
-            );
-            if (!updateQuestion.matchedCount && !updateInfo.modifiedCount) throw new Error ('updateQuestion failed');
-
-            let updateInfo;
-            if(user)
-            {
-                updateInfo = await userCollection.updateOne(
-                    { _id: user["_id"] },
-                    { $pull: { followedQuestions: questionId } }
-                );
-                if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw new Error ('Update failed');
-            }
-            else{
-                throw new Error ("We don't have this question.");
-            }
-            
-            user = await this.getUserById(userId);
-            return user;
-        },
-
-        async followQuestionCheck(userId, questionId){
-            if (!userId || typeof userId != 'string') throw new Error('You must provide a valid userId');
-            if (!questionId || typeof userId != 'string') throw new Error('You must provide a valid questionId')
-            const userCollection = await users();
-            let user = await this.getUserById(userId);
-            let check = false;
-            if(user["followedQuestions"].indexOf(questionId) != -1){
-                check = true;
-            };
-            return check;
-            
+        const userCollection = await users();
+        let newUser = await this.getUserById(id);
+        let passwordMatch = await bcryptjs.compare(password, newUser.hashedPassword);
+        if(!passwordMatch){
+            throw "Please provide right old password.";
         }
+        const salt = bcryptjs.genSaltSync(16);
+        const hash = bcryptjs.hashSync(newPassword, salt);
+        let userUpdateInfo = {
+            hashedPassword: hash
+        };
+        let updatedInfo = await userCollection.updateOne({ _id: id }, { $set: userUpdateInfo });
+        if (updatedInfo.modifiedCount === 0) {
+                throw 'could not edit the password successfully';
+    }   
+        return this.getUserById(id);
+    
+    },
+
+    //follow a question
+    async followQuestion(userId, questionId){
+        if (!userId || typeof userId != 'string') throw new Error('You must provide a valid userId');
+        if (!questionId || typeof userId != 'string') throw new Error('You must provide a valid questionId')
+        if(await this.followQuestionCheck(userId, questionId)) throw new Error('This question already had been followed.')
+        const userCollection = await users();
+        let user = await this.getUserById(userId);
+        const questionCollection = await questions();
+        // const ObjectId = await myDBfunction(id);
+        const find = await questionCollection.findOne({ _id: ObjectId(questionId) });
+        if (find == null) throw  new Error ("We don't have this question.");
+
+        let updateQuestion = await questionCollection.updateOne(
+            { _id: find["_id"] },
+            { $addToSet: { followers: userId } }
+        );
+        if (!updateQuestion.matchedCount && !updateInfo.modifiedCount) throw new Error ('updateQuestion failed');
+
+        let updateInfo;
+        if(user)
+        {
+            updateInfo = await userCollection.updateOne(
+                { _id: user["_id"] },
+                { $addToSet: { followedQuestions: questionId } }
+            );
+        if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw new Error ('Update failed');
+        }else{
+            throw new Error ("We don't have this question.");
+        }
+        user = await this.getUserById(userId);
+        return user;
+    },
+    async unfollowQuestion(userId, questionId){
+        if (!userId || typeof userId != 'string') throw new Error('You must provide a valid userId');
+        if (!questionId || typeof userId != 'string') throw new Error('You must provide a valid questionId')
+        if(!await this.followQuestionCheck(userId, questionId)) throw new Error("This question haven't been followed.")
+        const userCollection = await users();
+        let user = await this.getUserById(userId);
+        const questionCollection = await questions();
+        const find = await questionCollection.findOne({ _id: ObjectId(questionId) });
+        if (find == null) throw  new Error ("We don't have this question.");
+        let updateQuestion = await questionCollection.updateOne(
+            { _id: find["_id"] },
+            { $pull: { followers: userId } }
+        );
+        if (!updateQuestion.matchedCount && !updateInfo.modifiedCount) throw new Error ('updateQuestion failed');
+
+        let updateInfo;
+        if(user)
+        {
+            updateInfo = await userCollection.updateOne(
+                { _id: user["_id"] },
+                { $pull: { followedQuestions: questionId } }
+            );
+            if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw new Error ('Update failed');
+        }
+        else{
+            throw new Error ("We don't have this question.");
+        }
+        
+        user = await this.getUserById(userId);
+        return user;
+    },
+
+    async followQuestionCheck(userId, questionId){
+        if (!userId || typeof userId != 'string') throw new Error('You must provide a valid userId');
+        if (!questionId || typeof userId != 'string') throw new Error('You must provide a valid questionId')
+        const userCollection = await users();
+        let user = await this.getUserById(userId);
+        let check = false;
+        if(user["followedQuestions"].indexOf(questionId) != -1){
+            check = true;
+        };
+        return check;
+        
+    }
 
         
     

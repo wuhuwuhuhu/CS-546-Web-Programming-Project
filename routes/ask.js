@@ -13,7 +13,7 @@ let topics = []
 router.get('/', async (req, res) => {
 	try {
 		topics = await systemConfigs.getTopics()
-		res.render('ask/ask', { topic: topics });
+		res.render('ask/ask', { topic: topics,title:"Ask Question" });
 	} catch (error) {
 		const errorMsg = "Page inital wrong.";
 		errors.push(errorMsg);
@@ -25,6 +25,7 @@ router.get('/', async (req, res) => {
 })
 
 router.post('/', async (req, res) => {
+	
 	if (!req.session.user) {
 		//if user not exist, redirect to login page
 		res.status(403).redirect('/login')
@@ -56,25 +57,20 @@ router.post('/', async (req, res) => {
 		return;
 
 	}
-	if (!req.body.question) {
+	let questioner = xss(req.session.user);
+	let content = xss(req.body.question);
+	let topic = xss(req.body.topic);
+	if (!content) {
 		const errorMsg = 'You need to ask something';
 		errors.push(errorMsg);
 	}
-	if (!req.body.topic) {
+	if (!topic) {
 		const errorMsg = 'You need to select a topic';
 		errors.push(errorMsg);
 	}
 
-	//------Test Code ------------
-	if (test) {
-		req.session.user = Object.assign({}, { _id: '5fd4fdf681b3bb139040e42f', userName: "TestUser" });
-	}
-	//-----------------------------
-
 	
-	let questioner = xss(req.session.user);
-	let content = xss(req.body.question);
-	let topic = xss(req.body.topic);
+	
 
 	//check whether QuestionName duplicated
 	const questionCollection = await questions();
@@ -96,7 +92,7 @@ router.post('/', async (req, res) => {
 	try {
 		
 		const newQuestion = await questionsData.addQuestion(content, topic, questioner);
-		res.render('ask/askSuccess', { questionId: newQuestion._id.toString() });
+		res.render('ask/askSuccess', { questionId: newQuestion._id.toString() ,title:"Ask Success"});
 	//	console.log(newQuestion._id.toString())
 	} catch (error) {
 	

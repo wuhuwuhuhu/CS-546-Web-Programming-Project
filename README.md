@@ -1,6 +1,6 @@
 # CS-546-Web-Programming-Project
 ## Q&A Question and Answer Community Web
-## To Run The Prject
+## To Run The Project
 ### Commands
 ```
 npm i

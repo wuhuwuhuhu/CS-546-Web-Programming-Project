@@ -281,6 +281,12 @@
             const find = await questionCollection.findOne({ _id: ObjectId(questionId) });
             if (find == null) throw  new Error ("We don't have this question.");
 
+            let updateQuestion = await questionCollection.updateOne(
+                { _id: find["_id"] },
+                { $addToSet: { followers: userId } }
+            );
+            if (!updateQuestion.matchedCount && !updateInfo.modifiedCount) throw new Error ('updateQuestion failed');
+
             let updateInfo;
             if(user)
             {
@@ -304,6 +310,11 @@
             const questionCollection = await questions();
             const find = await questionCollection.findOne({ _id: ObjectId(questionId) });
             if (find == null) throw  new Error ("We don't have this question.");
+            let updateQuestion = await questionCollection.updateOne(
+                { _id: find["_id"] },
+                { $pull: { followers: userId } }
+            );
+            if (!updateQuestion.matchedCount && !updateInfo.modifiedCount) throw new Error ('updateQuestion failed');
 
             let updateInfo;
             if(user)

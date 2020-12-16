@@ -14,13 +14,13 @@ const answersData = require("../data/answers");
 const email = require("../data/email").send;
 
 router.get('/', async(req,res) => {
-    const userid = xss(req.session.user).trim();
+    const userId = xss(req.session.user).trim();
     let user;
-    if(!userid){
+    if(!userId){
         res.redirect("/");
     }
     try {
-        user = await usersData.getUserById(userid);
+        user = await usersData.getUserById(userId);
     } catch (error) {
         console.log(error);
         res.redirect("/");
@@ -140,6 +140,134 @@ router.post('/changePassword', async(req,res) => {
 
 });
 
+router.post('/getFollowedQuestions', async(req,res) => {
+    let limit = parseInt(xss(req.body.limit));
+    let sort = xss(req.body.sort);
+    let user;
+    const userid = xss(req.session.user)
+    try {
+        user = await usersData.getUserById(userid);
+    } catch (error) {
+        console.log(error);
+    }
+    let userFollowedQuestions = user["followedQuestions"];
+    let userFollowedQuestionsObjectsList = [];
+    let userFollowedQuestionsList = [];
+    for(let i = 0; i < userFollowedQuestions.length; i++)
+    {
+        let question;
+        try {
+            question = await questionsData.getQuestionById(userFollowedQuestions[i]);
+        } catch (error) {
+            console.log(error);
+            continue;
+        }
+        userFollowedQuestionsObjectsList.push(question);
+    }
+    if(userFollowedQuestionsObjectsList.length != 0){
+        if(sort === "Answers number from high to low"){
+            try {
+                userFollowedQuestionsObjectsList = await questionsData.sortQuestionsByAnsNum(userFollowedQuestionsObjectsList, limit);
+            } catch (error) {
+                console.log(error);
+            }
+            
+        }
+        else{
+            try {
+                userFollowedQuestionsObjectsList = await questionsData.sortQuestionsByTime(userFollowedQuestionsObjectsList, limit);
+            } catch (error) {
+                console.log(error);
+            }
+            
+        }
+    }
+    
+    for(let i = 0; i < userFollowedQuestionsObjectsList.length; i++)
+    {
+        let question = userFollowedQuestionsObjectsList[i];
+        let questionName = question["content"];
+        let questionUrl = `question/${question["_id"]}`;
+        let createdAt = new Date(question["questionCreatedTime"]).toDateString();
+
+        userFollowedQuestionsList.push({
+            questionId: question._id.toString(),
+            questionName: questionName,
+            questionUrl: questionUrl,
+            numberOfAnswers: question["answers"].length,
+            createdAt: createdAt
+
+        });
+    }
+    res.json({
+        userFollowedQuestionsList:userFollowedQuestionsList
+    });
+
+});
+router.post('/followQuestion', async(req,res) => {
+    const userId = xss(req.session.user).trim();
+    let questionId = xss(req.body.questionId).trim();
+    let followedStatus = true; 
+    let followedCheck;
+    let followedError;
+    try {
+        followedCheck = await usersData.followQuestionCheck(userId, questionId);
+    } catch (error) {
+        followedError = error;
+        followedStatus = false;
+    }
+    if(followedStatus && followedCheck)
+    {
+        followedError = "You have already followed the question.";
+        followedStatus = false;
+    }
+    if(followedStatus){
+        try {
+            await usersData.followQuestion(userId, questionId);
+        } catch (error) {
+            followedError = error;
+            followedStatus = false;
+        }
+    }
+
+    res.json({
+        status: followedStatus,
+        error: followedError
+    });
+});
+
+router.post('/unfollowQuestion', async(req,res) => {
+    const userId = xss(req.session.user).trim();
+    let questionId = xss(req.body.questionId).trim();
+    let unfollowedStatus = true; 
+    let unfollowedCheck;
+    let unfollowedError;
+    try {
+        unfollowedCheck = !await usersData.followQuestionCheck(userId, questionId);
+    } catch (error) {
+        unfollowedError = error;
+        unfollowedStatus = false;
+    }
+    if(unfollowedStatus && unfollowedCheck)
+    {
+        unfollowedError = "You have not followed the question.";
+        unfollowedStatus = false;
+    }
+    if(unfollowedStatus){
+        try {
+            deletedStatus = await usersData.unfollowQuestion(userId, questionId);
+        } catch (error) {
+            unfollowedError = error;
+            unfollowedStatus = false;
+        }
+    }
+
+    res.json({
+        status: unfollowedStatus,
+        error: unfollowedError
+    });
+});
+
 router.post('/getQuestions', async(req,res) => {
     let limit = parseInt(xss(req.body.limit));
     let sort = xss(req.body.sort);
@@ -206,7 +334,7 @@ router.post('/getQuestions', async(req,res) => {
 
 });
 router.post('/deleteQuestion', async(req,res) => {
-    let id = xss(req.body.questionId);
+    let id = xss(req.body.questionId).trim();
     let deletedStatus; 
     try {
         deletedStatus = await questionsData.removeQuestion(id);
@@ -214,7 +342,6 @@ router.post('/deleteQuestion', async(req,res) => {
         console.log(error);
     }
    
-    console.log(`delete ${deletedStatus}`);
     res.json({
         status: true
     });

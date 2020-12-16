@@ -1,3 +1,4 @@
+//author: whd
 (function ($) {
     //password elements
     const changePasswordDiv = $('#changePassword');
@@ -7,6 +8,7 @@
     const changePasswordFormOldPassword = $('#changePasswordFormOldPassword');
     const changePasswordFormNewPassword = $('#changePasswordFormNewPassword');
     const changePasswordFormNewPasswordCheck = $('#changePasswordFormNewPasswordCheck');
+    const followedQuestionsStatus = $('#followedQuestionsStatus');
     const questionsStatus = $('#questionsStatus');
     const answersStatus = $('#answersStatus');
     const reviewsStatus = $('#reviewsStatus');
@@ -14,6 +16,13 @@
     const votedReviewsStatus = $('#votedReviewsStatus');
     //init
     
+
+    //bind followedQuestions
+    const followedQuestionsDivList = $('#userFollowedQuestionsList');
+    const followedQuestionsLimitSelect = $('#followedQuestionsLimitSelect');
+    const followedQuestionsSortSelect = $('#followedQuestionsSortSelect');
+    followedQuestionsLimitSelect.change(init_followedQuestions);
+    followedQuestionsSortSelect.change(init_followedQuestions);
 
     //bind questions
     const questionsDivList = $('#userQuestionsList');
@@ -53,6 +62,7 @@
 
 
     init_page();
+    init_followedQuestions();
     init_questions();
     init_answers();
     init_reviews();
@@ -125,6 +135,7 @@
     function init_page(){
         changePasswordDiv.hide();
         changePasswordFormStatus.hide();
+        followedQuestionsStatus.hide();
         questionsStatus.hide();
         answersStatus.hide();
         reviewsStatus.hide();
@@ -175,6 +186,101 @@
         if (typeof password !== 'string') throw (`${variabName} must be a string`);
         if (password.trim().length < 6 ) throw (`the length of ${variabName} must be at least 6`);
 
+    }
+
+    function init_followedQuestions(limit = "10", sort = "date"){
+
+        limit = followedQuestionsLimitSelect.find(":selected").text();
+        sort = followedQuestionsSortSelect.find(":selected").text();
+        followedQuestionsDivList.empty();
+        let targetUrl = `/user/getFollowedQuestions`;
+        let requestConfig = {
+            method: 'POST',
+            url: targetUrl,
+            contentType: 'application/json',
+            data: JSON.stringify({
+            limit: limit,
+            sort: sort
+        })
+        };
+        $.ajax(requestConfig).then(function (responseMessage) {
+            const userFollowedQuestionsList = responseMessage.userFollowedQuestionsList;
+
+            if(userFollowedQuestionsList.length === 0){
+                followedQuestionsStatus.text("You haven't followed any question.");
+                $('#followedQuestionsSelector').hide();
+                followedQuestionsStatus.show();
+                return;
+            }
+
+            let followedQuestionTable = $(`
+                <table class="table table-bordered table-hover">
+                    <caption>Questions you followed</caption>         
+                <tr>
+                    <th>Question</th>
+                    <th>Number of answers</th>
+                    <th>Created at</th>
+                    <th>Unfollow the Question?</th>
+                </tr>
+                </table>
+            `)
+            //add the followedQuestions list
+            for(let i =0; i < userFollowedQuestionsList.length; i++)
+            {
+                let newTableRow = $(`<tr></tr>`);
+                let followedQuestion = userFollowedQuestionsList[i];
+                let followedQuestionA = $(`<a class="followedQuestionsListQuestion" id="followedQuestion_${followedQuestion.questionId}" href="${followedQuestion.questionUrl}">${followedQuestion.questionName}</a>`);
+                let followedQuestionUpdate = $(`<button class="btn btn-danger" id="followedQuestion_update_${followedQuestion.questionId}"></button>`);
+                followedQuestionUpdate.text("Unfollow");
+                followedQuestionUpdate.click(updateFollowedQuestion);
+                let followedQuestionATD = $(`<td></td>`);
+                followedQuestionATD.append(followedQuestionA);
+                let followedQuestionUpdateTD = $(`<td></td>`);
+                followedQuestionUpdateTD.append(followedQuestionUpdate);
+                newTableRow.append(followedQuestionATD);
+                newTableRow.append($(`<td><P>${followedQuestion.numberOfAnswers}</P></td>`));
+                newTableRow.append($(`<td><P>${followedQuestion.createdAt}</P></td>`));
+                newTableRow.append(followedQuestionUpdateTD);
+                followedQuestionTable.append(newTableRow);
+            }
+            followedQuestionsDivList.append(followedQuestionTable);
+            followedQuestionsDivList.show();
+        });
+    }
+
+    function updateFollowedQuestion(event){
+        event.preventDefault();
+        let target = $(event.target)
+        let id = event.target.id.split("_")[2];
+        let goal = target.text();
+        let targetUrl = "/user/followQuestion";
+        if(goal === "Unfollow")
+        {
+            targetUrl = "/user/unfollowQuestion";
+        }
+        let requestConfig = {
+            method: 'POST',
+            url: targetUrl,
+            contentType: 'application/json',
+            data: JSON.stringify({
+            questionId: id
+        })
+        };
+        $.ajax(requestConfig).then(function (responseMessage) {
+            if(responseMessage.status === true){
+                if(goal === "Unfollow"){
+                    target.text("Follow");
+                    target.attr("class", "btn btn-success")
+                }else{
+                    target.text("Unfollow");
+                    target.attr("class", "btn btn-danger")
+                }
+                
+            }
+            else{
+                console.log("fail");
+            } 
+        });
     }
 
     function init_questions(limit = "10", sort = "date"){
@@ -263,6 +369,7 @@
                 questionDelete.removeAttr("href");
                 questionDelete.addClass("deactive");
                 questionDelete.text("deleted");
+                init_followedQuestions();
                 init_answers();
                 init_reviews();
                 init_votedAnswers();

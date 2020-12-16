@@ -258,7 +258,7 @@ const main = async () => {
 		await answers.addAnswer("The Holiday", userIdList[15], questionIdList[9]);
 		await answers.addAnswer("365 Days", userIdList[16], questionIdList[9]);
 		await answers.addAnswer("Drink keeps people warm", userIdList[0], questionIdList[10]);
-		await answers.addAnswer("When it is cold outside,nothing to do indoors, just drink and sleep.", userIdList[1], questionIdList[11]);
+		await answers.addAnswer("When it is cold outside,nothing to do indoors, just drink and sleep.", userIdList[1], questionIdList[10]);
 		await answers.addAnswer("You'd better go to a professional training school", userIdList[0], questionIdList[11]);
 		await answers.addAnswer("When you came back at home, then you realize that your everyday life is so simple and easy.", userIdList[5], questionIdList[12]);
 		await answers.addAnswer("I am here.", userIdList[0], questionIdList[13]);

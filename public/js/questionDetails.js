@@ -13,7 +13,16 @@
 
  
 
-
+    $(document).on('click', '#linkToTwitter', function (event) {
+        event.preventDefault();
+        let question=$('#questionContent').text()
+        console.log(question);
+        question = question.replace(/\s+$/,''); 
+        question = question.replace(/^\s+/,'')
+        question="I find a very interesting question : "+question
+        let url="https://twitter.com/intent/tweet?via=%22QandA%22&text="+question
+        window.open(url);
+    })
 
     $(document).on('click', '.ReviewNumberShowButton', function (event) {
         event.preventDefault();

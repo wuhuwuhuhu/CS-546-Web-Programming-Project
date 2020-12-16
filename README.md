@@ -10,20 +10,20 @@ npm start
 ### An Initial Registered User For Test:
 - email: test@test.com
 - password: Test1234
-## Core Features Finished
-- Browse, search and sort questions, answers and reviews
-- Logged-in users:
-	- Ask Questions
-	- Answer questions
-	- Review answers and reviews
-	- Vote up or vote down for answers and reviews
-	- Delete or update questions, answers or reviews
-	- Modify personal information
-## Extra Features Finished
-- Credit for most popular answerer
-- Reset password
-- Email notification
-- Socail media sharing (Twitter)
+## Core Features
+[x] Browse, search and sort questions, answers and reviews
+[x] User register, log in and log out
+[x] Ask Questions
+[x] Answer questions
+[x] Review answers and reviews
+[x] Vote up or vote down for answers and reviews
+[x] Delete or update questions, answers or reviews
+[x] Modify personal information
+## Extra Features
+[x] Credit for most popular answerer
+[x] Reset password
+[x] Email notification
+[x] Socail media sharing (Twitter)
 
 ## Group members
 - Yilin Lou

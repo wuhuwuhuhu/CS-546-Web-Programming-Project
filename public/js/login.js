@@ -32,6 +32,7 @@
             return;
         }
         progressBar.attr("class","progress-bar");
+        progressBar.attr("style",`width:0%`);
         progressBar.show();
         let i = 0;
         let timer = setInterval(function(){
@@ -73,7 +74,7 @@
                     let listItem = $(`<li>${responseMessage.error[i]}</li>`);
                     elementError.append(listItem);
                 }
-                elementError.append($("<li>Please input right password.</li>"));
+                //elementError.append($("<li>Please input right password.</li>"));
                 elementError.show();
             } 
         });

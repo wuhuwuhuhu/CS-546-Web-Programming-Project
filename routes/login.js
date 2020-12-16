@@ -54,7 +54,7 @@ router.get("/", async (req, res) => {
             // }
             
           } catch (error) {
-              error_msgs.push(error.message);
+              error_msgs.push(error);
           }
       }
       if(error_msgs.length === 0 && user){

@@ -16,7 +16,7 @@ const constructorMethod = (app) => {
     app.use('/logout',logoutRoutes);
     app.use('/',mainRoutes)
     app.use("*", (req, res) => {
-        res.sendStatus(400);
+        res.redirect("/");
     })
 }
 

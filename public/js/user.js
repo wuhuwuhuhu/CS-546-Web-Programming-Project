@@ -230,7 +230,7 @@
                 let newTableRow = $(`<tr></tr>`);
                 let followedQuestion = userFollowedQuestionsList[i];
                 let followedQuestionA = $(`<a class="followedQuestionsListQuestion" id="followedQuestion_${followedQuestion.questionId}" href="${followedQuestion.questionUrl}">${followedQuestion.questionName}</a>`);
-                let followedQuestionUpdate = $(`<button class="btn btn-danger" id="followedQuestion_update_${followedQuestion.questionId}"></button>`);
+                let followedQuestionUpdate = $(`<button class="btn btn-danger text-center" id="followedQuestion_update_${followedQuestion.questionId}"></button>`);
                 followedQuestionUpdate.text("Unfollow");
                 followedQuestionUpdate.click(updateFollowedQuestion);
                 let followedQuestionATD = $(`<td></td>`);
@@ -270,10 +270,10 @@
             if(responseMessage.status === true){
                 if(goal === "Unfollow"){
                     target.text("Follow");
-                    target.attr("class", "btn btn-success")
+                    target.attr("class", "btn btn-success text-center")
                 }else{
                     target.text("Unfollow");
-                    target.attr("class", "btn btn-danger")
+                    target.attr("class", "btn btn-danger text-center")
                 }
                 
             }
@@ -325,7 +325,7 @@
                 let newTableRow = $(`<tr></tr>`);
                 let question = userQuestionsList[i];
                 let questionA = $(`<a class="questionsListQuestion" id="question_${question.questionId}" href="${question.questionUrl}">${question.questionName}</a>`);
-                let questionDelete = $(`<a href="" id="question_delete_${question.questionId}"></a>`);
+                let questionDelete = $(`<button class="btn btn-danger text-center" id="question_delete_${question.questionId}"></button>`);
                 questionDelete.text("delete");
                 questionDelete.click(deleteQuestion);
                 let questionATD = $(`<td></td>`);
@@ -362,13 +362,17 @@
         };
         $.ajax(requestConfig).then(function (responseMessage) {
             if(responseMessage.status === true){
+                let target = $(event.target);
+                target.attr("class","btn btn-secondary text-center")
+                target.text("deleted")
+                target.attr("disabled", true);
                 let questionA = $(`#question_${id}`);
-                let questionDelete = $(`#question_delete_${id}`);
+                // let questionDelete = $(`#question_delete_${id}`);
                 questionA.removeAttr("href");
                 questionA.addClass("deactive");
-                questionDelete.removeAttr("href");
-                questionDelete.addClass("deactive");
-                questionDelete.text("deleted");
+                // questionDelete.removeAttr("href");
+                // questionDelete.addClass("deactive");
+                // questionDelete.text("deleted");
                 init_followedQuestions();
                 init_answers();
                 init_reviews();
@@ -426,7 +430,7 @@
                 let answer = userAnswersList[i];
                 let answerQuestionA = $(`<a class="answersListQuestion" href="${answer.questionUrl}">${answer.questionName}</a>`);
                 
-                let answerDelete = $(`<a href="" id="answer_delete_${answer.answerId}"></a>`);
+                let answerDelete = $(`<button class="btn btn-danger text-center" id="answer_delete_${answer.answerId}"></button>`);
                 answerDelete.text("delete");
                 answerDelete.click(deleteAnswer);
                 let answerQuestionATD = $(`<td></td>`);
@@ -476,10 +480,14 @@
         };
         $.ajax(requestConfig).then(function (responseMessage) {
             if(responseMessage.status === true){
-                let answerDelete = $(`#answer_delete_${id}`);
-                answerDelete.removeAttr("href");
-                answerDelete.addClass("deactive");
-                answerDelete.text("deleted");
+                let target = $(event.target);
+                target.attr("class","btn btn-secondary text-center")
+                target.text("deleted")
+                target.attr("disabled", true);
+                // let answerDelete = $(`#answer_delete_${id}`);
+                // answerDelete.removeAttr("href");
+                // answerDelete.addClass("deactive");
+                // answerDelete.text("deleted");
                 init_reviews();
                 init_votedAnswers();
                 init_votedReviews();
@@ -536,7 +544,7 @@
                 let review = userReviewsList[i];
                 let reviewQuestionA = $(`<a class="reviewsListQuestion" href="${review.questionUrl}">${review.questionName}</a>`);
                 
-                let reviewDelete = $(`<a href="" id="review_delete_${review.reviewId}"></a>`);
+                let reviewDelete = $(`<button class="btn btn-danger text-center" id="review_delete_${review.reviewId}"></button>`);
                 reviewDelete.text("delete");
                 reviewDelete.click(deleteReview);
                 let reviewQuestionATD = $(`<td></td>`);
@@ -574,10 +582,14 @@
         };
         $.ajax(requestConfig).then(function (responseMessage) {
             if(responseMessage.status === true){
-                let reviewDelete = $(`#review_delete_${id}`);
-                reviewDelete.removeAttr("href");
-                reviewDelete.addClass("deactive");
-                reviewDelete.text("deleted");
+                let target = $(event.target);
+                target.attr("class","btn btn-secondary text-center")
+                target.text("deleted")
+                target.attr("disabled", true);
+                // let reviewDelete = $(`#review_delete_${id}`);
+                // reviewDelete.removeAttr("href");
+                // reviewDelete.addClass("deactive");
+                // reviewDelete.text("deleted");
                 init_votedReviews();
             }
             else{

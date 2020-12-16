@@ -5,7 +5,7 @@ const router = express.Router();
 const questions = require('../data/questions');
 const { getAllUserVoteList } = require('../data/vote');
 const voteData = require('../data/vote')
-
+const xss= require('xss')
 router.get('/', async(req,res)=>  {
     res.render("main/mainpage");   
 });
@@ -33,10 +33,10 @@ router.post('/search', async(req,res)=>{
         res.status(400).json(response)
     }
     else{
-        let keywords = req.body.keywords;
-        let sort = req.body.sort;
-        let topic =req.body.topic;
-        let limit =parseInt(req.body.limit);
+        let keywords = xss(req.body.keywords);
+        let sort = xss(req.body.sort);
+        let topic =xss(req.body.topic);
+        let limit =parseInt(xss(req.body.limit));
         let A = [];
         if(sort=="Date from new to old"){
             if(topic=="allTopic"){

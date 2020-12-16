@@ -107,22 +107,19 @@ let exportedMethods = {
             const reviewsCollection = await reviews();
             for (let i = 0; i < reviewArray.length; i++) {
                 let rewId = reviewArray[i]
-                let curRewDeletedInReview = await reviewsCollection.deleteOne({ _id: ObjectId(rewId) });
-                if (curRewDeletedInReview.deletedCount === 0) {
-                    throw `Failed to delete review by id ${rewId} in answer/removeAnswer`
-                }
-                //update user review
-                let curRewDeletedInUsr = await usersMethods.removeReview(userId, rewId)
+                //update  review
+                const getReview=await reviewsCollection.findOne({ _id: ObjectId(rewId) });
+                const reviewer=getReview.reviewer
+                //update user
+                let curRewDeletedInUsr = await usersMethods.removeReview(reviewer, rewId)
                 if (curRewDeletedInUsr == null) {
                     // throw `Failed to update user by deleting review by id ${rewId} in answer/removeAnswer`
                     return null
                 }
-            }
-            //delete answer
-            const answersCollection = await answers()
-            let answerDeleted = await answersCollection.deleteOne({ _id: ObjectId(id) });
-            if (answerDeleted.deletedCount === 0) {
-                throw `Failed to delete answer by id ${id} in answer/removeAnswer`
+                let curRewDeletedInReview = await reviewsCollection.deleteOne({ _id: ObjectId(rewId) });
+                if (curRewDeletedInReview.deletedCount === 0) {
+                    throw `Failed to delete review by id ${rewId} in answer/removeAnswer`
+                }
             }
             //update user answer
             let curAnsDeletedInUsr = await usersMethods.removeAnswer(userId, id)
@@ -136,6 +133,12 @@ let exportedMethods = {
                 // throw `Failed to update question by deleting review by id ${rewId} in answer/removeAnswer`
                 return null
             }
+              //delete answer
+              const answersCollection = await answers()
+              let answerDeleted = await answersCollection.deleteOne({ _id: ObjectId(id) });
+              if (answerDeleted.deletedCount === 0) {
+                  throw `Failed to delete answer by id ${id} in answer/removeAnswer`
+              }
         } catch (error) {
             throw error
         }

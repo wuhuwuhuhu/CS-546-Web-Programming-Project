@@ -112,20 +112,21 @@ let exportedMethods = {
                 throw `questionId in /data/reviews.js/removeReview has error`
             }
             const rev = await this.getReviewById(id);
+            const reviewer=rev.reviewer
             if (rev != null) {
-                const deletionInfo = await reviewsCollection.deleteOne({ _id: ObjectId(id) });
-                if (deletionInfo.deletedCount === 0) {
-                    throw `Could not delete book with id of ${id}`;
-                }
                 //update answer
                 const ansUpdate = await answersdMethods.removeReview(answerId, id)
                 if (ansUpdate == null) {
                     throw `answer updated failed in reviews.js/removeReview`
                 }
                 //update user
-                const usrUpdate = await usersMethods.removeReview(userId, id)
+                const usrUpdate = await usersMethods.removeReview(reviewer, id)
                 if (usrUpdate == null) {
                     throw `user updated failed in reviews.js/removeReview`
+                }
+                const deletionInfo = await reviewsCollection.deleteOne({ _id: ObjectId(id) });
+                if (deletionInfo.deletedCount === 0) {
+                    throw `Could not delete book with id of ${id}`;
                 }
             } else {
                 throw `did not find review by id ${id} in reviews/removeReview`

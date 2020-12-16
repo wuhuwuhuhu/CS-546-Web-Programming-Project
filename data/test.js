@@ -156,14 +156,8 @@ async function test18(){
   }
 }
 async function test19(){
-    try{
-        const data = await usersdMethods.checkPassword("test1@test.com","qqwe123")
-        console.log(data);
-        console.log("1");
-    }
-  catch(error){
-    console.log(error)
-  }
+
+    console.log(    await reviewsMethods.getReviewById("5fda9065e2c6f64a1d0f6b90"));
 }
 test19();
 

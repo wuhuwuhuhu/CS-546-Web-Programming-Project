@@ -193,6 +193,7 @@
                 changePasswordFormStatus.html("You have successfully changed your password, we will send your new password to your email.");
             }
             else{
+                clearInterval(timer);
                 progressBar.hide();
                 changePasswordFormStatus.empty();
                 changePasswordFormStatus.html(`${responseMessage.message}`);
@@ -204,7 +205,10 @@
 
     function checkPasswordLegal(variabName, password){
         if (typeof password !== 'string') throw (`${variabName} must be a string`);
-        if (password.trim().length < 6 ) throw (`the length of ${variabName} must be at least 6`);
+        let passwordPattern = /^[\w_-]{3,16}$/;
+        if(!passwordPattern.test(password.trim())){
+            throw (`${variabName} must be valid`);
+        }
 
     }
 

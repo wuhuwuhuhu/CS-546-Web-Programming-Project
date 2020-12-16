@@ -34,12 +34,14 @@ router.post("/", async (req, res) => {
         if(!emailPattern.test(email)){
                 error_msgs.push("You must provide a valid email.");
             }
-        if(userName<3 ||userName>16){
-            error_msgs.push("Please use 3-16 characters long name.");
-        }
-        if(password.length<3 || password.length >16){
-            error_msgs.push("Please user 3-16 characters long password.");
-        }
+        let passwordPattern = /^[\w_-]{3,16}$/;
+        if(!passwordPattern.test(password)){
+            error_msgs.push("Please provide valid password.");
+            };
+        let userNamePattern = /^[\w_-]{3,16}$/;
+        if(!userNamePattern.test(userName)){
+            error_msgs.push("Please provide valid userName.");
+            };
     }
     if(error_msgs.length === 0){
         try {
@@ -70,13 +72,15 @@ router.get('/validateUserName/:userName', async (req, res) => {
     let status = "true";
     let error;
     let user;
-    if(userName.trim().length < 3 || userName.trim().length > 16){
+    let userNamePattern = /^[\w_-]{3,16}$/;
+    if(!userNamePattern.test(userName)){
         res.json({
             status: "false",
-            error: "Please user 3-16 characters long name."
+            error: "Please provide valid userName."
         });
         return;
-    }
+    };
+    
     try {
         user = await userData.getUserByName(userName);
     } catch (error) {

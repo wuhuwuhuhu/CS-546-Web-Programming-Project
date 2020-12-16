@@ -70,6 +70,7 @@
                 
             }
             else{
+                clearInterval(timer);
                 progressBar.hide();
                 elementError.empty();
                 for(let i = 0; i < responseMessage.error.length; i++){
@@ -78,7 +79,11 @@
                 }
                 elementError.show();
             } 
+
         });
+    }else{
+        progressBar.hide();
+        elementError.show();
     }
     });
 
@@ -109,9 +114,10 @@
         }
     }
     function validateUserName(){
-        const userName = elementUserName.val();
-        if(userName.trim().length < 3 || userName.trim().length > 16){
-            setStatusTextandClass(userNameStatus, "Please use 3-16 characters long name.","text-danger");
+        const userName = elementUserName.val().trim();
+        let userNamePattern = /^[\w_-]{3,16}$/;
+        if(!userNamePattern.test(userName)){
+            setStatusTextandClass(userNameStatus, "Please input valid user name.", "text-danger")
             return;
         }
 
@@ -159,7 +165,12 @@
         });
     }
     function validatePassword(){
-        const password = elementPassword.val();
+        const password = elementPassword.val().trim();
+        let passwordPattern = /^[\w_-]{3,16}$/;
+        if(!passwordPattern.test(password)){
+            setStatusTextandClass(passwordStatus, "Please input valid password.", "text-danger")
+            return;
+        }
         if(password.trim().length < 3 || password.trim().length > 16){
             setStatusTextandClass(passwordStatus, "Please use 3-16 characters long password.", "text-danger")
             validateAll();

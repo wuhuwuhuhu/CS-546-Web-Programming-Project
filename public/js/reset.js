@@ -58,6 +58,7 @@
                 
             }
             else{
+                clearInterval(timer);
                 progressBar.hide();
                 elementError.empty();
                 for(let i = 0; i < responseMessage.error.length; i++){

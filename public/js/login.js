@@ -68,6 +68,7 @@
                 
             }
             else{
+                clearInterval(timer);
                 progressBar.hide();
                 elementError.empty();
                 for(let i = 0; i < responseMessage.error.length; i++){
@@ -109,7 +110,7 @@
     }
     
     function validateEmail(){
-        const email = elementEmail.val();
+        const email = elementEmail.val().trim();
         let emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 
         if(!emailPattern.test(email)){
@@ -133,9 +134,10 @@
         });
     }
     function validatePassword(){
-        const password = elementPassword.val();
-        if(password.trim().length < 3 || password.trim().length > 16){
-            setStatusTextandClass(passwordStatus, "Please use 3-16 characters long password.", "text-danger")
+        const password = elementPassword.val().trim();
+        let passwordPattern = /^[\w_-]{3,16}$/;
+        if(!passwordPattern.test(password)){
+            setStatusTextandClass(passwordStatus, "Please input valid password.", "text-danger")
             return;
         }
         else{

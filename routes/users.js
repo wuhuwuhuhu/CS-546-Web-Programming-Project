@@ -88,13 +88,14 @@ router.post('/changePassword', async(req,res) => {
         status = false;
         message = "Please provide old password.";
     }
-    if(newPassword.length < 3 || newPassword.length > 16){
+    let passwordPattern = /^[\w_-]{3,16}$/;
+    if(!passwordPattern.test(oldPassword)){
         status = false;
-        message = "new password's length should between 3 to 16.";
+        message = "Please provide valid old password.";
     }
-    if(oldPassword.length < 3 || oldPassword.length > 16){
+    if(!passwordPattern.test(newPassword)){
         status = false;
-        message = "old password's length should between 3 to 16.";
+        message = "Please provide valid new password.";
     }
 
     if(status){

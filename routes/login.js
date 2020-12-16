@@ -29,10 +29,11 @@ router.get("/", async (req, res) => {
           let emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
           if(!emailPattern.test(email)){
                   error_msgs.push("You must provide a valid email.");
-              }
-          if(password.length<3 || password.length >16){
-              error_msgs.push("Please user 3-16 characters long password.");
-          }
+              };
+          let passwordPattern = /^[\w_-]{3,16}$/;
+          if(!passwordPattern.test(password)){
+            error_msgs.push("Please provide valid old password.");
+            };
       }
       if(error_msgs.length === 0){
           try {

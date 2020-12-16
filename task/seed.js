@@ -19,6 +19,7 @@ const questionsData = mongoCollections.questions;
 const answersData = mongoCollections.answers;
 const reviewsData = mongoCollections.reviews;
 const systemConfigsData = mongoCollections.systemConfigs;
+const xss = require('xss')
 
 
 
@@ -52,9 +53,9 @@ const main = async () => {
 		"0jorgearman@factorypeople.com", "4owtrageous.pe@esbuah.nl", "graysalinax@aloftventure.com", "phamza_evan@encodium.com", "pmido_mahmoud5217@lttmobile.com",
 		"0sweet.ismarica4@kittiza.com", "izahra@chatur21bate.com", "0meyree.int@aristockphoto.com", "ipras@atourfinest.com", "ymoham@texasaol.com"]
 
-	//const passwordList = ["Test1234", "jPpG>oe2BFH74(%", "eo7x701)aFJz1H;1", "iwE[p+i}1.3Wq,9)", "cX8zOu:A:ZqFK:Hk", "NV>]D>O)24ay_MM{", "d3=PX#X$8y'DORS", "v6{k{&~IA5$Rkl8-", "gu>HT]53rk{E}V7t",
-	//	"J|JCtR;uw9??pnd3", "TYj!i%ode&hKg@49", "u9bwsJ8X0JpU|I;E", "dw*PAX7Yl)Owl>bW", "Rx]%4KF>=j~)x/X_", "x04*xMsK@a!&m(L", "-TDWH4C!%ayhXft%",
-	//	"#8yaB!Pw4B8H6nPL", "=qj8f&k@rLb#fKEH", "5w_EY__*2kkq#ub*", "B%p88Ps_6A+qLU#s"]
+	const passwordList = ["Test1234", "MbepHPIW6x", "Dqj7IGTtCW", "XaD7vIn6de", "riYXGhIVvo", "nr4KqV4tp9", "bQxEY84gMO", "dNyPnBjeU2", "VF7G2Oln75",
+		"bCTnWwjbvV", "cFaJelkkgO", "iI7DQUrlnb", "CQRTuQ9cPi", "uKlryiqWNk", "7fr6nmaXQY", "2UFF41aBNy",
+		"cemSfZcMFd", "Sf00QMS6hU", "qS35qODo1M", "WpHrCUkwIb"]
 
 	//helper function to generate random time between given range
 	function randomTime(startTime, endTime) {
@@ -65,30 +66,34 @@ const main = async () => {
 		let date = new Date(start.getTime() + new_diff);
 		return date;
 	}
+	
 	// create 20 users
+	
 	const userIdList = []
-	const hashList = [
-		'$2b$16$Jjmo2eR7GwDq6l6LRPVTM.y2LQyS.ohv94ec50PuMrZupz87L2fbe',
-		'$2b$16$ZxelqfOgz/LEi7RSdCEIUu.Poi2XEwtWA27SCuvWVyQqLjKd.I9mO',
-		'$2b$16$aLinh35hbMUIHrUS1uSSZe/OOn.8X0iw8aMW0OE441tWelZ.agspa',
-		'$2b$16$UWMZbQWjA7IEfTGniLIn0eQKEG.yTNmiGOI442qlhn5/nfXRQ315i',
-		'$2b$16$bE1o4S5JFvoZyN8pDcwwk.dGSXR0slV4dOrxpmHDcuc4SuBTORgc.',
-		'$2b$16$BIQ6GQ507RxzlEKYjrcuXOfUw0fD6yGaw8Ey2pYy/Z643pn.CnJLm',
-		'$2b$16$TphApinrftzGdjsJyE6nQ.QUpyIMGCaHOoNnkDY7tjGtXf2x.aWs2',
-		'$2b$16$qsgEfKqSXAWghKODG0sFZ.uFw3SJj5SdO9/2PbISC/KsMP415zL7a',
-		'$2b$16$Excu76Qmr1vDWKHVGqUc5.GEdZkdhAF11j/f4wF5HlUbjea3gt6Bm',
-		'$2b$16$P327CTYyQ4tb3SInx1p8/unmHjlbD/8703pQiimiywY5mMcNh1yh6',
-		'$2b$16$hWK44c2j0EHVN5xypyJGqOY2VjZoTTysu4AazJ.yTyg3sVY36FZCS',
-		'$2b$16$mD/gFaqlF.NI0SV4NYuZqe4bK2mOEoEB3fgLCs76NH.60T3kWzxJ2',
-		'$2b$16$6FXUISEHSFsazIUNK2Soee.IUPMVSoe/P4T5F1Cv7iGWK0ZGoynHS',
-		'$2b$16$KU3Eg/799Vs7upMRFpmgsuGJOn9.KPhUz4UTfeYwLUQ30SIP9nI3a',
-		'$2b$16$8L3oACeemuak9OasKhXUJ.YefWyAPnASIg08rWXMxahIYPFMyz3ym',
-		'$2b$16$Ldlvb10P6.bNH0EmfPn8YeSssg16APY.f52.iwO8P4Mw20vJDdiDu',
-		'$2b$16$XEhniFsrFIQrP8R.8xPgTutscbFNz.ZDlikJqOWI7uJecq.NhACWG',
-		'$2b$16$lPMcKMOYl2qzIyBU.8zIRu0GBrafCdeSllX/NEUZRCiwSCr6F9PnO',
-		'$2b$16$RKt5IbwRqBQwX3KTjsHtLeNii9jwUmkF5GDLwCROaIVUx1snR6pqe',
-		'$2b$16$LfdX7neQbi6S4.AM11bnzuZ4b8A/56pZvBH76mM4xxGOLikp2xjUK'
-	]
+
+	let hashList = [
+		'$2b$16$K/1P03X5HcF6sINwD4OS1uAK5SXNKgg44dL1bVSLwuig.1l3Y.p2i',
+		'$2b$16$SHplLpem6RAfkIqB9KS9uuZrddAZPHOdko7tLoV8xlHKG1Gx1jr8W',
+		'$2b$16$eUEoYIWhMDY8z9tWqqqrUeC0cqSurj8FAjRlzg7I38.ORtv/V1z1C',
+		'$2b$16$VRadUyEwwXSZXXslGDCr1.b76K4uXQzZtP8mHxSIZusIqp0oS6sIW',
+		'$2b$16$gqdd8gDkMPMR0TosyWkoYOyCjSwMGxcSge8JGmb6LwYRy1YBaYut.',
+		'$2b$16$4PNubHE484L8qxsXP.04oeUkHhJFhd9EmT6DxcgXuwFUW8O3NPprO',
+		'$2b$16$1FBuqu.tc5M5uukpxI1L4.RVpoao8Uhmg7WGRZw9bxTWBfQ.gXgjK',
+		'$2b$16$vz4IJ6YMDXPEMaA/ZZaRXO9.2wvkiSZLsq5VkzYE3PRNYCzj.IWbC',
+		'$2b$16$lbbC73fR9zup2FBFv8H7vezODUXWUpqu4IuUqTgPxqkone9VCltEy',
+		'$2b$16$.Lagsby.xaY5LueB9P5vduTEVPK13x3Q5nBvQV10sBMsu3LLArqs2',
+		'$2b$16$LPqRrz8p3MoHqlc4.AAHSOyzgv1K2qvkoAgZrm4OOATu.tUuLzzV.',
+		'$2b$16$QdHX0c/mwzB4wAltlSRfSeuA0Pfa5sqoiZdkhc23S/XMHP.FBD.32',
+		'$2b$16$4FdQtFbbrzKssSW4NXRIsuvKrM1NBEfWgEOdD7Y5rwsKwzEV7Ksb.',
+		'$2b$16$1fYC3EZsQVCj1GreG6tKAubUP7VlN0b/58n5lX4dy64QngBy9MTrW',
+		'$2b$16$grbx60y0eTyTrleskvO8H.9fsoXFN4gqBcXGXptsS6mq6qaB9DDV6',
+		'$2b$16$pdSaFOcWqJueii3Cr9qLL.gUoOXWv/GibNRSaXyyvO/VM58ojl4XG',
+		'$2b$16$LmYu3cojufEtZhV3AWR/iecoDtJ.XZmLC54BxJSGCnv0oz3GntfBi',
+		'$2b$16$/70GAZA7snsY8iZTrcS21O3MrwM1JCJBH2dkj6pbCh8RLgTE5v27O',
+		'$2b$16$tsbE0wDdszo/Tqg4jKUKBeMloROUi4qncUssoL/mGELJ9kzhN044G',
+		'$2b$16$tWHIrcFn6/w7Ft0FtQYjheMRx2z.irdyyTqBGy7kdjUFYo3yFSiQS'
+	  ]
+
 	//
 	//	  const hash = await bcrypt.hash('Test1234',saltRounds);
 	//			console.log(hash)
@@ -96,10 +101,13 @@ const main = async () => {
 		for (let i = 0; i < userNameList.length; i++) {
 			let newTime = randomTime('July 20, 2000 00:20:18 GMT+00:00', 'December 02, 2010 00:20:18 GMT+00:00');
 			//console.log(newTime);
-
+			//const hash = await bcrypt.hash(xss(passwordList[i].trim()),saltRounds);
+			//console.log(xss(passwordList[i].trim()))
+			//hashList.push(hash)
 			const newUser = {
 				userName: userNameList[i],
 				email: emailList[i],
+				//hashedPassword:hash,
 				hashedPassword: hashList[i],
 				dateSignedIn: newTime,
 				questions: [],
@@ -119,12 +127,9 @@ const main = async () => {
 			//if (updatedInfo.matchedCount === 0 || updatedInfo.modifiedCount === 0) {
 			//	throw 'seed.js: no time of reviews being updated.'
 			//}
-
-
-
 			//	userIdList.push(addUser._id.toString())
 		}
-
+	//	console.log(hashList)
 		//	console.log(userIdList)
 	} catch (error) {
 		console.log(error)
@@ -151,11 +156,13 @@ const main = async () => {
 	let travelQuestionList = ["Why people like travel?", "What is the meaning of traveling?", "5 star hotel or knapsack travel, what do you get from different ways of travel?", "What is the most popular place to go during Christmas?",
 		"Please recommand some place to go during summer?", "France vs. Japan? where for a 2 week vocation?", "Which rent company do you recommand during travel?", "Is it safe travel alone?"]
 	let otherQuestionList = ["What do you do when you're bored?", "Is there any people really viewing this website?", "Where are you going? Where Have You Been?", "Is stock market better than last year?", "Do you guys ask about life meaning related questions here?"]
-	//
+//	console.log(bookQuestionList.length)
+//	console.log(musicQuestionList.length)
+//	console.log(movieQuestionList.length)
 
 	let questionIdList = []
 	//create questions 
-
+//	let quest = []
 	let questionList = [bookQuestionList, musicQuestionList, movieQuestionList, wineQuestionList, cookQuestionList, travelQuestionList, otherQuestionList]
 	let remain = bookQuestionList.length + musicQuestionList.length + movieQuestionList.length + wineQuestionList.length + cookQuestionList.length + travelQuestionList.length + otherQuestionList.length
 	try {
@@ -166,6 +173,7 @@ const main = async () => {
 				if (questionList[i].length > 0) {
 					const newQuestion = await questions.addQuestion(questionList[i][0], topics[i], userIdList[j]);
 					questionIdList.push(newQuestion._id.toString())
+				//	quest.push(newQuestion.content)
 					questionList[i].splice(0, 1);
 					j = (j + 2) % 10;
 					remain--;
@@ -177,7 +185,7 @@ const main = async () => {
 				seeds = false;
 			}
 		}
-		//	console.log(questionIdList)
+		//	console.log(quest)
 	} catch (error) {
 		console.log(error);
 
@@ -264,8 +272,8 @@ const main = async () => {
 		await answers.addAnswer("I am here.", userIdList[0], questionIdList[13]);
 		await answers.addAnswer("I think Booker Prize is the highest", userIdList[2], questionIdList[14]);
 		await answers.addAnswer("Pulizer is only limited in US and mainly for English language, there are tons of master pieces over the world.", userIdList[18], questionIdList[14]);
-		await answers.addAnswer("Holiday Pop", userIdList[11], questionIdList[15]);
-		await answers.addAnswer("I don't have Prime Music. I prefer YouTube Music.", userIdList[14], questionIdList[15]);
+		await answers.addAnswer("Holiday Pop", userIdList[11], questionIdList[22]);
+		await answers.addAnswer("I don't have Prime Music. I prefer YouTube Music.", userIdList[14], questionIdList[22]);
 		await answers.addAnswer("Star War Series", userIdList[1], questionIdList[16]);
 		await answers.addAnswer("Tatanic", userIdList[10], questionIdList[16]);
 		await answers.addAnswer("Gone with the wind", userIdList[15], questionIdList[16]);

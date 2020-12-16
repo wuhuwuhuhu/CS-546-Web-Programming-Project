@@ -75,7 +75,8 @@ let exportedMethods = {
 			topic: topic.trim(),
 			questioner: questioner.trim(),
 			questionCreatedTime: date,
-			answers: []
+			answers: [],
+			followers:[]
 		}
 		const questionCollection = await questions();
 		//check whether QuestionName duplicated
@@ -111,8 +112,6 @@ let exportedMethods = {
 		if (typeof id !== 'string' || id.trim() === '') throw 'questions.js|removeQuestion(): id must be non-empty string'
 
 		const question = await this.getQuestionById(id);
-		
-		
 		if (question == null) throw `questions.js|removeQuestion(): question with ${id} not found`
 		//  remove answers first
 		let answerList = question.answers
@@ -132,7 +131,7 @@ let exportedMethods = {
 			for (let i = 0; i < reviewsList.length; i++) {
 				let reviewId = reviewsList[i];
 				//console.log("review of this answer")
-			//	console.log(reviewId)
+				//	console.log(reviewId)
 				const reviewCollection = await reviews();
 				const reviewObjectId = await myDBfunction(reviewId);
 				const find = await reviewCollection.findOne({ _id: reviewObjectId })
@@ -161,18 +160,18 @@ let exportedMethods = {
 				//update this review's creator's user db
 				const userId = find.reviewer
 				const objectUserId = await myDBfunction(userId)
-				const updatedInfo = await userCollection.updateOne({_id:objectUserId},{ $pull: { reviews: reviewId } })
+				const updatedInfo = await userCollection.updateOne({ _id: objectUserId }, { $pull: { reviews: reviewId } })
 				if (updatedInfo.matchedCount === 0) throw 'questions.js|removeQuestion():no user been found.'
 				if (updatedInfo.modifiedCount === 0) throw 'questions.js|removeQuestion():No user reviews being updated.'
 				//delete this review
-				
+
 				const deleteReviewInfo = await reviewCollection.deleteOne({ _id: reviewObjectId });
 				if (deleteReviewInfo.deletedCount === 0) throw 'questions.js|removeQuestion(): no reviews been deleted.'
 
 			}
 			let voteUpUserList = findAnswer.voteUp;
 			//console.log("voteUpList of this answer")
-		//	console.log(voteUpUserList)
+			//	console.log(voteUpUserList)
 			let voteDownUserList = findAnswer.voteDown;
 			//console.log("voteDownList of this answer")
 			//console.log(voteDownUserList)
@@ -194,13 +193,22 @@ let exportedMethods = {
 			//update this answer's creator's user db
 			const userId = findAnswer.answerer
 			const objectUserId = await myDBfunction(userId)
-			const updatedInfo = await userCollection.updateOne({_id:objectUserId},{ $pull: { answers: answerId } })
+			const updatedInfo = await userCollection.updateOne({ _id: objectUserId }, { $pull: { answers: answerId } })
 			if (updatedInfo.matchedCount === 0) throw 'questions.js|removeQuestion():no user been found.'
 			if (updatedInfo.modifiedCount === 0) throw 'questions.js|removeQuestion():No user answer being updated.'
 			//remove answerId from db
 			const deleteAnswerInfo = await answerCollection.deleteOne({ _id: answerObjectId })
 			if (deleteAnswerInfo.deletedCount === 0) throw 'questions.js|removeQuestion(): no answers been deleted.'
-			
+
+		}
+		//update followering user db
+		const followersList = question.followers
+		for(let i = 0; i<followersList.length;i++){
+			const userId = followersList[i]
+			const objectUserId = await myDBfunction(userId)
+			const updatedInfo = await userCollection.updateOne({_id:objectUserId},{$pull:{followedQuestions:id.trim()}})
+			if (updatedInfo.matchedCount === 0) throw 'questions.js|removeQuestion():no user been found.'
+			if (updatedInfo.modifiedCount === 0) throw 'questions.js|removeQuestion():No user followedQuestions being updated.'
 		}
 
 		//remove question from db
@@ -208,8 +216,9 @@ let exportedMethods = {
 		const questionCollection = await questions()
 		const deleteQuestionInfo = await questionCollection.deleteOne({ _id: questionObjectId })
 		if (deleteQuestionInfo.deletedCount === 0) throw 'questions.js|removeQuestion(): no question been deleted.'
+	
 		//remove question id from user db
-		
+
 		const userId = question.questioner
 		const objetUserId = await myDBfunction(userId)
 		const updatedInfo = await userCollection.updateOne({ _id: objetUserId }, { $pull: { questions: id.trim() } })
@@ -286,20 +295,10 @@ let exportedMethods = {
 	async getQuestionsByKeywords(keywords) {
 		if (!keywords) throw 'questions.js|getQuestionsByKeywords: you need to input keywords'
 		if (typeof keywords !== 'string' || keywords.trim() === '') throw 'questions.js|getQuestionsByKeywords: keywords must be non-empty string'
-		//	const searchText = keywords.trim().replace(/[\W+]+/g, " ")
-		//	console.log(searchText)
-		//const newKeywords ="\/" + keywords.trim().replace(/[\W+]+/g, "*") + "\/";
-
-		//console.log(newKeywords)
 		const regex = keywords.trim().replace(/[\W+]+/g, ".*")
-
-		console.log(regex)
+	//	console.log(regex)
 		const questionCollection = await questions()
-		//	await questionCollection.createIndex({ content: "text" })
-		//	const find = await questionCollection.find({ $text: { $search: searchText ,$caseSensitive: false } }, { score: { $meta: "textScore" } }).sort({ score: { $meta: "textScore" } }).toArray()
 
-		//	const find = await questionCollection.find({content: {$in:keywordsList}}).toArray()
-		// using regex
 		const find = await questionCollection.find({ content: { $regex: regex, $options: 'i' } }).toArray()
 		if (!find) throw 'questions.js|getQuestionsByKeywords: not found any match'
 
@@ -310,20 +309,11 @@ let exportedMethods = {
 	async getQuestionsByKeywordsAndTopic(keywords, topic) {
 		if (!keywords) throw 'questions.js|getQuestionsByKeywords: you need to input keywords'
 		if (typeof keywords !== 'string' || keywords.trim() === '') throw 'questions.js|getQuestionsByKeywords: keywords must be non-empty string'
-		//	const searchText = keywords.trim().replace(/[\W+]+/g, " ")
-		//	console.log(searchText)
-		//const newKeywords ="\/" + keywords.trim().replace(/[\W+]+/g, "*") + "\/";
-
-		//console.log(newKeywords)
 		const regex = keywords.trim().replace(/[\W+]+/g, ".*")
 
-		console.log(regex)
+		//	console.log(regex)
 		const questionCollection = await questions()
-		//	await questionCollection.createIndex({ content: "text" })
-		//	const find = await questionCollection.find({ $text: { $search: searchText ,$caseSensitive: false } }, { score: { $meta: "textScore" } }).sort({ score: { $meta: "textScore" } }).toArray()
 
-		//	const find = await questionCollection.find({content: {$in:keywordsList}}).toArray()
-		// using regex
 		const find = await questionCollection.find({ content: { $regex: regex, $options: 'i' } }).toArray()
 		if (!find) throw 'questions.js|getQuestionsByKeywords: not found any match'
 		let result = []

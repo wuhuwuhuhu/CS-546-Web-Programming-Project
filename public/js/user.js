@@ -263,6 +263,10 @@
                 questionDelete.removeAttr("href");
                 questionDelete.addClass("deactive");
                 questionDelete.text("deleted");
+                init_answers();
+                init_reviews();
+                init_votedAnswers();
+                init_votedReviews();
             }
             else{
                 console.log("fail");
@@ -369,6 +373,9 @@
                 answerDelete.removeAttr("href");
                 answerDelete.addClass("deactive");
                 answerDelete.text("deleted");
+                init_reviews();
+                init_votedAnswers();
+                init_votedReviews();
             }
             else{
                 console.log("fail");
@@ -464,6 +471,7 @@
                 reviewDelete.removeAttr("href");
                 reviewDelete.addClass("deactive");
                 reviewDelete.text("deleted");
+                init_votedReviews();
             }
             else{
                 console.log("fail");

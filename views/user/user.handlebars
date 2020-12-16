@@ -50,10 +50,32 @@
         </form>
     </fieldset>
 </div>
+<div id="followedQuestionsDiv" class="row container">
+    <fieldset>
+        <legend>Questions You Followed</legend>
+        <div id="followedQuestionsSelector">
+            <label for="followedQuestionsSortSelect">Sort: </label>
+            <select id="followedQuestionsSortSelect">
+                <option value="Date from new to old" selected="selected">Date from new to old</option>
+                <option value="Answers number from high to low">Answers number from high to low</option>
+            </select>
+            <br>
+            <label for="followedQuestionsLimitSelect">Limit: </label>
+            <select id="followedQuestionsLimitSelect">
+                <option value="10" selected="selected">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+            </select>
+            <br>
+        </div>
+        <div id="userFollowedQuestionsList"></div>
+        <p class="text-info" id="followedQuestionsStatus"></p>
+    </fieldset>
+</div>
 
 <div id="questionsDiv" class="row container">
     <fieldset>
-        <legend>Questions</legend>
+        <legend>Your Questions</legend>
         <div id="questionsSelector">
             <label for="questionsSortSelect">Sort: </label>
             <select id="questionsSortSelect">
@@ -75,7 +97,7 @@
 </div>
 <div id="answersDiv" class="row container">
     <fieldset>
-        <legend>Answers</legend>
+        <legend>Your Answers</legend>
         <div id="answersSelector">
             <label for="answersSortSelect">Sort: </label>
             <select id="answersSortSelect">
@@ -97,7 +119,7 @@
 </div>
 <div id="reviewsDiv" class="row container">
     <fieldset>
-        <legend>Reviews</legend>
+        <legend>Your Reviews</legend>
         <div id="reviewsSelector">
             <label for="reviewsSortSelect">Sort: </label>
             <select id="reviewsSortSelect">
@@ -119,7 +141,7 @@
 </div>
 <div id="votedAnswersDiv" class="row container">
     <fieldset>
-        <legend>VotedAnswers</legend>
+        <legend>Voted Answers</legend>
         <div id="votedAnswersSelector">
             <label for="votedAnswersSortSelect">Sort: </label>
             <select id="votedAnswersSortSelect">
@@ -144,7 +166,7 @@
 </div>
 <div id="votedReviewsAnswersDiv" class="row container ">
     <fieldset>
-        <legend>VotedReviews</legend>
+        <legend>Voted Reviews</legend>
         <div id="votedReviewsSelector">
             <label for="votedReviewsSortSelect">Sort: </label>
             <select id="votedReviewsSortSelect">

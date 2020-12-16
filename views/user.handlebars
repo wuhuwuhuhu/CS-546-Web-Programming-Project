@@ -69,13 +69,7 @@
             </select>
             <br>
         </div>
-        <div id="userQuestionsList">
-            {{#each userQuestionsList}}
-            <article>
-                <h2><a href="{{this.questionUrl}}">{{this.questionName}}</a></h2><br>
-            </article>
-            {{/each}}
-        </div>
+        <div id="userQuestionsList"></div>
         <p class="text-info" id="questionsStatus"></p>
     </fieldset>
 </div>
@@ -97,14 +91,7 @@
             </select>
             <br>
         </div>
-        <div id="userAnswersList">
-            {{#each userAnswersList}}
-            <article>
-                <h2><a href="{{this.questionUrl}}">{{this.questionName}}</a></h2><br>
-                <h3>{{this.answerContent}}</h3>
-            </article>
-            {{/each}}
-        </div>
+        <div id="userAnswersList"></div>
         <p class="text-info" id="answersStatus"></p>
     </fieldset>
 </div>
@@ -126,15 +113,7 @@
             </select>
             <br>
         </div>
-        <div id="userReviewsList">
-            {{#each userReviewsList}}
-            <article>
-                <h2><a href="{{this.questionUrl}}">{{this.questionName}}</a></h2><br>
-                <h3>{{this.answerContent}}</h3><br>
-                <h4>{{this.reviewContent}}</h4>
-            </article>
-            {{/each}}
-        </div>
+        <div id="userReviewsList"></div>
         <p class="text-info" id="reviewsStatus"></p>
     </fieldset>
 </div>
@@ -159,14 +138,7 @@
             </select>
             <br>
         </div>
-        <div id="userVotedAnswersList">
-            {{#each userVotedAnswersList}}
-            <article>
-                <h2><a href="{{this.questionUrl}}">{{this.questionName}}</a></h2><br>
-                <h3>{{this.answerContent}}</h3>
-            </article>
-            {{/each}}
-        </div>
+        <div id="userVotedAnswersList"></div>
         <p class="text-info" id="votedAnswersStatus"></p>
     </fieldset>
 </div>
@@ -191,15 +163,7 @@
             </select>
             <br>
         </div>
-        <div id="userVotedReviewsList">
-            {{#each userVotedReviewsList}}
-            <article>
-                <h2><a href="{{this.questionUrl}}">{{this.questionName}}</a></h2><br>
-                <h3>{{this.answerContent}}</h3><br>
-                <h4>{{this.reviewContent}}</h4>
-            </article>
-            {{/each}}
-        </div>
+        <div id="userVotedReviewsList"></div>
         <p class="text-info" id="votedReviewsStatus"></p>
     </fieldset>
 </div>

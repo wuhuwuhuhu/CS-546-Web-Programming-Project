@@ -106,7 +106,8 @@ const main = async () => {
 				answers: [],
 				reviews: [],
 				votedForReviews: [],
-				votedForAnswers: []
+				votedForAnswers: [],
+				followedQuestions: []
 			};
 		//	const addUser = await users.addUser(emailList[i],hashList[i],userNameList[i])
 			//shuffle user created time

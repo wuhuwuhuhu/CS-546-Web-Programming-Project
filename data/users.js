@@ -1,5 +1,6 @@
     const mongoCollections = require('../config/mongoCollections');
     const users = mongoCollections.users;
+    const questions = mongoCollections.questions;
     const { ObjectId } = require('mongodb');
     const bcryptjs = require("bcryptjs")
 
@@ -63,28 +64,28 @@
             
         },
         //userName cant be same 
-        async addUser(email, hashedPassword, userName) {
+        async addUser(email, password, userName) {
            
             console.log("-------addd")
             if (!email) throw new Error('You must provide an email');
-            if (!hashedPassword) throw new Error('You must provide a hashed password');
+            if (!password) throw new Error('You must provide a password');
             if (!userName) throw new Error('You must provide a userNme');
             if (userName.length>3&&userName.length<16){
                 
             }else{
-                throw new Error('You userName  should  3 - 16 length');
+                throw new Error('You userName  should be 3 - 16 length');
             }
-            if (hashedPassword.length>3&&hashedPassword.length<16){
+            if (password.length>3&&password.length<16){
                
             }else{
-                throw new Error('You password  should  3 - 16 length');
+                throw new Error('You password  should be 3 - 16 length');
             }
             let reg = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
             if(!reg.test(email)){
                 throw new Error('You email type error');
             }
             if (typeof email !== 'string') throw new TypeError('email must be a string');
-            if (typeof hashedPassword !== 'string') throw new TypeError('hashedPassword must be a string');
+            if (typeof password !== 'string') throw new TypeError('hashedPassword must be a string');
             if (typeof userName !== 'string') throw new TypeError('userName must be a string');
             email = email.toLowerCase()
             let emailExists = false;
@@ -98,9 +99,8 @@
 
             if (emailExists) throw new Error('Email already registered');
             const salt = bcryptjs.genSaltSync(16);
-            const hash = bcryptjs.hashSync(hashedPassword, salt);
+            const hash = bcryptjs.hashSync(password, salt);
             let newUser = {
-               // _id: uuid.v4(),
                 email: email,
                 hashedPassword: hash,
                 userName: userName,
@@ -110,6 +110,7 @@
                 answers: [],
                 votedForReviews:[],
                 votedForAnswers:[],
+                followedQuestions: []
             };
             const userCollection = await users();
             const newInsertInformation = await userCollection.insertOne(newUser);
@@ -266,9 +267,76 @@
         }   
             return this.getUserById(id);
         
+        },
+
+        //follow a question
+        async followQuestion(userId, questionId){
+            if (!userId || typeof userId != 'string') throw new Error('You must provide a valid userId');
+            if (!questionId || typeof userId != 'string') throw new Error('You must provide a valid questionId')
+            if(await this.followQuestionCheck(userId, questionId)) throw new Error('This question already had been followed.')
+            const userCollection = await users();
+            let user = await this.getUserById(userId);
+            const questionCollection = await questions();
+            // const ObjectId = await myDBfunction(id);
+            const find = await questionCollection.findOne({ _id: ObjectId(questionId) });
+            if (find == null) throw  new Error ("We don't have this question.");
+
+            let updateInfo;
+            if(user)
+            {
+                updateInfo = await userCollection.updateOne(
+                    { _id: user["_id"] },
+                    { $addToSet: { followedQuestions: questionId } }
+                );
+            if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw new Error ('Update failed');
+            }else{
+                throw new Error ("We don't have this question.");
+            }
+            user = await this.getUserById(userId);
+            return user;
+        },
+        async unfollowQuestion(userId, questionId){
+            if (!userId || typeof userId != 'string') throw new Error('You must provide a valid userId');
+            if (!questionId || typeof userId != 'string') throw new Error('You must provide a valid questionId')
+            if(!await this.followQuestionCheck(userId, questionId)) throw new Error("This question haven't been followed.")
+            const userCollection = await users();
+            let user = await this.getUserById(userId);
+            const questionCollection = await questions();
+            const find = await questionCollection.findOne({ _id: ObjectId(questionId) });
+            if (find == null) throw  new Error ("We don't have this question.");
+
+            let updateInfo;
+            if(user)
+            {
+                updateInfo = await userCollection.updateOne(
+                    { _id: user["_id"] },
+                    { $pull: { followedQuestions: questionId } }
+                );
+                if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw new Error ('Update failed');
+            }
+            else{
+                throw new Error ("We don't have this question.");
+            }
+            
+            user = await this.getUserById(userId);
+            return user;
+        },
+
+        async followQuestionCheck(userId, questionId){
+            if (!userId || typeof userId != 'string') throw new Error('You must provide a valid userId');
+            if (!questionId || typeof userId != 'string') throw new Error('You must provide a valid questionId')
+            const userCollection = await users();
+            let user = await this.getUserById(userId);
+            let check = false;
+            if(user["followedQuestions"].indexOf(questionId) != -1){
+                check = true;
+            };
+            return check;
+            
         }
 
         
+    
 }
 
     // removeUser(userId){

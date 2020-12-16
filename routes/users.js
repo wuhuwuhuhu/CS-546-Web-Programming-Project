@@ -64,7 +64,7 @@ router.get('/', async(req,res) => {
     }
 
     
-    res.render("user",{
+    res.render("user/user",{
         title: "Personal Information",
         userName: userName,
         userEmail: userEmail,

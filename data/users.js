@@ -201,16 +201,16 @@
             return await this.getUserById(userId);
         },
 
-        async addReview(userId,ReviewId){
+        async addReview(userId,reviewId){
             if (!userId) throw new Error('You must provide a userId');
-            if (!ReviewId) throw new Error('You must provide a reviewId');
+            if (!reviewId) throw new Error('You must provide a reviewId');
             const reviewCollection = await reviews();
             const find = await reviewCollection.findOne({ _id: ObjectId(reviewId) });
             if (find == null) throw  new Error ("We don't have this review.");        
             const userCollection = await users();
             const updateInfo = await userCollection.updateOne(
                 { _id: ObjectId(userId) },
-                { $addToSet: { reviews: ReviewId } }
+                { $addToSet: { reviews: reviewId } }
             );
             if (!updateInfo.matchedCount && !updateInfo.modifiedCount) throw 'Update failed';
             return await this.getUserById(userId);

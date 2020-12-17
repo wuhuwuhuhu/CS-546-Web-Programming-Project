@@ -46,7 +46,11 @@
             })
         };
         $.ajax(requestConfig).then(function (responseMessage) {
-            if (responseMessage.status === true) {
+			if(responseMessage.hasUser == false){
+				window.location.replace('/login')
+				return
+			}
+            if (responseMessage.status === true ) {
                 const option = responseMessage.option
                 if(option=='follow'){
                     $('#followQuestion').text('follow question')
@@ -57,6 +61,7 @@
             }
             else {
                 alert("something wrong")
+			  
             }
         });
 
@@ -92,7 +97,8 @@
                 $("#ReviewNumberIdShow" + answerId).show()
             }
             else {
-                alert("something wrong")
+                // alert("something wrong")
+			   window.location.replace('/login')
             }
         });
     })
@@ -120,7 +126,8 @@
                 $("#ReviewNumberIdShow" + answerId).show()
             }
             else {
-                alert("something wrong")
+                // alert("something wrong")
+			   window.location.replace('/login')
             }
         });
     })
@@ -158,7 +165,8 @@
                 $("#ReviewNumberIdShow" + answerid).show()
             }
             else {
-                alert("something wrong")
+			   // alert("something wrong")
+			   window.location.replace('/login')
             }
         });
 
@@ -198,7 +206,8 @@
                 $("#ReviewNumberIdShow" + answerId).show()
             }
             else {
-                alert("something wrong")
+                // alert("something wrong")
+			   window.location.replace('/login')
             }
         });
     })
@@ -268,7 +277,8 @@
                 $('#ReviewNumberIdShow' + answerId).show()
             }
             else {
-                alert("submit failed,something wrong")
+                // alert("something wrong")
+			   window.location.replace('/login')
             }
         });
     })
@@ -339,7 +349,8 @@
                     // console.log(subTableTody);
                 }
                 else {
-                    alert("something wrong")
+                    // alert("something wrong")
+			   window.location.replace('/login')
                 }
                 $('#' + tBodyReviews).show()
             });
@@ -367,7 +378,10 @@
             })
         };
         $.ajax(requestConfig).then(function (responseMessage) {
-            if (responseMessage.status === true) {
+			if(responseMessage.hasUser == false){
+				window.location.replace('/login')
+			}
+            if (responseMessage.status === true ) {
                 addAnswerSuccessful.show()
                 addAnswerSuccessful.delay(3000).hide(0);
                 mainTable.empty()
@@ -379,8 +393,12 @@
                 $("#answerContent").val("");
             }
             else {
-                addAnswerFailed.show()
-                addAnswerFailed.delay(3000).hide(0);
+			
+					addAnswerFailed.show()
+					addAnswerFailed.delay(3000).hide(0);
+				
+                
+				
             }
         });
     });

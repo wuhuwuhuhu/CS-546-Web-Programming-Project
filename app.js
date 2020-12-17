@@ -57,13 +57,13 @@ app.use('/registration', async (req, res, next) => {
      next();
    }
  });
- app.use('/question',async (req,res,next)=>{
-  if(!req.session.user){
-    res.redirect('/login');
-  }else{
-    next();
-  }
-});
+// app.use('/question',async (req,res,next)=>{
+//  if(!req.session.user){
+//    res.redirect('/login');
+//  }else{
+//    next();
+//  }
+//});
  app.use('/user',async (req,res,next)=>{
   if(!req.session.user){
     res.redirect('/login');
